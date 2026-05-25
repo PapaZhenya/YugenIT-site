@@ -4,7 +4,8 @@ const cards = document.querySelectorAll(".card, .course");
 const backBtn = document.querySelector(".back");
 
 const registerForm = document.getElementById("registerForm");
-const usersList = document.getElementById("usersList");
+const usersList = document.getElementById("ratingList");
+const ratingList = document.getElementById("ratingList");  
 const registerMessage = document.getElementById("registerMessage");
 
 const lessons = {
@@ -34,45 +35,110 @@ function saveUsers(users) {
   localStorage.setItem("greenYUsers", JSON.stringify(users));
 }
 
-function renderUsers() {
-  const users = getUsers();
+function getUserRegions() {
+  return JSON.parse(localStorage.getItem("greenYUserRegions")) || {};
+}
+
+function saveUserRegions(regions) {
+  localStorage.setItem("greenYUserRegions", JSON.stringify(regions));
+}
+
+function getUserRating(username) {
   const results = getTestResults();
+
+  const userResult = results.find(
+    result =>
+      result.username === username &&
+      result.testId === "first-test"
+  );
+
+  if (!userResult) return 0;
+
+  return userResult.percent;
+}
+
+function renderUsers() {
+  if (!usersList) return;
+
+  const users = getUsers();
+  const regions = getUserRegions();
 
   usersList.innerHTML = "";
 
-  const usersWithStats = users.map(user => {
-    const userResult = results.find(result => result.username === user.username && result.testId === "first-test");
+  if (users.length === 0) {
+    usersList.innerHTML = `
+      <tr>
+        <td colspan="4">No users yet.</td>
+      </tr>
+    `;
+    return;
+  }
 
-    return {
-      username: user.username,
-      password: user.password,
-      percent: userResult ? userResult.percent : 0,
-      correct: userResult ? userResult.correct : 0,
-      wrong: userResult ? userResult.wrong : 0,
-      date: userResult ? userResult.date : "Not passed"
-    };
-  });
+  const ratingUsers = users.map(user => ({
+    username: user.username,
+    region: regions[user.username] || "SD",
+    rating: getUserRating(user.username)
+  }));
 
-  usersWithStats.sort((a, b) => b.percent - a.percent);
+  ratingUsers.sort((a, b) => b.rating - a.rating);
 
-  usersWithStats.forEach((user, index) => {
+  ratingUsers.forEach((user, index) => {
     const row = document.createElement("tr");
 
+    const trophy =
+      index === 0 ? "🏆" :
+      index === 1 ? "🥈" :
+      index === 2 ? "🥉" :
+      "";
+
     row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${user.username}</td>
-      <td>${user.password}</td>
-      <td>${user.percent}%</td>
-      <td>${user.correct}</td>
-      <td>${user.wrong}</td>
-      <td>${user.date}</td>
+      <td>
+        <span class="rating-position">
+          ${trophy} ${index + 1}
+        </span>
+      </td>
+
+      <td>
+        <span class="talent-name">
+          👤 ${user.username}
+        </span>
+      </td>
+
+      <td>
+        <select class="region-select" data-username="${user.username}">
+          <option value="SD" ${user.region === "SD" ? "selected" : ""}>SD</option>
+          <option value="PC" ${user.region === "PC" ? "selected" : ""}>PC</option>
+          <option value="COL" ${user.region === "COL" ? "selected" : ""}>COL</option>
+        </select>
+      </td>
+
+      <td>
+        <span class="rating-score">
+          ${user.rating}
+        </span>
+      </td>
     `;
 
     usersList.appendChild(row);
   });
-}       
 
+  document.querySelectorAll(".region-select").forEach(select => {
+    select.addEventListener("change", () => {
+      const username = select.dataset.username;
 
+      const regions = getUserRegions();
+
+      regions[username] = select.value;
+
+      saveUserRegions(regions);
+    });
+  });
+}
+
+function renderRating() {
+  renderUsers();
+}
+  
 menuItems.forEach(item => {
   item.addEventListener("click", () => {
     const pageId = item.dataset.page;
@@ -86,6 +152,9 @@ menuItems.forEach(item => {
     if (pageId === "users") {
       renderUsers();
     }
+    if (pageId === "tests") {
+  renderRating();
+}
   });
 });
 
@@ -320,14 +389,35 @@ const translations = {
     home: "Home",
     progress: "Progress",
     tech: "Tech Moments",
-    classes: "Classes",
-    tests: "Tests",
+    classes: "Classes and Tests",
+    tests: "Rating",
     settings: "Settings",
+
     unfinishedCourses: "Your unfinished courses",
     allInfo: "All Informations",
+
+    domainTitle: "Working with Domain",
+    domainText: "Creating domain, Active Directory, DNS and users",
+
+    mikrotikTitle: "MikroTik Basics",
+    mikrotikText: "Router setup, IP, DHCP, firewall and network rules",
+
+    domainCardTitle: "Working with Domain",
+    domainCardText: "Domain creation, PC connection, AD users.",
+
+    mikrotikCardTitle: "MikroTik",
+    mikrotikCardText: "Router setup, DHCP, IP, firewall and security.",
+
+    serverCardTitle: "Windows Server",
+    serverCardText: "Server roles, DNS, DHCP, GPO and management.",
+
+    securityCardTitle: "Security",
+    securityCardText: "Network security basics and user protection.",
+
     techMoments: "Tech Moments",
     techSubtitle: "Discuss technical topics, ask questions and leave comments."
   },
+
   ru: {
     home: "Главная",
     progress: "Прогресс",
@@ -335,11 +425,32 @@ const translations = {
     classes: "Классы",
     tests: "Тесты",
     settings: "Настройки",
+
     unfinishedCourses: "Ваши незавершённые курсы",
     allInfo: "Вся информация",
+
+    domainTitle: "Работа с доменом",
+    domainText: "Создание домена, Active Directory, DNS и пользователи",
+
+    mikrotikTitle: "Основы MikroTik",
+    mikrotikText: "Настройка роутера, IP, DHCP, firewall и сетевые правила",
+
+    domainCardTitle: "Работа с доменом",
+    domainCardText: "Создание домена, подключение ПК, пользователи AD.",
+
+    mikrotikCardTitle: "MikroTik",
+    mikrotikCardText: "Настройка роутера, DHCP, IP, firewall и безопасность.",
+
+    serverCardTitle: "Windows Server",
+    serverCardText: "Роли сервера, DNS, DHCP, GPO и управление.",
+
+    securityCardTitle: "Security",
+    securityCardText: "Основы безопасности сети и защиты пользователей.",
+
     techMoments: "Тех. моменты",
     techSubtitle: "Обсуждайте технические темы, задавайте вопросы и оставляйте комментарии."
   },
+
   uk: {
     home: "Головна",
     progress: "Прогрес",
@@ -347,11 +458,32 @@ const translations = {
     classes: "Класи",
     tests: "Тести",
     settings: "Налаштування",
+
     unfinishedCourses: "Ваші незавершені курси",
     allInfo: "Уся інформація",
+
+    domainTitle: "Робота з доменом",
+    domainText: "Створення домену, Active Directory, DNS і користувачі",
+
+    mikrotikTitle: "Основи MikroTik",
+    mikrotikText: "Налаштування роутера, IP, DHCP, firewall і мережеві правила",
+
+    domainCardTitle: "Робота з доменом",
+    domainCardText: "Створення домену, підключення ПК, користувачі AD.",
+
+    mikrotikCardTitle: "MikroTik",
+    mikrotikCardText: "Налаштування роутера, DHCP, IP, firewall і безпека.",
+
+    serverCardTitle: "Windows Server",
+    serverCardText: "Ролі сервера, DNS, DHCP, GPO і керування.",
+
+    securityCardTitle: "Security",
+    securityCardText: "Основи безпеки мережі та захисту користувачів.",
+
     techMoments: "Тех. моменти",
     techSubtitle: "Обговорюйте технічні теми, ставте питання та залишайте коментарі."
   },
+
   es: {
     home: "Inicio",
     progress: "Progreso",
@@ -359,8 +491,28 @@ const translations = {
     classes: "Clases",
     tests: "Pruebas",
     settings: "Configuración",
+
     unfinishedCourses: "Tus cursos sin terminar",
     allInfo: "Toda la información",
+
+    domainTitle: "Trabajo con dominio",
+    domainText: "Creación de dominio, Active Directory, DNS y usuarios",
+
+    mikrotikTitle: "Conceptos básicos de MikroTik",
+    mikrotikText: "Configuración del router, IP, DHCP, firewall y reglas de red",
+
+    domainCardTitle: "Trabajo con dominio",
+    domainCardText: "Creación de dominio, conexión de PC, usuarios AD.",
+
+    mikrotikCardTitle: "MikroTik",
+    mikrotikCardText: "Configuración del router, DHCP, IP, firewall y seguridad.",
+
+    serverCardTitle: "Windows Server",
+    serverCardText: "Roles del servidor, DNS, DHCP, GPO y administración.",
+
+    securityCardTitle: "Seguridad",
+    securityCardText: "Fundamentos de seguridad de red y protección de usuarios.",
+
     techMoments: "Momentos técnicos",
     techSubtitle: "Discute temas técnicos, haz preguntas y deja comentarios."
   }
@@ -438,7 +590,7 @@ sendAdminMessage.addEventListener("click", () => {
   adminMessageInput.value = "";
   renderNotifications();
   updateNotificationCount();
-});
+}); 
 
 bellBtn.addEventListener("click", () => {
   showPage("notifications");
@@ -497,7 +649,9 @@ languageSelect.addEventListener("change", () => {
 
   document.querySelectorAll("[data-i18n]").forEach(element => {
     const key = element.dataset.i18n;
-    element.textContent = t[key];
+    if (t[key]) {
+  element.textContent = t[key];
+}
   });
 
   localStorage.setItem("greenYLanguage", lang);
@@ -1043,3 +1197,99 @@ firstTestForm.addEventListener("submit", (event) => {
     renderUsers();
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("authModal").style.display = "flex";
+
+  document.getElementById("showLogin").addEventListener("click", showLoginForm);
+  document.getElementById("showRegister").addEventListener("click", showRegisterForm);
+});
+
+function showLoginForm() {
+  document.getElementById("loginForm").style.display = "block";
+  document.getElementById("registerForm").style.display = "none";
+
+  document.getElementById("showLogin").classList.add("active");
+  document.getElementById("showRegister").classList.remove("active");
+}
+
+function showRegisterForm() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("registerForm").style.display = "block";
+
+  document.getElementById("showRegister").classList.add("active");
+  document.getElementById("showLogin").classList.remove("active");
+}
+
+function registerUser() {
+  const username = document.getElementById("regUsername").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+  const message = document.getElementById("authMessage");
+
+  if (!username || !password) {
+    message.textContent = "Введите имя и пароль";
+    return;
+  }
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const userExists = users.some(user => user.username === username);
+
+  if (userExists) {
+    message.textContent = "Такой аккаунт уже существует";
+    return;
+  }
+
+  const newUser = {
+    username: username,
+    password: password,
+    rating: 0,
+    region: "SD"
+  };
+
+  users.push(newUser);
+
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("currentUser", username);
+
+  document.getElementById("authModal").style.display = "none";
+
+  alert("Аккаунт создан!\nЛогин: " + username + "\nПароль: " + password);
+}
+
+function loginUser() {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const message = document.getElementById("authMessage");
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const foundUser = users.find(user =>
+    user.username === username && user.password === password
+  );
+
+  if (!foundUser) {
+    message.textContent = "Неверный логин или пароль";
+    return;
+  }
+
+  localStorage.setItem("currentUser", username);
+
+  document.getElementById("authModal").style.display = "none";
+
+  alert(
+    "Вход выполнен!\n" +
+    "Логин: " + foundUser.username + "\n" +
+    "Пароль: " + foundUser.password + "\n" +
+    "Рейтинг: " + foundUser.rating
+  );
+}
+function togglePassword(id) {
+  const input = document.getElementById(id);
+
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
+  

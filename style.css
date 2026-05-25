@@ -7,7 +7,7 @@
 
 body {
   min-height: 100vh;
-  background: #f8fff9;
+  background: #f1f5f3;
 }
 
 .app {
@@ -29,76 +29,129 @@ body {
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 70px;
-}
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
+    margin-bottom: 70px;
+
+    flex-wrap: nowrap;
+}
 .brand-box {
-  width: 52px;
-  height: 52px;
-  background: rgba(255,255,255,.14);
-  border-radius: 15px;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
+    width: 72px;
+    height: 72px;
+
+    border-radius: 18px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(0,255,120,.28),
+        rgba(120,0,255,.28)
+    );
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 0 18px rgba(0,255,120,.25),
+        0 0 30px rgba(120,0,255,.25);
 }
 
+.brand-box img {
+    width: 240%;
+    height: 240%;
+
+    object-fit: contain;
+
+    transform: scale(2.2);
+
+    filter:
+        brightness(1.15)
+        contrast(1.1);
+}
+.brand-box img {
+    width: 95%;
+    height: 95%;
+    object-fit: contain;
+}
 .brand-name {
-  font-size: 25px;
-  font-weight: 800;
+    font-size: 24px;
+    font-weight: 800;
+
+    white-space: nowrap;
 }
 
 .yin-yang {
-  width: 64px;
-  height: 64px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #6d28d9 50%, #22c55e 50%);
+  background: linear-gradient(90deg, #22c55e 50%, #6d28d9 50%);
   position: relative;
-  box-shadow: 0 0 18px rgba(34,197,94,.8), inset 0 0 14px rgba(0,0,0,.35);
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.65);
   animation: rotateLogo 8s linear infinite;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .yin-yang::before,
 .yin-yang::after {
   content: "";
   position: absolute;
-  width: 32px;
-  height: 32px;
-  left: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
 }
 
 .yin-yang::before {
   top: 0;
-  background: #22c55e;
+  background: #6d28d9;
 }
 
 .yin-yang::after {
   bottom: 0;
-  background: #6d28d9;
+  background: #22c55e;
 }
 
 .yin-yang span::before,
 .yin-yang span::after {
   content: "";
   position: absolute;
+  left: 24px;
   width: 10px;
   height: 10px;
-  left: 27px;
   border-radius: 50%;
   z-index: 3;
 }
 
 .yin-yang span::before {
-  top: 11px;
-  background: #6d28d9;
+  top: 9px;
+  background: #22c55e;
 }
 
 .yin-yang span::after {
-  bottom: 11px;
-  background: #22c55e;
+  bottom: 9px;
+  background: #6d28d9;
+}
+
+@keyframes rotateLogo {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes rotateLogo {
@@ -971,4 +1024,238 @@ td {
   .test-card-open {
     padding: 24px;
   }
+}
+.rating-page.active {
+  display: block;
+}
+.rating-page {
+  background:
+    radial-gradient(circle at 80% 10%, rgba(34, 197, 94, 0.18), transparent 28%),
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.22), transparent 30%),
+    linear-gradient(135deg, #050816 0%, #0b1024 45%, #071b18 100%);
+
+  min-height: 100vh;
+  padding: 30px;
+  color: white;
+}
+
+.rating-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.rating-hero h1 {
+  font-size: 46px;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.rating-hero p {
+  color: #9ca3af;
+}
+
+.trophy-box {
+  width: 120px;
+  height: 120px;
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(124,58,237,.35),
+    rgba(34,197,94,.35)
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 70px;
+
+  box-shadow:
+    0 0 25px rgba(124,58,237,.5),
+    0 0 35px rgba(34,197,94,.25);
+}
+
+.rating-board {
+  background: rgba(5,10,25,.75);
+
+  border: 1px solid rgba(124,58,237,.4);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 0 30px rgba(124,58,237,.2),
+    inset 0 0 20px rgba(34,197,94,.05);
+}
+
+.rating-board table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rating-board th {
+  background: rgba(0,0,0,.35);
+
+  color: #22c55e;
+
+  text-align: left;
+
+  padding: 18px 24px;
+
+  font-size: 17px;
+
+  border-bottom: 2px solid rgba(124,58,237,.6);
+}
+
+.rating-board td {
+  padding: 18px 24px;
+
+  border-bottom: 1px solid rgba(255,255,255,.05);
+
+  color: #f3f4f6;
+}
+
+.rating-board tr:nth-child(even) {
+  background: rgba(255,255,255,.03);
+}
+
+.rating-board tr:hover {
+  background: rgba(124,58,237,.15);
+}
+
+.rating-position {
+  font-weight: 800;
+  color: white;
+}
+
+.talent-name {
+  font-weight: 700;
+}
+
+.rating-score {
+  color: #22c55e;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.region-select {
+  background: #111827;
+
+  color: white;
+
+  border: 1px solid #8b5cf6;
+
+  border-radius: 10px;
+
+  padding: 8px 14px;
+
+  outline: none;
+}
+
+.region-select:focus {
+  border-color: #22c55e;
+
+  box-shadow: 0 0 10px rgba(34,197,94,.4);
+}
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.auth-box {
+  width: 360px;
+  background: #14001f;
+  border: 2px solid #7cff00;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 25px #7cff00;
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #7cff00;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.auth-tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #35104a;
+  color: white;
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  background: #7cff00;
+  color: black;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  background: #7cff00;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#authMessage {
+  margin-top: 12px;
+  color: #ff5cff;
+}
+.password-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.password-box input {
+  width: 100%;
+  padding: 12px;
+  padding-right: 50px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.show-pass {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px !important;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #7cff00;
+  cursor: pointer;
 }

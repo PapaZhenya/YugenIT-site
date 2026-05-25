@@ -7,12 +7,53 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<div id="authModal" class="auth-modal">
+  <div class="auth-box">
+    <h2>Welcome to Green Y</h2>
 
+    <div class="auth-tabs">
+      <button id="showLogin" class="active">Войти</button>
+      <button id="showRegister">Создать аккаунт</button>
+    </div>
+
+    <div id="loginForm">
+      <input id="loginUsername" type="text" placeholder="Имя / IT Name">
+      <div class="password-box">
+      <input id="loginPassword" type="password" placeholder="Пароль">
+
+      <button type="button"
+          class="show-pass"
+          onclick="togglePassword('loginPassword')">
+    👁
+      </button>
+      </div>  
+      <button onclick="loginUser()">Войти</button>
+    </div>
+
+    <div id="registerForm" style="display:none;">
+      <input id="regUsername" type="text" placeholder="Имя / IT Name">
+      <div class="password-box">
+      <input id="regPassword" type="password" placeholder="Пароль">
+
+      <button type="button"
+          class="show-pass"
+          onclick="togglePassword('regPassword')">
+    👁
+      </button>
+      </div>
+      <button onclick="registerUser()">Создать аккаунт</button>
+    </div>
+
+    <p id="authMessage"></p>
+  </div>
+</div>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-box">G</div>
-      <div class="brand-name">Green Y</div>
+      <div class="brand-box">
+    <img src="logo.png" alt="logo">
+</div>
+      <div class="brand-name">Green-Y</div>
       <div class="yin-yang">
         <span></span>
       </div>
@@ -55,12 +96,10 @@
     <table>
       <thead>
   <tr>
-    <th>Rating</th>
-    <th>Username</th>
-    <th>Password</th>
-    <th>Accuracy</th>
-    <th>Correct</th>
-    <th>Wrong</th>
+    <th>Position</th>
+    <th>Talent</th>
+    <th>Region</th>
+<th>Rating</th>
   </tr>
 </thead>
       <tbody id="usersList"></tbody>
@@ -128,16 +167,21 @@
       <div class="courses">
         <div class="course purple" data-topic="domain">
           <div class="course-icon">🌐</div>
-          <span>82 min</span>
-          <h2>Working with Domain</h2>
-          <p>Creating domain, Active Directory, DNS and users</p>
+          <h2 data-i18n="domainTitle">
+           Working with Domain
+         </h2>
+          <p data-i18n="domainText">
+           Creating domain, Active Directory, DNS and users
+          </p>
         </div>
-
         <div class="course green" data-topic="mikrotik">
           <div class="course-icon">📡</div>
-          <span>90 min</span>
-          <h2>MikroTik Basics</h2>
-          <p>Router setup, IP, DHCP, firewall and network rules</p>
+          <h2 data-i18n="mikrotikTitle">
+           MikroTik Basics
+          </h2>
+          <p data-i18n="mikrotikText">
+           Router setup, IP, DHCP, firewall and network rules
+          </p>
         </div>
       </div>
 
@@ -146,29 +190,37 @@
       <div class="cards">
         <div class="card" data-topic="domain">
           <div class="card-icon">🌐</div>
-          <h3>Работа с доменом</h3>
-          <p>Создание домена, подключение ПК, пользователи AD.</p>
+          <h3 data-i18n="domainCardTitle">Работа с доменом</h3>
+          <p data-i18n="domainCardText">
+           Создание домена, подключение ПК, пользователи AD.
+          </p>
           <b>→</b>
         </div>
 
         <div class="card" data-topic="mikrotik">
           <div class="card-icon">📡</div>
-          <h3>MikroTik</h3>
-          <p>Настройка роутера, DHCP, IP, firewall и безопасность.</p>
+          <h3 data-i18n="mikrotikCardTitle">MikroTik</h3>
+          <p data-i18n="mikrotikCardText">
+           Настройка роутера, DHCP, IP, firewall и безопасность.
+          </p>
           <b>→</b>
         </div>
 
         <div class="card" data-topic="server">
           <div class="card-icon">🖥️</div>
-          <h3>Windows Server</h3>
-          <p>Роли сервера, DNS, DHCP, GPO и управление.</p>
+          <h3 data-i18n="serverCardTitle">Windows Server</h3>
+          <p data-i18n="serverCardText">
+           Роли сервера, DNS, DHCP, GPO и управление.
+          </p>
           <b>→</b>
         </div>
 
         <div class="card" data-topic="security">
           <div class="card-icon">🔐</div>
-          <h3>Security</h3>
-          <p>Основы безопасности сети и защиты пользователей.</p>
+          <h3 data-i18n="securityCardTitle">Security</h3>
+          <p data-i18n="securityCardText">
+           Основы безопасности сети и защиты пользователей.
+          </p>
           <b>→</b>
         </div>
       </div>
@@ -227,8 +279,34 @@
 
 
   <div id="testResult" class="test-result"></div>
-</section>
-    <section id="tests" class="page"><h1>Tests</h1><p>Your tests will be here.</p></section>
+  </section>
+<section id="tests" class="page rating-page">
+
+  <div class="rating-hero">
+    <div>
+      <h1>🏆 Rating</h1>
+      <p>User rating table</p>
+    </div>
+
+    <div class="trophy-box">🏆</div>
+  </div>
+
+  <div class="rating-board">
+    <table>
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Talent</th>
+          <th>Region</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+
+      <tbody id="ratingList"></tbody>
+    </table>
+  </div>
+
+</section>  
     <section id="settings" class="page"><h1>Settings</h1><p>Profile settings.</p></section>
 
     <section id="lesson" class="page">

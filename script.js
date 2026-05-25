@@ -1230,7 +1230,7 @@ function registerUser() {
     return;
   }
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let users = JSON.parse(localStorage.getItem("greenYUsers")) || [];
 
   const userExists = users.some(user => user.username === username);
 
@@ -1248,8 +1248,8 @@ function registerUser() {
 
   users.push(newUser);
 
-  localStorage.setItem("users", JSON.stringify(users));
-  localStorage.setItem("currentUser", username);
+  localStorage.setItem("greenYUsers", JSON.stringify(users));
+  localStorage.setItem("greenYCurrentUser", username);
 
   document.getElementById("authModal").style.display = "none";
 
@@ -1261,7 +1261,7 @@ function loginUser() {
   const password = document.getElementById("loginPassword").value.trim();
   const message = document.getElementById("authMessage");
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let users = JSON.parse(localStorage.getItem("greenYUsers")) || [];
 
   const foundUser = users.find(user =>
     user.username === username && user.password === password
@@ -1272,7 +1272,7 @@ function loginUser() {
     return;
   }
 
-  localStorage.setItem("currentUser", username);
+  localStorage.setItem("greenYCurrentUser", username);
 
   document.getElementById("authModal").style.display = "none";
 
@@ -1292,4 +1292,3 @@ function togglePassword(id) {
     input.type = "password";
   }
 }
-  

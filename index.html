@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green Y Learning Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-box">G</div>
+      <div class="brand-name">Green Y</div>
+      <div class="yin-yang">
+        <span></span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <button class="menu-item active" data-page="home">⌂ Home</button>
+      <button class="menu-item" data-page="progress">▥ Progress</button>
+      <button class="menu-item" data-page="messages">💬 Tech Moments</button>
+      <button class="menu-item" data-page="classes">▣ Classes</button>
+      <button class="menu-item" data-page="tests">✓ Tests</button>
+      <button class="menu-item" data-page="settings">⚙ Settings</button>
+      <button class="menu-item" data-page="register">➕ Register</button>
+      <button class="menu-item" data-page="users">👥 Users</button>
+    </nav>
+
+    <div class="support">
+      <h3>Support 24/7</h3>
+      <p>Contact us anytime</p>
+      <button>Start →</button>
+    </div>
+  </aside>
+<section id="register" class="page">
+  <h1>Register User</h1>
+
+  <form class="register-form" id="registerForm">
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="registerMessage"></p>
+</section>
+
+<section id="users" class="page">
+  <h1>Registered Users</h1>
+
+  <div class="users-table">
+    <table>
+      <thead>
+  <tr>
+    <th>Rating</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>Accuracy</th>
+    <th>Correct</th>
+    <th>Wrong</th>
+  </tr>
+</thead>
+      <tbody id="usersList"></tbody>
+    </table>
+  </div>
+</section>
+<section id="notifications" class="page">
+  <h1>Notifications</h1>
+
+  <div class="admin-message-box">
+    <h3>Admin message</h3>
+    <textarea id="adminMessageInput" placeholder="Write admin message..."></textarea>
+    <button id="sendAdminMessage">Send Admin Message</button>
+  </div>
+
+  <div id="notificationsList" class="notifications-list"></div>
+</section>
+
+<section id="profile" class="page">
+  <h1>User Profile</h1>
+
+  <div class="profile-card">
+    <h2 id="profileUsername">Username</h2>
+    <p><b>Password:</b> <span id="profilePassword">---</span></p>
+    <p><b>Rating position:</b> <span id="profileRating">---</span></p>
+    <p><b>Current progress:</b> <span id="profileProgress">35%</span></p>
+    <p><b>Completed courses:</b> <span id="profileCourses">1 / 4</span></p>
+  </div>
+</section>
+  <main class="main">
+    <header class="top">
+  <div class="search" id="topSearch">
+    🔍 <input type="text" placeholder="Search..." />
+  </div>
+
+  <div class="top-actions">
+    <select id="languageSelect" class="language-select">
+      <option value="en">EN</option>
+      <option value="ru">RU</option>
+      <option value="uk">UA</option>
+      <option value="es">ES</option>
+    </select>
+
+    <button class="bell-btn" id="bellBtn">
+      🔔 <span id="notificationCount">0</span>
+    </button>
+
+    <button class="profile-btn" id="profileBtn">👤</button>
+
+    <div class="burger-wrapper">
+      <button class="burger-btn" id="burgerBtn">☰</button>
+
+      <div class="burger-menu" id="burgerMenu">
+        <button id="menuSearch">Search</button>
+        <button id="menuHome">Home</button>
+        <button id="menuLogout">Log Out</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <section id="home" class="page active">
+      <h1 data-i18n="unfinishedCourses">Your unfinished courses</h1>
+
+      <div class="courses">
+        <div class="course purple" data-topic="domain">
+          <div class="course-icon">🌐</div>
+          <span>82 min</span>
+          <h2>Working with Domain</h2>
+          <p>Creating domain, Active Directory, DNS and users</p>
+        </div>
+
+        <div class="course green" data-topic="mikrotik">
+          <div class="course-icon">📡</div>
+          <span>90 min</span>
+          <h2>MikroTik Basics</h2>
+          <p>Router setup, IP, DHCP, firewall and network rules</p>
+        </div>
+      </div>
+
+      <h1 class="title" data-i18n="allInfo">All Informations</h1>
+
+      <div class="cards">
+        <div class="card" data-topic="domain">
+          <div class="card-icon">🌐</div>
+          <h3>Работа с доменом</h3>
+          <p>Создание домена, подключение ПК, пользователи AD.</p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="mikrotik">
+          <div class="card-icon">📡</div>
+          <h3>MikroTik</h3>
+          <p>Настройка роутера, DHCP, IP, firewall и безопасность.</p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="server">
+          <div class="card-icon">🖥️</div>
+          <h3>Windows Server</h3>
+          <p>Роли сервера, DNS, DHCP, GPO и управление.</p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="security">
+          <div class="card-icon">🔐</div>
+          <h3>Security</h3>
+          <p>Основы безопасности сети и защиты пользователей.</p>
+          <b>→</b>
+        </div>
+      </div>
+    </section>
+
+    <section id="progress" class="page"><h1>Progress</h1><p>Your learning progress will be here.</p></section>
+    <section id="messages" class="page">
+  <h1 data-i18n="techMoments">Tech Moments</h1>
+<p class="page-subtitle" data-i18n="techSubtitle">Discuss technical topics, ask questions and leave comments.</p>
+ <div class="topic-box">
+  <input type="text" id="newTopicInput" placeholder="Create new topic, example: Telephony" />
+  <button id="addTopicBtn">Add Topic</button>
+ </div>
+  <div class="discussion-tabs">
+    <button class="discussion-tab active" data-topic="domain">Domain</button>
+    <button class="discussion-tab" data-topic="mikrotik">MikroTik</button>
+    <button class="discussion-tab" data-topic="server">Windows Server</button>
+    <button class="discussion-tab" data-topic="security">Security</button>
+  </div>
+
+  <div class="comment-box">
+    <input type="text" id="commentUser" placeholder="Your username" />
+    <textarea id="commentText" placeholder="Write your comment..."></textarea>
+    <button id="sendComment">Send Comment</button>
+  </div>
+
+  <div class="comments-list" id="commentsList"></div>
+</section>
+    <section id="classes" class="page">
+  <h1>Classes</h1>
+
+  <div class="test-card-open" id="openFirstTest">
+    <h2>Первый тест</h2>
+    <p>Advanced Level для системного администратора: 30 вопросов + 10 логических заданий.</p>
+    <button>Start Test</button>
+  </div>
+</section>
+
+<section id="firstTest" class="page">
+  <button class="back" id="backToClasses">← Back to Classes</button>
+
+  <h1>Первый тест</h1>
+
+  <div class="test-user-box">
+    <input type="text" id="testUsername" placeholder="Enter your registered username" />
+  </div>
+
+  <form id="firstTestForm" class="test-form">
+    <div id="autoQuestions"></div>
+
+    <h2>Логические задания</h2>
+    <div id="logicQuestions"></div>
+
+    <button type="submit" class="submit-test-btn">Finish Test</button>
+  </form>
+
+
+  <div id="testResult" class="test-result"></div>
+</section>
+    <section id="tests" class="page"><h1>Tests</h1><p>Your tests will be here.</p></section>
+    <section id="settings" class="page"><h1>Settings</h1><p>Profile settings.</p></section>
+
+    <section id="lesson" class="page">
+      <button class="back">← Back</button>
+      <h1 id="lessonTitle"></h1>
+      <p id="lessonText"></p>
+    </section>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

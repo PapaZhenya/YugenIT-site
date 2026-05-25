@@ -1,12 +1,17 @@
+const SUPABASE_URL = "https://yawxydwdrfmlpsymgqbq.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_E8hzSOWCNWUU2ds65v1RXQ_muZMbzq2";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 const menuItems = document.querySelectorAll(".menu-item");
 const pages = document.querySelectorAll(".page");
 const cards = document.querySelectorAll(".card, .course");
 const backBtn = document.querySelector(".back");
-
-const registerForm = document.getElementById("registerForm");
 const usersList = document.getElementById("ratingList");
 const ratingList = document.getElementById("ratingList");  
-const registerMessage = document.getElementById("registerMessage");
 
 const lessons = {
   domain: {
@@ -175,38 +180,6 @@ cards.forEach(card => {
 backBtn.addEventListener("click", () => {
   pages.forEach(page => page.classList.remove("active"));
   document.getElementById("home").classList.add("active");
-});
-
-registerForm.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!username || !password) {
-    registerMessage.textContent = "Please fill in all fields.";
-    return;
-  }
-
-  const users = getUsers();
-
-  const userExists = users.some(user => user.username === username);
-
-  if (userExists) {
-    registerMessage.textContent = "This username already exists.";
-    return;
-  }
-
-  users.push({
-    username: username,
-    password: password
-  });
-
-  saveUsers(users);
-
-  registerMessage.textContent = "User registered successfully!";
-  registerForm.reset();
-  renderUsers();
 });
 
 renderUsers();
@@ -1113,12 +1086,18 @@ backToClasses.addEventListener("click", () => {
 firstTestForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const username = testUsername.value.trim();
+let username = testUsername.value.trim();
 
-  if (!username) {
-    alert("Enter your username.");
-    return;
-  }
+const savedUser = localStorage.getItem("greenYCurrentUser");
+
+if (!username && savedUser) {
+  username = savedUser;
+}
+
+if (!username) {
+  alert("You must log in before passing the test.");
+  return;
+}
 
   if (!userIsRegistered(username)) {
     alert("This user is not registered.");
@@ -1181,7 +1160,8 @@ firstTestForm.addEventListener("submit", (event) => {
   });
 
   saveTestResults(results);
-
+  renderUsers();
+  localStorage.setItem("greenYLogicAnswers", JSON.stringify(results));
   testResult.innerHTML = `
     <h2>Test finished</h2>
     <p><b>User:</b> ${username}</p>
@@ -1219,8 +1199,7 @@ function showRegisterForm() {
   document.getElementById("showRegister").classList.add("active");
   document.getElementById("showLogin").classList.remove("active");
 }
-
-function registerUser() {
+async function registerUser() {
   const username = document.getElementById("regUsername").value.trim();
   const password = document.getElementById("regPassword").value.trim();
   const message = document.getElementById("authMessage");
@@ -1229,6 +1208,44 @@ function registerUser() {
     message.textContent = "Введите имя и пароль";
     return;
   }
+
+  const fakeEmail = `${username}@greeny.local`;
+
+  const { data, error } = await db.auth.signUp({
+    email: fakeEmail,
+    password: password
+  });
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  const userId = data.user.id;
+
+  const { error: insertError } = await db
+    .from("green_y_users")
+    .insert([
+      {
+        id: userId,
+        username: username,
+        region: "SD",
+        rating: 0
+      }
+    ]);
+
+  if (insertError) {
+    message.textContent = insertError.message;
+    return;
+  }
+
+  localStorage.setItem("greenYCurrentUser", username);
+  document.getElementById("authModal").style.display = "none";
+
+  await renderUsers();
+
+  alert("Аккаунт создан!");
+}
 
   let users = JSON.parse(localStorage.getItem("greenYUsers")) || [];
 
@@ -1254,23 +1271,38 @@ function registerUser() {
   document.getElementById("authModal").style.display = "none";
 
   alert("Аккаунт создан!\nЛогин: " + username + "\nПароль: " + password);
-}
 
-function loginUser() {
+
+async function loginUser() {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
   const message = document.getElementById("authMessage");
 
-  let users = JSON.parse(localStorage.getItem("greenYUsers")) || [];
+  if (!username || !password) {
+    message.textContent = "Введите логин и пароль";
+    return;
+  }
 
-  const foundUser = users.find(user =>
-    user.username === username && user.password === password
-  );
+  const fakeEmail = `${username}@greeny.local`;
 
-  if (!foundUser) {
+  const { data, error } = await db.auth.signInWithPassword({
+    email: fakeEmail,
+    password: password
+  });
+
+  if (error) {
     message.textContent = "Неверный логин или пароль";
     return;
   }
+
+  localStorage.setItem("greenYCurrentUser", username);
+
+  document.getElementById("authModal").style.display = "none";
+
+  await renderUsers();
+
+  alert("Добро пожаловать, " + username);
+}
 
   localStorage.setItem("greenYCurrentUser", username);
 
@@ -1282,7 +1314,7 @@ function loginUser() {
     "Пароль: " + foundUser.password + "\n" +
     "Рейтинг: " + foundUser.rating
   );
-}
+
 function togglePassword(id) {
   const input = document.getElementById(id);
 
@@ -1292,3 +1324,36 @@ function togglePassword(id) {
     input.type = "password";
   }
 }
+function renderAdminLogicAnswers() {
+  const box = document.getElementById("adminLogicAnswers");
+  if (!box) return;
+
+  const results = getTestResults();
+
+  box.innerHTML = "";
+
+  results.forEach(result => {
+    const div = document.createElement("div");
+    div.className = "admin-answer-card";
+
+    let answersHtml = "";
+
+    Object.values(result.logicAnswers || {}).forEach(item => {
+      answersHtml += `
+        <p><b>Question:</b> ${item.question}</p>
+        <p><b>Answer:</b> ${item.answer || "No answer"}</p>
+        <hr>
+      `;
+    });
+
+    div.innerHTML = `
+      <h3>${result.username}</h3>
+      <p><b>Test:</b> ${result.testName}</p>
+      <p><b>Date:</b> ${result.date}</p>
+      ${answersHtml}
+    `;
+
+    box.appendChild(div);
+  });
+}
+renderAdminLogicAnswers();

@@ -66,7 +66,6 @@
       <button class="menu-item" data-page="classes">▣ Classes</button>
       <button class="menu-item" data-page="tests">✓ Tests</button>
       <button class="menu-item" data-page="settings">⚙ Settings</button>
-      <button class="menu-item" data-page="register">➕ Register</button>
       <button class="menu-item" data-page="users">👥 Users</button>
     </nav>
 
@@ -79,33 +78,28 @@
 <section id="register" class="page">
   <h1>Register User</h1>
 
-  <form class="register-form" id="registerForm">
-    <input type="text" id="username" placeholder="Username" required />
-    <input type="password" id="password" placeholder="Password" required />
-
-    <button type="submit">Register</button>
-  </form>
-
-  <p id="registerMessage"></p>
-</section>
-
 <section id="users" class="page">
   <h1>Registered Users</h1>
 
   <div class="users-table">
     <table>
       <thead>
-  <tr>
-    <th>Position</th>
-    <th>Talent</th>
-    <th>Region</th>
-<th>Rating</th>
-  </tr>
-</thead>
+        <tr>
+          <th>Position</th>
+          <th>Talent</th>
+          <th>Region</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+
       <tbody id="usersList"></tbody>
     </table>
   </div>
+
+  <h2>Logic Answers</h2>
+  <div id="adminLogicAnswers"></div>
 </section>
+
 <section id="notifications" class="page">
   <h1>Notifications</h1>
 
@@ -316,7 +310,7 @@
     </section>
   </main>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>

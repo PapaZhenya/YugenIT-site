@@ -32,8 +32,17 @@ const lessons = {
   }
 };
 
-function getUsers() {
-  return JSON.parse(localStorage.getItem("greenYUsers")) || [];
+async function getUsers() {
+  const { data, error } = await db
+    .from("green_y_users")
+    .select("*");
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data;
 }
 
 function saveUsers(users) {
@@ -62,10 +71,10 @@ function getUserRating(username) {
   return userResult.percent;
 }
 
-function renderUsers() {
+async function renderUsers() {
   if (!usersList) return;
 
-  const users = getUsers();
+  const users = await getUsers();
   const regions = getUserRegions();
 
   usersList.innerHTML = "";
@@ -572,8 +581,8 @@ bellBtn.addEventListener("click", () => {
   renderNotifications();
 });
 
-profileBtn.addEventListener("click", () => {
-  const users = getUsers();
+profileBtn.addEventListener("click", async () => {
+  const users = await getUsers();
 
   const currentUser = users[users.length - 1];
 
@@ -583,7 +592,7 @@ profileBtn.addEventListener("click", () => {
     profileRating.textContent = "---";
   } else {
     profileUsername.textContent = currentUser.username;
-    profilePassword.textContent = currentUser.password;
+    profilePassword.textContent = "Hidden";
     profileRating.textContent = users.length;
   }
 
@@ -1059,8 +1068,8 @@ function saveTestResults(results) {
   localStorage.setItem("greenYTestResults", JSON.stringify(results));
 }
 
-function userIsRegistered(username) {
-  const users = getUsers();
+async function userIsRegistered(username) {
+  const users = await getUsers();
   return users.some(user => user.username === username);
 }
 
@@ -1083,7 +1092,7 @@ backToClasses.addEventListener("click", () => {
   showPage("classes");
 });
 
-firstTestForm.addEventListener("submit", (event) => {
+firstTestForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
 let username = testUsername.value.trim();
@@ -1099,7 +1108,7 @@ if (!username) {
   return;
 }
 
-  if (!userIsRegistered(username)) {
+  if (!(await userIsRegistered(username))) {
     alert("This user is not registered.");
     return;
   }
@@ -1247,31 +1256,6 @@ async function registerUser() {
   alert("Аккаунт создан!");
 }
 
-  let users = JSON.parse(localStorage.getItem("greenYUsers")) || [];
-
-  const userExists = users.some(user => user.username === username);
-
-  if (userExists) {
-    message.textContent = "Такой аккаунт уже существует";
-    return;
-  }
-
-  const newUser = {
-    username: username,
-    password: password,
-    rating: 0,
-    region: "SD"
-  };
-
-  users.push(newUser);
-
-  localStorage.setItem("greenYUsers", JSON.stringify(users));
-  localStorage.setItem("greenYCurrentUser", username);
-
-  document.getElementById("authModal").style.display = "none";
-
-  alert("Аккаунт создан!\nЛогин: " + username + "\nПароль: " + password);
-
 
 async function loginUser() {
   const username = document.getElementById("loginUsername").value.trim();
@@ -1304,16 +1288,6 @@ async function loginUser() {
   alert("Добро пожаловать, " + username);
 }
 
-  localStorage.setItem("greenYCurrentUser", username);
-
-  document.getElementById("authModal").style.display = "none";
-
-  alert(
-    "Вход выполнен!\n" +
-    "Логин: " + foundUser.username + "\n" +
-    "Пароль: " + foundUser.password + "\n" +
-    "Рейтинг: " + foundUser.rating
-  );
 
 function togglePassword(id) {
   const input = document.getElementById(id);

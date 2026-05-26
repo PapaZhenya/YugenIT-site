@@ -1210,18 +1210,18 @@ function showRegisterForm() {
 }
 async function registerUser() {
   const username = document.getElementById("regUsername").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value.trim();
   const message = document.getElementById("authMessage");
 
-  if (!username || !password) {
-    message.textContent = "Введите имя и пароль";
+  if (!username || !email || !password) {
+    message.textContent = "Введите имя, email и пароль";
     return;
   }
 
-  const fakeEmail = `${username}@greeny.local`;
 
   const { data, error } = await db.auth.signUp({
-    email: fakeEmail,
+    email: email,
     password: password
   });
 
@@ -1267,10 +1267,8 @@ async function loginUser() {
     return;
   }
 
-  const fakeEmail = `${username}@greeny.local`;
-
   const { data, error } = await db.auth.signInWithPassword({
-    email: fakeEmail,
+    email: username,
     password: password
   });
 

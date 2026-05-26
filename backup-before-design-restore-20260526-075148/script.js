@@ -9,8 +9,8 @@ const backBtn = document.querySelector(".back");
 const ratingList = document.getElementById("ratingList");
 const lessons = {
   domain: {
-    title: "CLOUD BASICS",
-    text: "Azure, AWS, Virtual Machines, Microsoft 365 and modern cloud infrastructure."
+    title: "Работа с доменом",
+    text: "В этом разделе будет обучение по созданию домена: настройка Windows Server, установка Active Directory, DNS, DHCP, создание пользователей и подключение клиентских компьютеров к домену."
   },
   mikrotik: {
     title: "MikroTik",
@@ -367,14 +367,14 @@ const translations = {
     unfinishedCourses: "Your unfinished courses",
     allInfo: "All Informations",
 
-    domainTitle: "CLOUD BASICS",
-    domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
+    domainTitle: "Working with Domain",
+    domainText: "Creating domain, Active Directory, DNS and users",
 
     mikrotikTitle: "MikroTik Basics",
     mikrotikText: "Router setup, IP, DHCP, firewall and network rules",
 
-    domainCardTitle: "CLOUD BASICS",
-    domainCardText: "Cloud systems, virtual servers and enterprise platforms.",
+    domainCardTitle: "Working with Domain",
+    domainCardText: "Domain creation, PC connection, AD users.",
 
     mikrotikCardTitle: "MikroTik",
     mikrotikCardText: "Router setup, DHCP, IP, firewall and security.",
@@ -400,14 +400,14 @@ const translations = {
     unfinishedCourses: "Ваши незавершённые курсы",
     allInfo: "Вся информация",
 
-    domainTitle: "CLOUD BASICS",
-    domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
+    domainTitle: "Работа с доменом",
+    domainText: "Создание домена, Active Directory, DNS и пользователи",
 
     mikrotikTitle: "Основы MikroTik",
     mikrotikText: "Настройка роутера, IP, DHCP, firewall и сетевые правила",
 
-    domainCardTitle: "CLOUD BASICS",
-    domainCardText: "Облачные системы, виртуальные серверы и корпоративные платформы.",
+    domainCardTitle: "Работа с доменом",
+    domainCardText: "Создание домена, подключение ПК, пользователи AD.",
 
     mikrotikCardTitle: "MikroTik",
     mikrotikCardText: "Настройка роутера, DHCP, IP, firewall и безопасность.",
@@ -433,14 +433,14 @@ const translations = {
     unfinishedCourses: "Ваші незавершені курси",
     allInfo: "Уся інформація",
 
-    domainTitle: "CLOUD BASICS",
-    domainText: "Вивчайте сучасні хмарні системи, віртуальні сервери та корпоративні платформи.",
+    domainTitle: "Робота з доменом",
+    domainText: "Створення домену, Active Directory, DNS і користувачі",
 
     mikrotikTitle: "Основи MikroTik",
     mikrotikText: "Налаштування роутера, IP, DHCP, firewall і мережеві правила",
 
-    domainCardTitle: "CLOUD BASICS",
-    domainCardText: "Хмарні системи, віртуальні сервери та корпоративні платформи.",
+    domainCardTitle: "Робота з доменом",
+    domainCardText: "Створення домену, підключення ПК, користувачі AD.",
 
     mikrotikCardTitle: "MikroTik",
     mikrotikCardText: "Налаштування роутера, DHCP, IP, firewall і безпека.",
@@ -466,14 +466,14 @@ const translations = {
     unfinishedCourses: "Tus cursos sin terminar",
     allInfo: "Toda la información",
 
-    domainTitle: "CLOUD BASICS",
-    domainText: "Aprende sistemas cloud modernos, servidores virtuales y plataformas empresariales.",
+    domainTitle: "Trabajo con dominio",
+    domainText: "Creación de dominio, Active Directory, DNS y usuarios",
 
     mikrotikTitle: "Conceptos básicos de MikroTik",
     mikrotikText: "Configuración del router, IP, DHCP, firewall y reglas de red",
 
-    domainCardTitle: "CLOUD BASICS",
-    domainCardText: "Sistemas cloud, servidores virtuales y plataformas empresariales.",
+    domainCardTitle: "Trabajo con dominio",
+    domainCardText: "Creación de dominio, conexión de PC, usuarios AD.",
 
     mikrotikCardTitle: "MikroTik",
     mikrotikCardText: "Configuración del router, DHCP, IP, firewall y seguridad.",

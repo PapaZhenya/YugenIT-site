@@ -59,17 +59,17 @@
           <span>Team</span>
           <span>Green</span>
         </div>
-        <div class="yin-yang"><span></span></div>
+        <div class="yin-yang"><img src="yin-yang-new.png" alt=""></div>
       </div>
       <div class="brand-subtitle">Project-Y</div>
     </div>
 
     <nav class="menu">
-      <button class="menu-item active" data-page="home">⌂ Home</button>
-      <button class="menu-item" data-page="progress">▥ Progress</button>
-      <button class="menu-item" data-page="messages">💬 Tech Moments</button>
-      <button class="menu-item" data-page="classes">▣ Classes and Tests</button>
-      <button class="menu-item" data-page="tests">✓ Rating</button>
+      <button class="menu-item active" data-page="home"><img class="menu-icon" src="home.jpg" alt=""> <span>Home</span></button>
+      <button class="menu-item" data-page="progress"><img class="menu-icon" src="progress.jpg" alt=""> <span>Progress</span></button>
+      <button class="menu-item" data-page="messages"><img class="menu-icon" src="tech.moments.jpg" alt=""> <span>Tech Moments</span></button>
+      <button class="menu-item" data-page="classes"><img class="menu-icon" src="classesandtest.jpg" alt=""> <span>Classes and Tests</span></button>
+      <button class="menu-item" data-page="tests"><img class="menu-icon" src="rating.menu.jpg" alt=""> <span>Rating</span></button>
       <button class="menu-item" data-page="settings"><img class="menu-icon" src="settings.jpg" alt=""> <span>Settings</span></button>
     </nav>
 
@@ -82,8 +82,11 @@
 <main class="main">
     <header class="top">
   <div class="search" id="topSearch">
-    🔍 <input type="text" placeholder="Search..." />
+    <span class="search-icon" aria-hidden="true">🔍</span>
+    <input id="globalSearchInput" type="text" placeholder="Search courses, topics, infrastructure..." autocomplete="off" />
+    <span class="search-glow" aria-hidden="true"></span>
   </div>
+  <p class="search-status" id="searchStatus" aria-live="polite"></p>
 
   <div class="top-actions">
     <select id="languageSelect" class="language-select">
@@ -94,13 +97,18 @@
     </select>
 
     <button class="bell-btn" id="bellBtn">
-      🔔 <span id="notificationCount">0</span>
+      <img src="alertsadmin.jpg" alt="Notifications">
+      <span id="notificationCount">0</span>
     </button>
 
-    <button class="profile-btn" id="profileBtn">👤</button>
+    <button class="profile-btn" id="profileBtn">
+      <img src="profil.jpg" alt="Profile">
+    </button>
 
     <div class="burger-wrapper">
-      <button class="burger-btn" id="burgerBtn">☰</button>
+      <button class="burger-btn" id="burgerBtn">
+        <img src="menubutton.jpg" alt="Menu">
+      </button>
 
       <div class="burger-menu" id="burgerMenu">
         <button id="menuSearch">Search</button>
@@ -113,13 +121,69 @@
 
     
 <section id="profile" class="page">
-  <h1>User Profile</h1>
+  <div class="profile-heading">
+    <h1>Профиль</h1>
+    <p>Управляй своей информацией и отслеживай прогресс</p>
+  </div>
 
-  <div class="profile-card">
-    <h2 id="profileUsername">Username</h2>
-    <p><b>Rating position:</b> <span id="profileRating">---</span></p>
-    <p><b>Current progress:</b> <span id="profileProgress">35%</span></p>
-    <p><b>Completed courses:</b> <span id="profileCourses">1 / 4</span></p>
+  <div class="profile-dashboard">
+    <div class="profile-main-card">
+      <div class="profile-avatar-wrap">
+        <img class="profile-avatar" src="greenprofil.jpg" alt="Profile avatar">
+        <span class="profile-status-dot"></span>
+      </div>
+
+      <div class="profile-main-info">
+        <div class="profile-name-row">
+          <h2 id="profileUsername">Username</h2>
+          <select id="profileRole" class="profile-role-select" aria-label="Profile role">
+            <option value="Junior SysAdmin">Junior SysAdmin</option>
+            <option value="Middle SysAdmin">Middle SysAdmin</option>
+            <option value="Senior SysAdmin">Senior SysAdmin</option>
+          </select>
+        </div>
+        <p class="profile-quote">"Постоянное развитие — ключ к успеху."</p>
+
+        <div class="profile-info-grid">
+          <p><b>Аккаунт:</b> <span id="profileAccount">---</span></p>
+          <p><b>Регион:</b> <span id="profileRegion">SD</span></p>
+          <p><b>Статус:</b> <span id="profileOnline">Online 🟢</span></p>
+          <p><b>Присоединился:</b> <span>Май 2026</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-progress-card">
+      <div class="level-badge">✦</div>
+      <div>
+        <span>Уровень</span>
+        <strong id="profileLevel">5</strong>
+      </div>
+      <div class="xp-panel">
+        <span>XP Progress</span>
+        <strong id="profileXp">0 / 20 XP</strong>
+        <div class="xp-track"><div id="profileXpBar" class="xp-fill"></div></div>
+        <small id="profileXpPercent">0%</small>
+      </div>
+    </div>
+
+    <div class="profile-stat-card">
+      <span>Рейтинг</span>
+      <strong id="profileRating">---</strong>
+      <small>в топе</small>
+    </div>
+
+    <div class="profile-stat-card">
+      <span>Курсы</span>
+      <strong id="profileCourses">0 / 1</strong>
+      <small>завершено</small>
+    </div>
+
+    <div class="profile-stat-card">
+      <span>Достижения</span>
+      <strong id="profileAchievements">0</strong>
+      <small>получено</small>
+    </div>
   </div>
 </section>
 
@@ -161,11 +225,56 @@
       <h1 class="title" data-i18n="allInfo">All Informations</h1>
 
       <div class="cards">
+        <div class="card" data-topic="security">
+          <div class="card-icon">🔐</div>
+          <h3 data-i18n="securityCardTitle">Security</h3>
+          <p data-i18n="securityCardText">
+           Основы безопасности сети и защиты пользователей.
+          </p>
+          <b>→</b>
+        </div>
+
         <div class="card" data-topic="domain">
           <div class="card-icon">☁️</div>
           <h3 data-i18n="domainCardTitle">CLOUD BASICS</h3>
           <p data-i18n="domainCardText">
            Облачные системы, виртуальные серверы и корпоративные платформы.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="docker">
+          <div class="card-icon">🐳</div>
+          <h3 data-i18n="dockerCardTitle">Docker</h3>
+          <p data-i18n="dockerCardText">
+           Контейнеризация приложений, изолированные среды и удобный деплой сервисов.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="linux">
+          <div class="card-icon">🐧</div>
+          <h3 data-i18n="linuxCardTitle">Linux Administration</h3>
+          <p data-i18n="linuxCardText">
+           Управление Linux-серверами, настройка систем и работа с инфраструктурой.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="devops">
+          <div class="card-icon">⚙️</div>
+          <h3 data-i18n="devopsCardTitle">DevOps Basics</h3>
+          <p data-i18n="devopsCardText">
+           Автоматизация разработки, управление инфраструктурой и процессы CI/CD.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="networking">
+          <div class="card-icon">🌐</div>
+          <h3 data-i18n="networkingCardTitle">Computer Networking Basics</h3>
+          <p data-i18n="networkingCardText">
+           Основы компьютерных сетей, интернет-инфраструктуры и передачи данных между устройствами.
           </p>
           <b>→</b>
         </div>
@@ -187,40 +296,44 @@
           </p>
           <b>→</b>
         </div>
-
-        <div class="card" data-topic="security">
-          <div class="card-icon">🔐</div>
-          <h3 data-i18n="securityCardTitle">Security</h3>
-          <p data-i18n="securityCardText">
-           Основы безопасности сети и защиты пользователей.
-          </p>
-          <b>→</b>
-        </div>
       </div>
     </section>
 
     <section id="progress" class="page"><h1>Progress</h1><p>Your learning progress will be here.</p></section>
     <section id="messages" class="page">
-  <h1 data-i18n="techMoments">Tech Moments</h1>
-<p class="page-subtitle" data-i18n="techSubtitle">Discuss technical topics, ask questions and leave comments.</p>
- <div class="topic-box">
-  <input type="text" id="newTopicInput" placeholder="Create new topic, example: Telephony" />
-  <button id="addTopicBtn">Add Topic</button>
- </div>
-  <div class="discussion-tabs">
-    <button class="discussion-tab active" data-topic="domain">Domain</button>
-    <button class="discussion-tab" data-topic="mikrotik">MikroTik</button>
-    <button class="discussion-tab" data-topic="server">Windows Server</button>
-    <button class="discussion-tab" data-topic="security">Security</button>
-  </div>
+  <div class="chat-shell">
+    <div class="chat-header">
+      <div class="chat-header-icon">&lt;/&gt;</div>
+      <div>
+        <h1 data-i18n="techMoments">Technical moments</h1>
+        <p data-i18n="techSubtitle">Discuss technical issues, configurations, solutions and best practices.</p>
+      </div>
+      <button class="chat-more" type="button" aria-label="More">⋮</button>
+    </div>
 
-  <div class="comment-box">
-    <input type="text" id="commentUser" placeholder="Your username" />
-    <textarea id="commentText" placeholder="Write your comment..."></textarea>
-    <button id="sendComment">Send Comment</button>
-  </div>
+    <div class="discussion-tabs">
+      <button class="discussion-tab active" data-topic="technical-moments">Техник моментс</button>
+    </div>
 
-  <div class="comments-list" id="commentsList"></div>
+    <div class="comments-list" id="commentsList"></div>
+
+    <div class="comment-box">
+      <div class="chat-current-user">
+        <img src="greenprofil.jpg" alt="">
+        <span id="chatCurrentUser">Guest</span>
+      </div>
+      <textarea id="commentText" placeholder="Write a message..."></textarea>
+      <div class="emoji-bar" aria-label="Emoji picker">
+        <button type="button" class="emoji-btn">😀</button>
+        <button type="button" class="emoji-btn">🔥</button>
+        <button type="button" class="emoji-btn">✅</button>
+        <button type="button" class="emoji-btn">💻</button>
+        <button type="button" class="emoji-btn">🚀</button>
+        <button type="button" class="emoji-btn">⚙️</button>
+      </div>
+      <button id="sendComment" type="button" aria-label="Send message">➤</button>
+    </div>
+  </div>
 </section>
     <section id="classes" class="page">
   <h1>Classes</h1>
@@ -293,6 +406,11 @@
 <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 
 

@@ -1006,6 +1006,7 @@ async function getUsers() {
   }
 
   profilesCache = data || [];
+  updateAdminPointsPanel();
   return profilesCache;
 }
 
@@ -1268,6 +1269,61 @@ function isSiteAdmin(username) {
   return profile?.role === "admin";
 }
 
+async function adjustUserPoints(kind, direction) {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile || profile.role !== "admin") {
+    alert("Только админ может менять XP и рейтинг.");
+    return;
+  }
+
+  const targetUserId = adminPointsUser?.value;
+  const amount = Number(adminPointsAmount?.value);
+  const reason = adminPointsReason?.value.trim() || "";
+
+  if (!targetUserId) {
+    alert("Выберите пользователя.");
+    return;
+  }
+
+  if (!Number.isInteger(amount) || amount <= 0) {
+    alert("Введите положительное целое число очков.");
+    return;
+  }
+
+  if (!reason) {
+    alert("Укажите причину изменения.");
+    return;
+  }
+
+  const signedAmount = direction === "remove" ? -amount : amount;
+  const xpDelta = kind === "xp" ? signedAmount : 0;
+  const ratingDelta = kind === "rating" ? signedAmount : 0;
+
+  setAdminPointsStatus("Saving...");
+
+  const { data, error } = await db.rpc("admin_adjust_user_points", {
+    p_target_user_id: targetUserId,
+    p_xp_delta: xpDelta,
+    p_rating_delta: ratingDelta,
+    p_reason: reason
+  });
+
+  if (error) {
+    console.error(error);
+    alert(`Не удалось изменить очки: ${error.message}`);
+    setAdminPointsStatus("Error");
+    return;
+  }
+
+  const result = Array.isArray(data) ? data[0] : data;
+  await getUsers();
+  await renderUsers();
+  renderAdminUserOptions();
+  setAdminPointsStatus(`Saved: ${result?.username || "user"} XP ${result?.xp ?? "-"} Rating ${result?.rating ?? "-"}`);
+  alert("Изменение сохранено.");
+}
+
 async function applyAdminCode(code) {
   const { data, error } = await db
     .rpc("apply_admin_code", {
@@ -1279,6 +1335,8 @@ async function applyAdminCode(code) {
     return null;
   }
 
+  currentProfileCache = null;
+  await getCurrentUserProfile();
   await getUsers();
   return data;
 }
@@ -1332,6 +1390,49 @@ async function setFirstTestOpen(isOpen) {
 function updateAdminStatus(username) {
   if (!adminStatus) return;
   adminStatus.textContent = isSiteAdmin(username) ? "Admin mode" : "User mode";
+  updateAdminPointsPanel();
+}
+
+function setAdminPointsStatus(message) {
+  if (adminPointsStatus) {
+    adminPointsStatus.textContent = message;
+  }
+}
+
+function renderAdminUserOptions() {
+  if (!adminPointsUser) return;
+
+  const selectedUserId = adminPointsUser.value;
+  adminPointsUser.innerHTML = "";
+
+  profilesCache
+    .slice()
+    .sort((a, b) => (a.username || "").localeCompare(b.username || ""))
+    .forEach(user => {
+      const option = document.createElement("option");
+      option.value = user.id;
+      option.textContent = `${user.username} | XP ${Number(user.xp) || 0} | Rating ${Number(user.rating) || 0}`;
+      adminPointsUser.appendChild(option);
+    });
+
+  if (selectedUserId && profilesCache.some(user => user.id === selectedUserId)) {
+    adminPointsUser.value = selectedUserId;
+  }
+}
+
+function updateAdminPointsPanel() {
+  if (!adminPointsPanel) return;
+
+  const isAdmin = currentProfileCache?.role === "admin";
+  adminPointsPanel.classList.toggle("active", isAdmin);
+
+  if (!isAdmin) {
+    setAdminPointsStatus("Only admins");
+    return;
+  }
+
+  renderAdminUserOptions();
+  setAdminPointsStatus("Ready");
 }
 
 function updateTestAccessUi() {
@@ -1720,6 +1821,12 @@ const profileAchievements = document.getElementById("profileAchievements");
 const adminStatus = document.getElementById("adminStatus");
 const adminCodeInput = document.getElementById("adminCodeInput");
 const activateAdminBtn = document.getElementById("activateAdminBtn");
+const adminPointsPanel = document.getElementById("adminPointsPanel");
+const adminPointsUser = document.getElementById("adminPointsUser");
+const adminPointsAmount = document.getElementById("adminPointsAmount");
+const adminPointsReason = document.getElementById("adminPointsReason");
+const adminPointsStatus = document.getElementById("adminPointsStatus");
+const adminPointButtons = document.querySelectorAll("[data-adjust-kind]");
 
 const burgerBtn = document.getElementById("burgerBtn");
 const burgerMenu = document.getElementById("burgerMenu");
@@ -2976,7 +3083,7 @@ openFirstTest.addEventListener("click", async () => {
   }
 
   try {
-    if (await userAlreadyPassed(profile.id)) {
+    if (profile.role !== "admin" && await userAlreadyPassed(profile.id)) {
       alert("Вы уже проходили этот тест. Повторное прохождение недоступно.");
       await renderUsers();
       return;
@@ -3026,7 +3133,7 @@ firstTestForm.addEventListener("submit", async (event) => {
   }
 
   try {
-    if (await userAlreadyPassed(profile.id)) {
+    if (profile.role !== "admin" && await userAlreadyPassed(profile.id)) {
       alert("This user has already passed this test.");
       await renderUsers();
       showPage("classes");
@@ -3109,6 +3216,13 @@ firstTestForm.addEventListener("submit", async (event) => {
     await renderUsers();
   }
 });
+
+adminPointButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    adjustUserPoints(button.dataset.adjustKind, button.dataset.adjustDirection);
+  });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("authModal").style.display = "flex";
 

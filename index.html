@@ -193,6 +193,40 @@
         <button id="activateAdminBtn" type="button">Activate</button>
       </div>
     </div>
+
+    <div class="admin-points-panel" id="adminPointsPanel">
+      <div class="admin-points-head">
+        <div>
+          <span>Admin controls</span>
+          <strong>XP & Rating Manager</strong>
+          <small>Изменения проходят через Supabase RPC и сохраняются в журнале аудита.</small>
+        </div>
+        <small id="adminPointsStatus">Only admins</small>
+      </div>
+
+      <div class="admin-points-grid">
+        <label>
+          User
+          <select id="adminPointsUser"></select>
+        </label>
+        <label>
+          Amount
+          <input id="adminPointsAmount" type="number" min="1" step="1" placeholder="100">
+        </label>
+      </div>
+
+      <label class="admin-reason-field">
+        Reason
+        <textarea id="adminPointsReason" placeholder="Why are you changing XP or rating?"></textarea>
+      </label>
+
+      <div class="admin-points-actions">
+        <button type="button" data-adjust-kind="xp" data-adjust-direction="add">Add XP</button>
+        <button type="button" data-adjust-kind="xp" data-adjust-direction="remove">Remove XP</button>
+        <button type="button" data-adjust-kind="rating" data-adjust-direction="add">Add Rating</button>
+        <button type="button" data-adjust-kind="rating" data-adjust-direction="remove">Remove Rating</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -463,7 +497,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20260528-questions-v10"></script>
+<script src="script.js?v=20260528-admin-tools-v1"></script>
 </body>
 </html>
 

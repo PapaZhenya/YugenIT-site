@@ -125,6 +125,48 @@ create table if not exists public.notification_reads (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.admin_test_attempts (
+  id uuid primary key default gen_random_uuid(),
+  admin_user_id uuid not null references auth.users(id) on delete cascade,
+  admin_username text not null,
+  test_name text not null,
+  score integer not null check (score >= 0),
+  total_questions integer not null check (total_questions > 0),
+  logic_answers jsonb not null default '[]'::jsonb,
+  attempt_type text not null default 'admin_test_attempt',
+  created_at timestamptz not null default now()
+);
+
+alter table public.admin_test_attempts add column if not exists admin_user_id uuid references auth.users(id) on delete cascade;
+alter table public.admin_test_attempts add column if not exists admin_username text;
+alter table public.admin_test_attempts add column if not exists test_name text;
+alter table public.admin_test_attempts add column if not exists score integer;
+alter table public.admin_test_attempts add column if not exists total_questions integer;
+alter table public.admin_test_attempts add column if not exists logic_answers jsonb not null default '[]'::jsonb;
+alter table public.admin_test_attempts add column if not exists attempt_type text not null default 'admin_test_attempt';
+alter table public.admin_test_attempts add column if not exists created_at timestamptz not null default now();
+
+create table if not exists public.admin_rating_adjustments (
+  id uuid primary key default gen_random_uuid(),
+  target_user_id uuid not null references auth.users(id) on delete cascade,
+  target_username text not null,
+  admin_user_id uuid not null references auth.users(id) on delete cascade,
+  admin_username text not null,
+  xp_delta integer not null default 0,
+  rating_delta integer not null default 0,
+  reason text not null check (char_length(trim(reason)) > 0),
+  created_at timestamptz not null default now()
+);
+
+alter table public.admin_rating_adjustments add column if not exists target_user_id uuid references auth.users(id) on delete cascade;
+alter table public.admin_rating_adjustments add column if not exists target_username text;
+alter table public.admin_rating_adjustments add column if not exists admin_user_id uuid references auth.users(id) on delete cascade;
+alter table public.admin_rating_adjustments add column if not exists admin_username text;
+alter table public.admin_rating_adjustments add column if not exists xp_delta integer not null default 0;
+alter table public.admin_rating_adjustments add column if not exists rating_delta integer not null default 0;
+alter table public.admin_rating_adjustments add column if not exists reason text;
+alter table public.admin_rating_adjustments add column if not exists created_at timestamptz not null default now();
+
 insert into public.test_settings (test_name, is_open)
 values ('Первый тест', true)
 on conflict (test_name) do nothing;
@@ -318,6 +360,31 @@ begin
     raise exception 'Profile not found';
   end if;
 
+  if public.is_admin() then
+    insert into public.admin_test_attempts (
+      admin_user_id,
+      admin_username,
+      test_name,
+      score,
+      total_questions,
+      logic_answers,
+      attempt_type
+    )
+    values (
+      v_user_id,
+      v_username,
+      p_test_name,
+      p_score,
+      p_total_questions,
+      p_logic_answers,
+      'admin_test_attempt'
+    );
+
+    return query
+    select p_score, p_total_questions, 0, 0, 0, 0;
+    return;
+  end if;
+
   v_xp_earned := (p_score * 10) + 50;
 
   insert into public.test_results (
@@ -360,15 +427,111 @@ begin
 
   update public.profiles
   set
-    xp = xp + v_xp_earned,
-    rating = rating + p_score,
-    level = public.calculate_lms_level(xp + v_xp_earned)
+    xp = public.profiles.xp + v_xp_earned,
+    rating = public.profiles.rating + p_score,
+    level = public.calculate_lms_level(public.profiles.xp + v_xp_earned)
   where id = v_user_id
   returning profiles.xp, profiles.level, profiles.rating
   into v_total_xp, v_level, v_rating;
 
   return query
   select p_score, p_total_questions, v_xp_earned, v_total_xp, v_level, v_rating;
+end;
+$$;
+
+create or replace function public.admin_adjust_user_points(
+  p_target_user_id uuid,
+  p_xp_delta integer,
+  p_rating_delta integer,
+  p_reason text
+)
+returns table (
+  target_user_id uuid,
+  username text,
+  xp integer,
+  rating integer,
+  level integer
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_admin_user_id uuid := auth.uid();
+  v_admin_username text;
+  v_target_username text;
+  v_current_xp integer;
+  v_current_rating integer;
+  v_new_xp integer;
+  v_new_rating integer;
+  v_new_level integer;
+begin
+  if v_admin_user_id is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if not public.is_admin() then
+    raise exception 'Admin role required';
+  end if;
+
+  if coalesce(p_xp_delta, 0) = 0 and coalesce(p_rating_delta, 0) = 0 then
+    raise exception 'No XP or rating change requested';
+  end if;
+
+  if char_length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'Adjustment reason is required';
+  end if;
+
+  select profiles.username into v_admin_username
+  from public.profiles
+  where profiles.id = v_admin_user_id
+    and profiles.role = 'admin';
+
+  if v_admin_username is null then
+    raise exception 'Admin profile not found';
+  end if;
+
+  select profiles.username, profiles.xp, profiles.rating
+  into v_target_username, v_current_xp, v_current_rating
+  from public.profiles
+  where profiles.id = p_target_user_id;
+
+  if v_target_username is null then
+    raise exception 'Target profile not found';
+  end if;
+
+  v_new_xp := greatest(v_current_xp + coalesce(p_xp_delta, 0), 0);
+  v_new_rating := greatest(v_current_rating + coalesce(p_rating_delta, 0), 0);
+  v_new_level := public.calculate_lms_level(v_new_xp);
+
+  update public.profiles
+  set
+    xp = v_new_xp,
+    rating = v_new_rating,
+    level = v_new_level
+  where profiles.id = p_target_user_id;
+
+  insert into public.admin_rating_adjustments (
+    target_user_id,
+    target_username,
+    admin_user_id,
+    admin_username,
+    xp_delta,
+    rating_delta,
+    reason
+  )
+  values (
+    p_target_user_id,
+    v_target_username,
+    v_admin_user_id,
+    v_admin_username,
+    coalesce(p_xp_delta, 0),
+    coalesce(p_rating_delta, 0),
+    trim(p_reason)
+  );
+
+  return query
+  select p_target_user_id, v_target_username, v_new_xp, v_new_rating, v_new_level;
 end;
 $$;
 
@@ -380,6 +543,8 @@ alter table public.user_preferences enable row level security;
 alter table public.discussion_comments enable row level security;
 alter table public.admin_messages enable row level security;
 alter table public.notification_reads enable row level security;
+alter table public.admin_test_attempts enable row level security;
+alter table public.admin_rating_adjustments enable row level security;
 
 drop policy if exists "Profiles are readable by authenticated users" on public.profiles;
 drop policy if exists "Users can insert own profile" on public.profiles;
@@ -557,7 +722,55 @@ to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "Admins can read admin test attempts" on public.admin_test_attempts;
+drop policy if exists "Admins can insert admin test attempts" on public.admin_test_attempts;
+drop policy if exists "Admins can manage admin test attempts" on public.admin_test_attempts;
+
+create policy "Admins can read admin test attempts"
+on public.admin_test_attempts for select
+to authenticated
+using (public.is_admin());
+
+create policy "Admins can insert admin test attempts"
+on public.admin_test_attempts for insert
+to authenticated
+with check (
+  public.is_admin()
+  and auth.uid() = admin_user_id
+  and attempt_type = 'admin_test_attempt'
+);
+
+create policy "Admins can manage admin test attempts"
+on public.admin_test_attempts for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+drop policy if exists "Admins can read rating adjustments" on public.admin_rating_adjustments;
+drop policy if exists "Admins can insert rating adjustments" on public.admin_rating_adjustments;
+drop policy if exists "Admins can manage rating adjustments" on public.admin_rating_adjustments;
+
+create policy "Admins can read rating adjustments"
+on public.admin_rating_adjustments for select
+to authenticated
+using (public.is_admin());
+
+create policy "Admins can insert rating adjustments"
+on public.admin_rating_adjustments for insert
+to authenticated
+with check (
+  public.is_admin()
+  and auth.uid() = admin_user_id
+);
+
+create policy "Admins can manage rating adjustments"
+on public.admin_rating_adjustments for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
 grant execute on function public.is_admin() to authenticated;
 grant execute on function public.apply_admin_code(text) to authenticated;
 grant execute on function public.submit_test_attempt(text, text, integer, integer, jsonb) to authenticated;
+grant execute on function public.admin_adjust_user_points(uuid, integer, integer, text) to authenticated;
 grant execute on function public.handle_new_user_profile() to authenticated;

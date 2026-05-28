@@ -2686,7 +2686,7 @@ td {
 }
 
 .question {
-  color: #dffef0;
+  color: #f8fafc;
   border: 1px solid rgba(34, 197, 94, .16);
   background:
     linear-gradient(145deg, rgba(15, 23, 42, .72), rgba(2, 44, 34, .46));
@@ -2700,7 +2700,12 @@ td {
 }
 
 .question label {
-  color: #cbd5e1;
+  color: #f1f5f9;
+}
+
+.question h3,
+.question p {
+  color: #f8fafc;
 }
 
 .submit-test-btn {

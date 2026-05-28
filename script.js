@@ -1538,15 +1538,11 @@ backBtn?.addEventListener("click", () => {
 
 renderUsers();
 const discussionTabsContainer = document.querySelector(".discussion-tabs");
-const commentUser = document.getElementById("commentUser");
 const commentText = document.getElementById("commentText");
 const sendComment = document.getElementById("sendComment");
 const commentsList = document.getElementById("commentsList");
 const chatCurrentUser = document.getElementById("chatCurrentUser");
 const emojiButtons = document.querySelectorAll(".emoji-btn");
-
-const newTopicInput = document.getElementById("newTopicInput");
-const addTopicBtn = document.getElementById("addTopicBtn");
 
 const TECHNICAL_TOPIC_ID = "technical-moments";
 let activeDiscussionTopic = TECHNICAL_TOPIC_ID;
@@ -1557,18 +1553,6 @@ const defaultTopics = [
 
 function getTopics() {
   return defaultTopics;
-}
-
-function saveTopics(topics) {
-  console.warn("Discussion topics are fixed in this build.", topics);
-}
-
-function createTopicId(topicName) {
-  return topicName
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-zа-яё0-9-]/gi, "");
 }
 
 function renderTopics() {
@@ -1660,38 +1644,6 @@ async function renderComments() {
     commentsList.appendChild(card);
   });
 }
-
-addTopicBtn?.addEventListener("click", () => {
-  const topicName = newTopicInput.value.trim();
-
-  if (!topicName) {
-    alert("Write topic name.");
-    return;
-  }
-
-  const topics = getTopics();
-  const topicId = createTopicId(topicName);
-
-  const exists = topics.some(topic => topic.id === topicId);
-
-  if (exists) {
-    alert("This topic already exists.");
-    return;
-  }
-
-  topics.push({
-    id: topicId,
-    name: topicName
-  });
-
-  saveTopics(topics);
-
-  activeDiscussionTopic = TECHNICAL_TOPIC_ID;
-  newTopicInput.value = "";
-
-  renderTopics();
-  renderComments();
-});
 
 sendComment.addEventListener("click", async () => {
   const profile = await getCurrentUserProfile();

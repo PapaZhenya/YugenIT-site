@@ -184,6 +184,18 @@
       <strong id="profileAchievements">0</strong>
       <small>получено</small>
     </div>
+
+    <div class="profile-admin-card">
+      <div>
+        <span>Admin access</span>
+        <strong id="adminStatus">User mode</strong>
+        <small>Введите admin-код для управления тестами или код отключения, чтобы снять права.</small>
+      </div>
+      <div class="admin-code-row">
+        <input id="adminCodeInput" type="password" placeholder="Admin code">
+        <button id="activateAdminBtn" type="button">Activate</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -197,6 +209,18 @@
   </div>
 
   <div id="notificationsList" class="notifications-list"></div>
+
+  <div class="logic-review-panel" id="logicReviewPanel">
+    <div class="logic-review-head">
+      <div>
+        <span>Admin Review</span>
+        <h2>Логические ответы</h2>
+        <p>Ответы пользователей на текстовые задания для проверки администратором.</p>
+      </div>
+      <button id="refreshLogicAnswersBtn" type="button">Refresh</button>
+    </div>
+    <div id="logicAnswersList" class="logic-answers-list"></div>
+  </div>
 </section>
 
 <section id="home" class="page active">
@@ -335,13 +359,33 @@
     </div>
   </div>
 </section>
-    <section id="classes" class="page">
-  <h1>Classes</h1>
+    <section id="classes" class="page classes-page">
+  <div class="classes-hero">
+    <span>Green Y Testing Center</span>
+    <h1>Тесты и задания</h1>
+    <p>Проходи практические проверки, получай XP и открывай новые уровни системного администратора.</p>
+  </div>
+
+  <div class="test-admin-panel" id="testAdminPanel">
+    <div>
+      <span>Admin Control</span>
+      <strong id="adminTestState">Тест открыт</strong>
+      <small>Админ может закрыть прохождение теста для всех пользователей одним кликом.</small>
+    </div>
+    <button id="toggleTestAccessBtn" type="button">Закрыть тест</button>
+  </div>
 
   <div class="test-card-open" id="openFirstTest">
+    <div class="test-card-orbit"></div>
+    <div class="test-card-badge">Advanced</div>
     <h2>Первый тест</h2>
     <p>Advanced Level для системного администратора: 30 вопросов + 10 логических заданий.</p>
-    <button>Start Test</button>
+    <div class="test-meta">
+      <span>30 questions</span>
+      <span>10 logic tasks</span>
+      <span id="testAccessPill">Open</span>
+    </div>
+    <button id="startFirstTestBtn" type="button">Start Test</button>
   </div>
 </section>
 

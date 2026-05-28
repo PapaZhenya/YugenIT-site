@@ -1722,6 +1722,120 @@ td {
   border-left: 6px solid #22c55e;
 }
 
+.logic-review-panel {
+  display: none;
+  max-width: 1050px;
+  margin-top: 26px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #ecfeff;
+  background:
+    linear-gradient(145deg, rgba(2, 8, 23, .86), rgba(3, 45, 36, .7)),
+    rgba(255,255,255,.04);
+  border: 1px solid rgba(34, 211, 238, .2);
+  box-shadow:
+    inset 0 0 24px rgba(34, 211, 238, .06),
+    0 22px 54px rgba(0, 0, 0, .32);
+  backdrop-filter: blur(16px);
+}
+
+.logic-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.logic-review-head span {
+  color: #86efac;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.logic-review-head h2 {
+  margin: 6px 0;
+  color: #f8fafc;
+  text-shadow: 0 0 18px rgba(34, 197, 94, .24);
+}
+
+.logic-review-head p,
+.logic-review-empty {
+  color: #94a3b8;
+}
+
+.logic-review-head button {
+  border: none;
+  border-radius: 14px;
+  padding: 13px 20px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed, #22c55e);
+  box-shadow: 0 0 18px rgba(34, 197, 94, .22);
+}
+
+.logic-answers-list {
+  display: grid;
+  gap: 18px;
+}
+
+.logic-answer-group {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(168, 85, 247, .25);
+  background: rgba(2, 8, 23, .52);
+}
+
+.logic-answer-group header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, .16);
+}
+
+.logic-answer-group h3 {
+  margin: 0 0 4px;
+  color: #86efac;
+}
+
+.logic-answer-group header p,
+.logic-answer-group time {
+  color: #cbd5e1;
+}
+
+.logic-review-answer {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, .1);
+}
+
+.logic-review-answer:last-child {
+  border-bottom: none;
+}
+
+.logic-review-answer strong {
+  color: #f5d0fe;
+}
+
+.logic-review-question {
+  margin: 8px 0;
+  color: #dbeafe;
+}
+
+.logic-review-text {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #ecfeff;
+  background: rgba(34, 197, 94, .08);
+  border: 1px solid rgba(34, 197, 94, .16);
+}
+
 .profile-card p {
   font-size: 18px;
   margin: 14px 0;
@@ -1924,6 +2038,365 @@ td {
   margin: 10px 0;
 }
 
+.classes-page {
+  max-width: 980px;
+}
+
+.classes-hero {
+  margin-bottom: 28px;
+  animation: fadeLift .45s ease both;
+}
+
+.classes-hero span {
+  color: #86efac;
+  font-weight: 900;
+  letter-spacing: .4px;
+}
+
+.classes-hero h1 {
+  margin: 10px 0 12px;
+  color: #ecfeff;
+  font-size: 46px;
+  text-shadow:
+    0 0 18px rgba(34, 197, 94, .28),
+    0 0 28px rgba(124, 58, 237, .24);
+}
+
+.classes-hero p {
+  max-width: 700px;
+  color: #bbf7d0;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.test-admin-panel {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 760px;
+  margin-bottom: 22px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(76, 29, 149, .42), rgba(2, 44, 34, .7)),
+    rgba(255,255,255,.06);
+  border: 1px solid rgba(168, 85, 247, .42);
+  box-shadow:
+    inset 0 0 18px rgba(34, 197, 94, .08),
+    0 0 26px rgba(124, 58, 237, .2);
+  backdrop-filter: blur(14px);
+  animation: fadeLift .38s ease both;
+}
+
+.test-admin-panel.active {
+  display: flex;
+}
+
+.test-admin-panel span,
+.test-admin-panel small {
+  display: block;
+  color: #94a3b8;
+}
+
+.test-admin-panel strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 22px;
+  margin: 5px 0;
+}
+
+.test-admin-panel button {
+  border: none;
+  min-width: 150px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed, #22c55e);
+  box-shadow: 0 0 18px rgba(34, 197, 94, .26);
+}
+
+.test-card-open {
+  max-width: 760px;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+  padding: 42px;
+  border-radius: 28px;
+  color: #ecfeff;
+  background:
+    linear-gradient(135deg, rgba(3, 7, 18, .86), rgba(3, 35, 28, .72)),
+    rgba(255,255,255,.05);
+  border: 1px solid rgba(34, 211, 238, .22);
+  box-shadow:
+    inset 0 0 28px rgba(34, 211, 238, .08),
+    0 24px 64px rgba(0, 0, 0, .34),
+    0 0 28px rgba(34, 197, 94, .13);
+  backdrop-filter: blur(16px);
+  animation: fadeLift .5s ease both;
+  transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease, opacity .28s ease;
+}
+
+.test-card-open:hover {
+  transform: translateY(-8px);
+  border-color: rgba(34, 197, 94, .58);
+  box-shadow:
+    inset 0 0 32px rgba(34, 211, 238, .1),
+    0 30px 70px rgba(0, 0, 0, .38),
+    0 0 34px rgba(34, 197, 94, .26);
+}
+
+.test-card-open.test-closed {
+  opacity: .76;
+  border-color: rgba(248, 113, 113, .48);
+}
+
+.test-card-orbit {
+  position: absolute;
+  right: -80px;
+  top: -90px;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 197, 94, .3);
+  box-shadow:
+    inset 0 0 34px rgba(34, 197, 94, .1),
+    0 0 38px rgba(124, 58, 237, .18);
+}
+
+.test-card-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 42px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(34, 197, 94, .32), transparent 62%);
+}
+
+.test-card-badge,
+.test-meta span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, .1);
+  border: 1px solid rgba(34, 197, 94, .2);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.test-card-open h2 {
+  margin: 22px 0 14px;
+  color: #f8fafc;
+  font-size: 34px;
+}
+
+.test-card-open p {
+  max-width: 520px;
+  color: #cbd5e1;
+  font-size: 18px;
+}
+
+.test-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+#testAccessPill.closed {
+  color: #fecaca;
+  background: rgba(239, 68, 68, .14);
+  border-color: rgba(248, 113, 113, .35);
+}
+
+.test-card-open button,
+.submit-test-btn {
+  border: none;
+  background: linear-gradient(135deg, #4c1d95, #22c55e);
+  color: white;
+  padding: 15px 28px;
+  border-radius: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  margin-top: 26px;
+  box-shadow: 0 0 24px rgba(34, 197, 94, .22);
+  transition: transform .22s ease, opacity .22s ease, box-shadow .22s ease;
+}
+
+.test-card-open button:hover,
+.submit-test-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(34, 197, 94, .36);
+}
+
+.test-card-open button:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+  background: linear-gradient(135deg, #64748b, #334155);
+}
+
+#firstTest {
+  max-width: 1050px;
+}
+
+#firstTest h1,
+#firstTest .test-form h2 {
+  color: #ecfeff;
+  text-shadow: 0 0 18px rgba(34, 197, 94, .24);
+}
+
+#firstTest .back {
+  border: 1px solid rgba(168, 85, 247, .45);
+  background:
+    linear-gradient(135deg, rgba(76, 29, 149, .85), rgba(3, 111, 72, .72));
+  box-shadow: 0 0 22px rgba(124, 58, 237, .22);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+#firstTest .back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(34, 197, 94, .28);
+}
+
+.test-user-box,
+.test-form,
+.test-result {
+  max-width: 920px;
+  border-radius: 24px;
+  border: 1px solid rgba(34, 211, 238, .2);
+  background:
+    linear-gradient(145deg, rgba(2, 8, 23, .84), rgba(3, 45, 36, .72)),
+    rgba(255,255,255,.04);
+  box-shadow:
+    inset 0 0 24px rgba(34, 211, 238, .06),
+    0 22px 54px rgba(0, 0, 0, .34);
+  backdrop-filter: blur(16px);
+  animation: fadeLift .45s ease both;
+}
+
+.test-user-box {
+  padding: 22px;
+}
+
+.test-user-box input,
+.logic-answer {
+  color: #ecfeff;
+  border: 1px solid rgba(168, 85, 247, .4);
+  background: rgba(2, 8, 23, .68);
+  box-shadow: inset 0 0 14px rgba(124, 58, 237, .08);
+}
+
+.test-user-box input:focus,
+.logic-answer:focus {
+  border-color: rgba(34, 197, 94, .72);
+  box-shadow:
+    inset 0 0 14px rgba(34, 197, 94, .08),
+    0 0 18px rgba(34, 197, 94, .2);
+}
+
+.test-form {
+  padding: 28px;
+}
+
+.question {
+  color: #dffef0;
+  border: 1px solid rgba(34, 197, 94, .16);
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, .72), rgba(2, 44, 34, .46));
+  box-shadow: inset 0 0 18px rgba(34, 197, 94, .05);
+  transition: transform .22s ease, border-color .22s ease;
+}
+
+.question:hover {
+  transform: translateY(-3px);
+  border-color: rgba(34, 197, 94, .34);
+}
+
+.question label {
+  color: #cbd5e1;
+}
+
+.submit-test-btn {
+  min-width: 190px;
+}
+
+.test-result {
+  color: #ecfeff;
+  padding: 26px;
+}
+
+.profile-admin-card {
+  grid-column: 1 / -1;
+  padding: 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(168, 85, 247, .3);
+  background:
+    linear-gradient(145deg, rgba(17, 9, 45, .72), rgba(3, 29, 24, .58)),
+    rgba(255,255,255,.04);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+}
+
+.profile-admin-card span,
+.profile-admin-card small {
+  display: block;
+  color: #94a3b8;
+}
+
+.profile-admin-card strong {
+  display: block;
+  color: #ecfeff;
+  font-size: 24px;
+  margin: 4px 0;
+}
+
+.admin-code-row {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-code-row input {
+  width: 180px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, .38);
+  color: #ecfeff;
+  background: rgba(2, 8, 18, .58);
+  outline: none;
+}
+
+.admin-code-row button {
+  border: none;
+  border-radius: 12px;
+  padding: 0 18px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed, #22c55e);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.admin-code-row button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(34, 197, 94, .28);
+}
+
+@keyframes fadeLift {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 600px) {
   .question {
     padding: 18px;
@@ -1931,6 +2404,21 @@ td {
 
   .test-card-open {
     padding: 24px;
+  }
+
+  .test-admin-panel,
+  .profile-admin-card,
+  .admin-code-row {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-code-row input,
+  .admin-code-row button,
+  .test-admin-panel button {
+    width: 100%;
+    min-height: 46px;
   }
 }
 .rating-page.active {

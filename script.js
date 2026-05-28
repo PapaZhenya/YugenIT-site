@@ -1,6 +1,22 @@
 ﻿const SUPABASE_URL = "https://yawxydwdrfmlpsymgqbq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_E8hzSOWCNWUU2ds65v1RXQ_muZMbzq2";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const PROFILES_TABLE = "profiles";
+const TEST_RESULTS_TABLE = "test_results";
+const LOGIC_ANSWERS_TABLE = "logic_answers";
+const TEST_SETTINGS_TABLE = "test_settings";
+const USER_PREFERENCES_TABLE = "user_preferences";
+const DISCUSSION_COMMENTS_TABLE = "discussion_comments";
+const ADMIN_MESSAGES_TABLE = "admin_messages";
+const NOTIFICATION_READS_TABLE = "notification_reads";
+const FIRST_TEST_ID = "first-test";
+const FIRST_TEST_NAME = "Первый тест";
+const XP_PER_CORRECT_ANSWER = 10;
+const TEST_COMPLETION_BONUS_XP = 50;
+let testResultsCache = [];
+let profilesCache = [];
+let firstTestOpenCache = true;
+let currentProfileCache = null;
 
 const menuItems = document.querySelectorAll(".menu-item");
 const pages = document.querySelectorAll(".page");
@@ -981,90 +997,135 @@ const mikrotikBasicsContent = `
 `;
 async function getUsers() {
   const { data, error } = await db
-    .from("green_y_users")
+    .from(PROFILES_TABLE)
     .select("*");
 
   if (error) {
     console.error(error);
-    return [];
+    return profilesCache;
   }
 
-  return data || [];
+  profilesCache = data || [];
+  return profilesCache;
 }
 
-function getUserRegions() {
-  return JSON.parse(localStorage.getItem("greenYUserRegions")) || {};
+async function getCurrentSupabaseUser() {
+  const { data, error } = await db.auth.getUser();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data.user || null;
 }
 
-function saveUserRegions(regions) {
-  localStorage.setItem("greenYUserRegions", JSON.stringify(regions));
+async function getCurrentUserProfile() {
+  const user = await getCurrentSupabaseUser();
+
+  if (!user) return null;
+
+  const { data, error } = await db
+    .from(PROFILES_TABLE)
+    .select("id, username, region, xp, level, rating, role, created_at")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  if (data) {
+    currentProfileCache = data;
+    return data;
+  }
+
+  const username = user.user_metadata?.username || user.email?.split("@")[0] || "User";
+  const { data: createdProfile, error: createError } = await db
+    .from(PROFILES_TABLE)
+    .insert([
+      {
+        id: user.id,
+        username,
+        region: "SD",
+        xp: 0,
+        level: 1,
+        rating: 0,
+        role: "user"
+      }
+    ])
+    .select("id, username, region, xp, level, rating, role, created_at")
+    .single();
+
+  if (createError) {
+    console.error(createError);
+    return null;
+  }
+
+  currentProfileCache = createdProfile;
+  return createdProfile;
+}
+
+async function getCurrentUsername() {
+  const profile = await getCurrentUserProfile();
+  return profile?.username || "Guest";
+}
+
+async function refreshTestResults() {
+  const { data, error } = await db
+    .from(TEST_RESULTS_TABLE)
+    .select("user_id, username, test_name, score, total_questions, xp_earned, created_at")
+    .eq("test_name", FIRST_TEST_NAME)
+    .order("xp_earned", { ascending: false })
+    .order("score", { ascending: false })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    return testResultsCache;
+  }
+
+  testResultsCache = data || [];
+  return testResultsCache;
+}
+
+function getTestResults() {
+  return testResultsCache;
 }
 
 function getUserRating(username) {
-  const results = getTestResults();
-
-  const userResult = results.find(
-    result =>
-      result.username === username &&
-      result.testId === "first-test"
-  );
-
-  if (!userResult) return 0;
-
-  return userResult.percent;
+  const profile = profilesCache.find(user => user.username === username);
+  return profile ? Number(profile.rating) || 0 : 0;
 }
 
 function getCompletedCoursesCount(username) {
-  const results = getTestResults();
-  const passedTestIds = new Set(
-    results
+  const passedTests = new Set(
+    testResultsCache
       .filter(result => result.username === username)
-      .map(result => result.testId)
+      .map(result => result.test_name)
   );
 
-  return passedTestIds.size;
+  return passedTests.size;
 }
 
 function getTotalCoursesCount() {
   return 1;
 }
 
-function getRatingPosition(username, users) {
-  const regions = getUserRegions();
-  const ratingUsers = users.map(user => ({
-    username: user.username,
-    region: regions[user.username] || user.region || "SD",
-    rating: getUserRating(user.username)
-  }));
-
-  ratingUsers.sort((a, b) => b.rating - a.rating);
-
-  const index = ratingUsers.findIndex(user => user.username === username);
+function getRatingPosition(username) {
+  const sortedProfiles = [...profilesCache].sort((a, b) => {
+    const xpDiff = (Number(b.xp) || 0) - (Number(a.xp) || 0);
+    if (xpDiff !== 0) return xpDiff;
+    return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+  });
+  const index = sortedProfiles.findIndex(result => result.username === username);
   return index === -1 ? "---" : `#${index + 1}`;
 }
 
-function getUserXpStore() {
-  return JSON.parse(localStorage.getItem("greenYUserXp")) || {};
-}
-
-function saveUserXpStore(xpStore) {
-  localStorage.setItem("greenYUserXp", JSON.stringify(xpStore));
-}
-
 function getUserTotalXp(username) {
-  const xpStore = getUserXpStore();
-  return Number(xpStore[username]) || 0;
-}
-
-function setUserTotalXp(username, xp) {
-  const xpStore = getUserXpStore();
-  xpStore[username] = Math.max(0, Math.floor(Number(xp) || 0));
-  saveUserXpStore(xpStore);
-}
-
-function addUserXp(username, xp) {
-  const currentXp = getUserTotalXp(username);
-  setUserTotalXp(username, currentXp + xp);
+  const profile = profilesCache.find(user => user.username === username);
+  return profile ? Number(profile.xp) || 0 : 0;
 }
 
 function getXpForNextLevel(level) {
@@ -1121,18 +1182,72 @@ function calculateLevelProgress(totalXp) {
   };
 }
 
-function getUserRoles() {
-  return JSON.parse(localStorage.getItem("greenYUserRoles")) || {};
-}
-
-function saveUserRoles(roles) {
-  localStorage.setItem("greenYUserRoles", JSON.stringify(roles));
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function getAllowedRole(level, requestedRole) {
   if (requestedRole === "Senior SysAdmin" && level > 50) return requestedRole;
   if (requestedRole === "Middle SysAdmin" && level > 25) return requestedRole;
   return "Junior SysAdmin";
+}
+
+async function getUserPreferences() {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) return null;
+
+  const { data, error } = await db
+    .from(USER_PREFERENCES_TABLE)
+    .select("language, display_role")
+    .eq("user_id", profile.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  if (data) return data;
+
+  const { data: createdPreferences, error: createError } = await db
+    .from(USER_PREFERENCES_TABLE)
+    .insert([{ user_id: profile.id }])
+    .select("language, display_role")
+    .single();
+
+  if (createError) {
+    console.error(createError);
+    return null;
+  }
+
+  return createdPreferences;
+}
+
+async function saveUserPreferences(updates) {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) return false;
+
+  const { error } = await db
+    .from(USER_PREFERENCES_TABLE)
+    .upsert({
+      user_id: profile.id,
+      ...updates,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+
+  return true;
 }
 
 function updateRoleOptions(level) {
@@ -1145,12 +1260,123 @@ function updateRoleOptions(level) {
   });
 }
 
+const ADMIN_ACCESS_CODE = "mls234692";
+const ADMIN_REVOKE_CODE = "nomls234692";
+
+function isSiteAdmin(username) {
+  const profile = profilesCache.find(user => user.username === username);
+  return profile?.role === "admin";
+}
+
+async function applyAdminCode(code) {
+  const { data, error } = await db
+    .rpc("apply_admin_code", {
+      p_code: code
+    });
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  await getUsers();
+  return data;
+}
+
+function isFirstTestOpen() {
+  return firstTestOpenCache;
+}
+
+async function refreshTestAccess() {
+  const { data, error } = await db
+    .from(TEST_SETTINGS_TABLE)
+    .select("is_open")
+    .eq("test_name", FIRST_TEST_NAME)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    updateTestAccessUi();
+    return firstTestOpenCache;
+  }
+
+  firstTestOpenCache = data?.is_open !== false;
+  updateTestAccessUi();
+  return firstTestOpenCache;
+}
+
+async function setFirstTestOpen(isOpen) {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) return;
+
+  const { error } = await db
+    .from(TEST_SETTINGS_TABLE)
+    .upsert({
+      test_name: FIRST_TEST_NAME,
+      is_open: isOpen,
+      updated_by: profile.id,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "test_name" });
+
+  if (error) {
+    console.error(error);
+    alert("Не удалось изменить статус теста. Проверь admin role и RLS.");
+    return;
+  }
+
+  firstTestOpenCache = isOpen;
+  updateTestAccessUi();
+}
+
+function updateAdminStatus(username) {
+  if (!adminStatus) return;
+  adminStatus.textContent = isSiteAdmin(username) ? "Admin mode" : "User mode";
+}
+
+function updateTestAccessUi() {
+  const isOpen = isFirstTestOpen();
+  const isAdmin = currentProfileCache?.role === "admin";
+  const adminPanel = document.getElementById("testAdminPanel");
+  const adminTestState = document.getElementById("adminTestState");
+  const toggleBtn = document.getElementById("toggleTestAccessBtn");
+  const testAccessPill = document.getElementById("testAccessPill");
+  const startBtn = document.getElementById("startFirstTestBtn");
+  const testCard = document.getElementById("openFirstTest");
+
+  if (adminPanel) {
+    adminPanel.classList.toggle("active", isAdmin);
+  }
+
+  if (adminTestState) {
+    adminTestState.textContent = isOpen ? "Тест открыт" : "Тест закрыт";
+  }
+
+  if (toggleBtn) {
+    toggleBtn.textContent = isOpen ? "Закрыть тест" : "Открыть тест";
+  }
+
+  if (testAccessPill) {
+    testAccessPill.textContent = isOpen ? "Open" : "Closed";
+    testAccessPill.classList.toggle("closed", !isOpen);
+  }
+
+  if (startBtn) {
+    startBtn.textContent = isOpen ? "Start Test" : "Test Closed";
+    startBtn.disabled = !isOpen;
+  }
+
+  if (testCard) {
+    testCard.classList.toggle("test-closed", !isOpen);
+  }
+}
+
 async function renderUsers() {
   const tableBodies = [ratingList].filter(Boolean);
   if (tableBodies.length === 0) return;
 
   const users = await getUsers();
-  const regions = getUserRegions();
+  await refreshTestResults();
 
   tableBodies.forEach(tableBody => {
     tableBody.innerHTML = "";
@@ -1167,13 +1393,22 @@ async function renderUsers() {
     return;
   }
 
-  const ratingUsers = users.map(user => ({
-    username: user.username,
-    region: regions[user.username] || user.region || "SD",
-    rating: getUserRating(user.username)
-  }));
-
-  ratingUsers.sort((a, b) => b.rating - a.rating);
+  const ratingUsers = [...users]
+    .map(user => ({
+      username: user.username,
+      region: user.region || "SD",
+      xp: Number(user.xp) || 0,
+      level: Number(user.level) || 1,
+      rating: Number(user.rating) || 0,
+      createdAt: user.created_at
+    }))
+    .sort((a, b) => {
+      const xpDiff = b.xp - a.xp;
+      if (xpDiff !== 0) return xpDiff;
+      const ratingDiff = b.rating - a.rating;
+      if (ratingDiff !== 0) return ratingDiff;
+      return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+    });
 
   tableBodies.forEach(tableBody => {
     ratingUsers.forEach((user, index) => {
@@ -1208,7 +1443,7 @@ async function renderUsers() {
 
         <td>
           <span class="rating-score">
-            ${user.rating}
+            ${user.xp} XP / ${user.rating}
           </span>
         </td>
       `;
@@ -1218,11 +1453,25 @@ async function renderUsers() {
   });
 
   document.querySelectorAll(".region-select").forEach(select => {
-    select.addEventListener("change", () => {
+    select.addEventListener("change", async () => {
       const username = select.dataset.username;
-      const regions = getUserRegions();
-      regions[username] = select.value;
-      saveUserRegions(regions);
+      const profile = profilesCache.find(user => user.username === username);
+
+      if (!profile) return;
+
+      const { error } = await db
+        .from(PROFILES_TABLE)
+        .update({ region: select.value })
+        .eq("id", profile.id);
+
+      if (error) {
+        console.error(error);
+        alert("Не удалось обновить регион. Проверь admin-права.");
+        select.value = profile.region || "SD";
+        return;
+      }
+
+      profile.region = select.value;
     });
   });
 }
@@ -1243,7 +1492,7 @@ function returnToHome() {
 }
   
 menuItems.forEach(item => {
-  item.addEventListener("click", () => {
+  item.addEventListener("click", async () => {
     const pageId = item.dataset.page;
 
     menuItems.forEach(btn => btn.classList.remove("active"));
@@ -1255,6 +1504,9 @@ menuItems.forEach(item => {
     if (pageId === "tests") {
   renderRating();
 }
+    if (pageId === "classes") {
+      await refreshTestAccess();
+    }
     applySearchFilter();
   });
 });
@@ -1307,12 +1559,11 @@ const defaultTopics = [
 ];
 
 function getTopics() {
-  localStorage.setItem("greenYTopics", JSON.stringify(defaultTopics));
   return defaultTopics;
 }
 
 function saveTopics(topics) {
-  localStorage.setItem("greenYTopics", JSON.stringify(topics));
+  console.warn("Discussion topics are fixed in this build.", topics);
 }
 
 function createTopicId(topicName) {
@@ -1348,40 +1599,40 @@ function renderTopics() {
   });
 }
 
-function getComments() {
-  return JSON.parse(localStorage.getItem("greenYComments")) || [];
+async function getCurrentChatUsername() {
+  const profile = await getCurrentUserProfile();
+  return profile?.username || "Guest";
 }
 
-function saveComments(comments) {
-  localStorage.setItem("greenYComments", JSON.stringify(comments));
-}
-
-function migrateCommentsToTechnicalMoments() {
-  const comments = getComments();
-  if (comments.length === 0) return;
-
-  const migratedComments = comments.map(comment => ({
-    ...comment,
-    topic: TECHNICAL_TOPIC_ID
-  }));
-
-  saveComments(migratedComments);
-}
-
-function getCurrentChatUsername() {
-  return localStorage.getItem("greenYCurrentUser") || "Guest";
-}
-
-function updateChatCurrentUser() {
+async function updateChatCurrentUser() {
   if (chatCurrentUser) {
-    chatCurrentUser.textContent = getCurrentChatUsername();
+    chatCurrentUser.textContent = await getCurrentChatUsername();
   }
 }
 
-function renderComments() {
-  const comments = getComments().filter(comment => comment.topic === activeDiscussionTopic);
+async function renderComments() {
+  const currentUsername = await getCurrentChatUsername();
+  const { data, error } = await db
+    .from(DISCUSSION_COMMENTS_TABLE)
+    .select("username, text, created_at")
+    .eq("topic_id", activeDiscussionTopic)
+    .order("created_at", { ascending: true });
 
-  updateChatCurrentUser();
+  if (error) {
+    console.error(error);
+    commentsList.innerHTML = `
+      <div class="chat-empty">
+        <div class="chat-empty-icon">!</div>
+        <h3>Messages unavailable</h3>
+        <p>Check Supabase discussion_comments policies.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const comments = data || [];
+
+  await updateChatCurrentUser();
   commentsList.innerHTML = "";
 
   if (comments.length === 0) {
@@ -1398,15 +1649,15 @@ function renderComments() {
   comments.forEach(comment => {
     const card = document.createElement("div");
     card.classList.add("comment-card");
-    const isOwnMessage = comment.username === getCurrentChatUsername();
+    const isOwnMessage = comment.username === currentUsername;
     card.classList.toggle("own-message", isOwnMessage);
 
     card.innerHTML = `
       <div class="comment-author">
-        <span>${comment.username}</span>
-        <small>${comment.date}</small>
+        <span>${escapeHtml(comment.username)}</span>
+        <small>${new Date(comment.created_at).toLocaleString()}</small>
       </div>
-      <p>${comment.text}</p>
+      <p>${escapeHtml(comment.text)}</p>
     `;
 
     commentsList.appendChild(card);
@@ -1445,28 +1696,37 @@ addTopicBtn?.addEventListener("click", () => {
   renderComments();
 });
 
-sendComment.addEventListener("click", () => {
-  const username = getCurrentChatUsername();
+sendComment.addEventListener("click", async () => {
+  const profile = await getCurrentUserProfile();
   const text = commentText.value.trim();
+
+  if (!profile) {
+    alert("Сначала войдите в аккаунт.");
+    return;
+  }
 
   if (!text) {
     alert("Write a message.");
     return;
   }
 
-  const comments = getComments();
+  const { error } = await db
+    .from(DISCUSSION_COMMENTS_TABLE)
+    .insert([{
+      user_id: profile.id,
+      username: profile.username,
+      topic_id: activeDiscussionTopic,
+      text
+    }]);
 
-  comments.push({
-    topic: activeDiscussionTopic,
-    username: username,
-    text: text,
-    date: new Date().toLocaleString()
-  });
-
-  saveComments(comments);
+  if (error) {
+    console.error(error);
+    alert("Не удалось отправить сообщение.");
+    return;
+  }
 
   commentText.value = "";
-  renderComments();
+  await renderComments();
 });
 
 commentText?.addEventListener("keydown", event => {
@@ -1483,7 +1743,6 @@ emojiButtons.forEach(button => {
   });
 });
 
-migrateCommentsToTechnicalMoments();
 renderTopics();
 renderComments();
 const languageSelect = document.getElementById("languageSelect");
@@ -1492,6 +1751,9 @@ const notificationCount = document.getElementById("notificationCount");
 const notificationsList = document.getElementById("notificationsList");
 const sendAdminMessage = document.getElementById("sendAdminMessage");
 const adminMessageInput = document.getElementById("adminMessageInput");
+const logicReviewPanel = document.getElementById("logicReviewPanel");
+const logicAnswersList = document.getElementById("logicAnswersList");
+const refreshLogicAnswersBtn = document.getElementById("refreshLogicAnswersBtn");
 
 const profileBtn = document.getElementById("profileBtn");
 const profileUsername = document.getElementById("profileUsername");
@@ -1506,6 +1768,9 @@ const profileRegion = document.getElementById("profileRegion");
 const profileRole = document.getElementById("profileRole");
 const profileOnline = document.getElementById("profileOnline");
 const profileAchievements = document.getElementById("profileAchievements");
+const adminStatus = document.getElementById("adminStatus");
+const adminCodeInput = document.getElementById("adminCodeInput");
+const activateAdminBtn = document.getElementById("activateAdminBtn");
 
 const burgerBtn = document.getElementById("burgerBtn");
 const burgerMenu = document.getElementById("burgerMenu");
@@ -1701,16 +1966,22 @@ function showPage(pageId) {
   applySearchFilter();
 }
 
-function getAdminMessages() {
-  return JSON.parse(localStorage.getItem("greenYAdminMessages")) || [];
+async function getAdminMessages() {
+  const { data, error } = await db
+    .from(ADMIN_MESSAGES_TABLE)
+    .select("id, author_username, text, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data || [];
 }
 
-function saveAdminMessages(messages) {
-  localStorage.setItem("greenYAdminMessages", JSON.stringify(messages));
-}
-
-function renderNotifications() {
-  const messages = getAdminMessages();
+async function renderNotifications() {
+  const messages = await getAdminMessages();
 
   notificationsList.innerHTML = "";
 
@@ -1725,17 +1996,128 @@ function renderNotifications() {
 
     card.innerHTML = `
       <h3>Admin</h3>
-      <p>${message.text}</p>
-      <small>${message.date}</small>
+      <p>${escapeHtml(message.text)}</p>
+      <small>${new Date(message.created_at).toLocaleString()}</small>
     `;
 
     notificationsList.appendChild(card);
   });
 }
 
-function updateNotificationCount() {
-  const messages = getAdminMessages();
-  const unread = Number(localStorage.getItem("greenYUnreadMessages")) || 0;
+function groupLogicAnswers(answers) {
+  return answers.reduce((groups, answer) => {
+    const key = `${answer.user_id}-${answer.test_name}`;
+
+    if (!groups[key]) {
+      groups[key] = {
+        username: answer.username,
+        testName: answer.test_name,
+        createdAt: answer.created_at,
+        answers: []
+      };
+    }
+
+    groups[key].answers.push(answer);
+    return groups;
+  }, {});
+}
+
+async function renderAdminLogicAnswers() {
+  const profile = await getCurrentUserProfile();
+
+  if (!logicReviewPanel || !logicAnswersList) return;
+
+  if (!profile || !isSiteAdmin(profile.username)) {
+    logicReviewPanel.style.display = "none";
+    logicAnswersList.innerHTML = "";
+    return;
+  }
+
+  logicReviewPanel.style.display = "block";
+  logicAnswersList.innerHTML = "<p class=\"logic-review-empty\">Loading answers...</p>";
+
+  const { data, error } = await db
+    .from(LOGIC_ANSWERS_TABLE)
+    .select("user_id, username, test_name, question_number, question_text, answer_text, created_at")
+    .order("created_at", { ascending: false })
+    .order("question_number", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    logicAnswersList.innerHTML = `
+      <p class="logic-review-empty">
+        Нет доступа к логическим ответам. Проверь RLS и admin role в Supabase.
+      </p>
+    `;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    logicAnswersList.innerHTML = "<p class=\"logic-review-empty\">Пока нет логических ответов.</p>";
+    return;
+  }
+
+  const groupedAnswers = Object.values(groupLogicAnswers(data));
+
+  logicAnswersList.innerHTML = groupedAnswers.map(group => `
+    <article class="logic-answer-group">
+      <header>
+        <div>
+          <h3>${escapeHtml(group.username)}</h3>
+          <p>${escapeHtml(group.testName)}</p>
+        </div>
+        <time>${new Date(group.createdAt).toLocaleString()}</time>
+      </header>
+      ${group.answers
+        .sort((a, b) => a.question_number - b.question_number)
+        .map(answer => `
+          <div class="logic-review-answer">
+            <strong>Вопрос ${answer.question_number}</strong>
+            <p class="logic-review-question">${escapeHtml(answer.question_text)}</p>
+            <p class="logic-review-text">${escapeHtml(answer.answer_text || "Ответ не заполнен")}</p>
+          </div>
+        `)
+        .join("")}
+    </article>
+  `).join("");
+}
+
+async function getLastNotificationReadAt(userId) {
+  const { data, error } = await db
+    .from(NOTIFICATION_READS_TABLE)
+    .select("last_read_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return "1970-01-01T00:00:00.000Z";
+  }
+
+  return data?.last_read_at || "1970-01-01T00:00:00.000Z";
+}
+
+async function updateNotificationCount() {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) {
+    notificationCount.style.display = "none";
+    return;
+  }
+
+  const lastReadAt = await getLastNotificationReadAt(profile.id);
+  const { count, error } = await db
+    .from(ADMIN_MESSAGES_TABLE)
+    .select("id", { count: "exact", head: true })
+    .gt("created_at", lastReadAt);
+
+  if (error) {
+    console.error(error);
+    notificationCount.style.display = "none";
+    return;
+  }
+
+  const unread = count || 0;
 
   if (unread > 0) {
     notificationCount.style.display = "inline-block";
@@ -1745,52 +2127,87 @@ function updateNotificationCount() {
   }
 }
 
-sendAdminMessage.addEventListener("click", () => {
+async function markNotificationsRead() {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) return;
+
+  const { error } = await db
+    .from(NOTIFICATION_READS_TABLE)
+    .upsert({
+      user_id: profile.id,
+      last_read_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+  if (error) {
+    console.error(error);
+  }
+}
+
+sendAdminMessage.addEventListener("click", async () => {
+  const profile = await getCurrentUserProfile();
   const text = adminMessageInput.value.trim();
+  await getUsers();
+
+  if (!profile || !isSiteAdmin(profile.username)) {
+    alert("Только админ может отправлять admin messages.");
+    return;
+  }
 
   if (!text) {
     alert("Write message.");
     return;
   }
 
-  const messages = getAdminMessages();
+  const { error } = await db
+    .from(ADMIN_MESSAGES_TABLE)
+    .insert([{
+      author_id: profile.id,
+      author_username: profile.username,
+      text
+    }]);
 
-  messages.unshift({
-    text,
-    date: new Date().toLocaleString()
-  });
-
-  saveAdminMessages(messages);
-
-  const unread = Number(localStorage.getItem("greenYUnreadMessages")) || 0;
-  localStorage.setItem("greenYUnreadMessages", unread + 1);
+  if (error) {
+    console.error(error);
+    alert("Не удалось отправить admin message.");
+    return;
+  }
 
   adminMessageInput.value = "";
-  renderNotifications();
-  updateNotificationCount();
+  await renderNotifications();
+  await updateNotificationCount();
 }); 
 
-bellBtn.addEventListener("click", () => {
+bellBtn.addEventListener("click", async () => {
   showPage("notifications");
-  localStorage.setItem("greenYUnreadMessages", 0);
-  updateNotificationCount();
-  renderNotifications();
+  await markNotificationsRead();
+  await updateNotificationCount();
+  await renderNotifications();
+  await getUsers();
+  renderAdminLogicAnswers();
+});
+
+refreshLogicAnswersBtn?.addEventListener("click", async () => {
+  await getUsers();
+  renderAdminLogicAnswers();
 });
 
 profileBtn.addEventListener("click", async () => {
   const users = await getUsers();
-  const savedUsername = localStorage.getItem("greenYCurrentUser");
+  await refreshTestResults();
+  const activeProfile = await getCurrentUserProfile();
+  const savedUsername = activeProfile?.username || "Guest";
   const currentUser = users.find(user => user.username === savedUsername);
   const username = currentUser?.username || savedUsername || "Guest";
-  const regions = getUserRegions();
-  const region = regions[username] || currentUser?.region || "SD";
+  const region = currentUser?.region || "SD";
   const completedCourses = username === "Guest" ? 0 : getCompletedCoursesCount(username);
   const totalCourses = getTotalCoursesCount();
-  const ratingPosition = currentUser ? getRatingPosition(username, users) : "---";
-  const xpProgress = calculateLevelProgress(getUserTotalXp(username));
-  const level = xpProgress.level;
-  const userRoles = getUserRoles();
-  const selectedRole = getAllowedRole(level, userRoles[username]);
+  const ratingPosition = currentUser ? getRatingPosition(username) : "---";
+  const xpProgress = calculateLevelProgress(Number(currentUser?.xp) || 0);
+  const level = Number(currentUser?.level) || xpProgress.level;
+  const preferences = await getUserPreferences();
+  const selectedRole = getAllowedRole(level, preferences?.display_role);
 
   profileUsername.textContent = username;
   profileAccount.textContent = username;
@@ -1805,23 +2222,60 @@ profileBtn.addEventListener("click", async () => {
   profileRole.dataset.username = username;
   profileRole.dataset.level = level;
   profileRole.value = selectedRole;
-  userRoles[username] = selectedRole;
-  saveUserRoles(userRoles);
   profileOnline.textContent = "Online 🟢";
   profileAchievements.textContent = completedCourses > 0 ? "1" : "0";
+  updateAdminStatus(username);
+  await refreshTestAccess();
 
   showPage("profile");
 });
 
-profileRole?.addEventListener("change", () => {
-  const username = profileRole.dataset.username || localStorage.getItem("greenYCurrentUser") || "Guest";
+activateAdminBtn?.addEventListener("click", async () => {
+  const profile = await getCurrentUserProfile();
+  const username = profile?.username || "Guest";
+  const code = adminCodeInput.value.trim();
+
+  if (username === "Guest") {
+    alert("Сначала войдите в аккаунт.");
+    return;
+  }
+
+  if (code === ADMIN_REVOKE_CODE) {
+    const newRole = await applyAdminCode(code);
+    if (newRole !== "user") {
+      alert("Не удалось снять admin mode в Supabase.");
+      return;
+    }
+    adminCodeInput.value = "";
+    updateAdminStatus(username);
+    updateTestAccessUi();
+    alert("Admin mode отключён.");
+    return;
+  }
+
+  if (code !== ADMIN_ACCESS_CODE) {
+    alert("Неверный admin-код.");
+    return;
+  }
+
+  const newRole = await applyAdminCode(code);
+  if (newRole !== "admin") {
+    alert("Не удалось активировать admin mode в Supabase.");
+    return;
+  }
+
+  adminCodeInput.value = "";
+  updateAdminStatus(username);
+  updateTestAccessUi();
+  alert("Admin mode активирован.");
+});
+
+profileRole?.addEventListener("change", async () => {
   const level = Number(profileRole.dataset.level) || 0;
   const selectedRole = getAllowedRole(level, profileRole.value);
-  const roles = getUserRoles();
 
   profileRole.value = selectedRole;
-  roles[username] = selectedRole;
-  saveUserRoles(roles);
+  await saveUserPreferences({ display_role: selectedRole });
 });
 
 burgerBtn.addEventListener("click", () => {
@@ -1921,14 +2375,16 @@ menuHome.addEventListener("click", () => {
   burgerMenu.classList.remove("active");
 });
 
-menuLogout.addEventListener("click", () => {
+menuLogout.addEventListener("click", async () => {
+  await db.auth.signOut();
+  localStorage.removeItem("greenYCurrentUser");
+  document.getElementById("authModal").style.display = "flex";
   alert("You logged out.");
   burgerMenu.classList.remove("active");
 });
 
-languageSelect.addEventListener("change", () => {
-  const lang = languageSelect.value;
-  const t = translations[lang];
+function applyLanguage(lang) {
+  const t = translations[lang] || translations.en;
 
   document.querySelector('[data-page="home"]').innerHTML = `<img class="menu-icon" src="home.jpg" alt=""> <span>${t.home}</span>`;
   document.querySelector('[data-page="progress"]').innerHTML = `<img class="menu-icon" src="progress.jpg" alt=""> <span>${t.progress}</span>`;
@@ -1944,17 +2400,26 @@ languageSelect.addEventListener("change", () => {
 }
   });
 
-  localStorage.setItem("greenYLanguage", lang);
   applySearchFilter();
+}
+
+languageSelect.addEventListener("change", async () => {
+  applyLanguage(languageSelect.value);
+  await saveUserPreferences({ language: languageSelect.value });
 });
 
-const savedLang = localStorage.getItem("greenYLanguage") || "en";
-languageSelect.value = savedLang;
-languageSelect.dispatchEvent(new Event("change"));
+async function initializeUserPreferences() {
+  const preferences = await getUserPreferences();
+  languageSelect.value = preferences?.language || "en";
+  applyLanguage(languageSelect.value);
+}
 
+initializeUserPreferences();
 renderNotifications();
 updateNotificationCount();
+refreshTestAccess();
 const openFirstTest = document.getElementById("openFirstTest");
+const toggleTestAccessBtn = document.getElementById("toggleTestAccessBtn");
 const backToClasses = document.getElementById("backToClasses");
 const firstTestForm = document.getElementById("firstTestForm");
 const testUsername = document.getElementById("testUsername");
@@ -2369,29 +2834,73 @@ function renderLogicQuestions() {
   });
 }
 
-function getTestResults() {
-  return JSON.parse(localStorage.getItem("greenYTestResults")) || [];
-}
-
-function saveTestResults(results) {
-  localStorage.setItem("greenYTestResults", JSON.stringify(results));
-}
-
 async function userIsRegistered(username) {
   const users = await getUsers();
   return users.some(user => user.username === username);
 }
 
-function userAlreadyPassed(username) {
-  const results = getTestResults();
-  return results.some(result => result.username === username && result.testId === "first-test");
+async function userAlreadyPassed(userId) {
+  const { data, error } = await db
+    .from(TEST_RESULTS_TABLE)
+    .select("id")
+    .eq("user_id", userId)
+    .eq("test_name", FIRST_TEST_NAME)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Не удалось проверить результат теста.");
+  }
+
+  return Boolean(data);
 }
 
-openFirstTest.addEventListener("click", () => {
+toggleTestAccessBtn?.addEventListener("click", async event => {
+  event.stopPropagation();
+  const profile = await getCurrentUserProfile();
+  const username = profile?.username || "Guest";
+
+  if (!isSiteAdmin(username)) {
+    alert("Только админ может управлять доступом к тесту.");
+    return;
+  }
+
+  await setFirstTestOpen(!isFirstTestOpen());
+});
+
+openFirstTest.addEventListener("click", async () => {
+  await refreshTestAccess();
+
+  if (!isFirstTestOpen()) {
+    alert("Тест сейчас закрыт администратором.");
+    updateTestAccessUi();
+    return;
+  }
+
+  const profile = await getCurrentUserProfile();
+
+  if (!profile) {
+    alert("Сначала войдите в аккаунт.");
+    return;
+  }
+
+  try {
+    if (await userAlreadyPassed(profile.id)) {
+      alert("Вы уже проходили этот тест. Повторное прохождение недоступно.");
+      await renderUsers();
+      return;
+    }
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+
   showPage("firstTest");
 
   firstTestForm.style.display = "block";
   testResult.innerHTML = "";
+  testUsername.value = profile.username;
+  testUsername.readOnly = true;
 
   renderTestQuestions();
   renderLogicQuestions();
@@ -2404,45 +2913,49 @@ backToClasses.addEventListener("click", () => {
 firstTestForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-let username = testUsername.value.trim();
+  if (!isFirstTestOpen()) {
+    alert("Тест закрыт администратором. Отправка недоступна.");
+    showPage("classes");
+    updateTestAccessUi();
+    return;
+  }
 
-const savedUser = localStorage.getItem("greenYCurrentUser");
+  const profile = await getCurrentUserProfile();
 
-if (!username && savedUser) {
-  username = savedUser;
-}
+  if (!profile) {
+    alert("Сначала войдите в аккаунт.");
+    return;
+  }
 
-if (!username) {
-  alert("You must log in before passing the test.");
-  return;
-}
+  const username = profile.username;
 
   if (!(await userIsRegistered(username))) {
     alert("This user is not registered.");
     return;
   }
 
-  if (userAlreadyPassed(username)) {
-    alert("This user has already passed this test.");
+  try {
+    if (await userAlreadyPassed(profile.id)) {
+      alert("This user has already passed this test.");
+      await renderUsers();
+      showPage("classes");
+      return;
+    }
+  } catch (error) {
+    alert(error.message);
     return;
   }
 
   let correct = 0;
   let wrong = 0;
 
-  const userAnswers = {};
-  const logicAnswers = {};
-
   testQuestions.forEach(q => {
     const selected = document.querySelector(`input[name="${q.id}"]:checked`);
 
     if (!selected) {
-      userAnswers[q.id] = null;
       wrong++;
       return;
     }
-
-    userAnswers[q.id] = selected.value;
 
     if (selected.value === q.correct) {
       correct++;
@@ -2451,49 +2964,56 @@ if (!username) {
     }
   });
 
-  logicQuestions.forEach((question, index) => {
+  const total = testQuestions.length;
+  const percent = Math.round((correct / total) * 100);
+  const logicAnswersPayload = logicQuestions.map((question, index) => {
     const textarea = document.querySelector(`textarea[name="logic${index + 1}"]`);
 
-    logicAnswers[`logic${index + 1}`] = {
-      question: question,
-      answer: textarea.value.trim()
+    return {
+      question_number: index + 1,
+      question_text: question,
+      answer_text: textarea?.value.trim() || ""
     };
   });
 
-  const total = testQuestions.length;
-  const percent = Math.round((correct / total) * 100);
+  const { data: submitData, error: saveResultError } = await db
+    .rpc("submit_test_attempt", {
+      p_test_name: FIRST_TEST_NAME,
+      p_username: username,
+      p_score: correct,
+      p_total_questions: total,
+      p_logic_answers: logicAnswersPayload
+    });
 
-  const results = getTestResults();
+  if (saveResultError) {
+    if (saveResultError.code === "23505") {
+      alert("This user has already passed this test.");
+      return;
+    }
 
-  results.push({
-    testId: "first-test",
-    testName: "Первый тест",
-    username: username,
-    correct: correct,
-    wrong: wrong,
-    percent: percent,
-    userAnswers: userAnswers,
-    logicAnswers: logicAnswers,
-    date: new Date().toLocaleString()
-  });
+    console.error(saveResultError);
+    alert("Не удалось сохранить результат теста.");
+    return;
+  }
 
-  saveTestResults(results);
-  addUserXp(username, percent);
-  renderUsers();
+  const submittedResult = Array.isArray(submitData) ? submitData[0] : submitData;
+  const xpEarned = submittedResult?.xp_earned || (correct * XP_PER_CORRECT_ANSWER) + TEST_COMPLETION_BONUS_XP;
+  await renderUsers();
   testResult.innerHTML = `
     <h2>Test finished</h2>
     <p><b>User:</b> ${username}</p>
     <p><b>Correct answers:</b> ${correct}</p>
     <p><b>Wrong answers:</b> ${wrong}</p>
+    <p><b>Score:</b> ${correct} / ${total}</p>
     <p><b>Accuracy:</b> ${percent}%</p>
-    <p><b>XP earned:</b> ${percent}</p>
-    <p>Logical answers were saved for admin review.</p>
+    <p><b>XP earned:</b> ${xpEarned}</p>
+    <p>Result and logical answers saved in Supabase.</p>
   `;
 
   firstTestForm.style.display = "none";
 
   if (typeof renderUsers === "function") {
-    renderUsers();
+    await renderUsers();
   }
 });
 document.addEventListener("DOMContentLoaded", () => {
@@ -2550,15 +3070,18 @@ async function registerUser() {
   }
 
   const { error: insertError } = await db
-    .from("green_y_users")
-    .insert([
+    .from(PROFILES_TABLE)
+    .upsert([
       {
         id: userId,
         username,
         region: "SD",
-        rating: 0
+        xp: 0,
+        level: 1,
+        rating: 0,
+        role: "user"
       }
-    ]);
+    ], { onConflict: "id" });
 
   if (insertError) {
     message.textContent = insertError.message;
@@ -2594,7 +3117,7 @@ async function loginUser() {
   }
 
   let { data: profile, error: profileError } = await db
-    .from("green_y_users")
+    .from(PROFILES_TABLE)
     .select("username")
     .eq("id", data.user.id)
     .maybeSingle();
@@ -2610,15 +3133,18 @@ async function loginUser() {
       email.split("@")[0];
 
     const { data: createdProfile, error: createProfileError } = await db
-      .from("green_y_users")
-      .insert([
+      .from(PROFILES_TABLE)
+      .upsert([
         {
           id: data.user.id,
           username,
           region: "SD",
-          rating: 0
+          xp: 0,
+          level: 1,
+          rating: 0,
+          role: "user"
         }
-      ])
+      ], { onConflict: "id" })
       .select("username")
       .single();
 

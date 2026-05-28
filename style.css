@@ -40,7 +40,8 @@ body {
 .brand {
     display: flex;
     align-items: center;
-    column-gap: 10px;
+    justify-content: center;
+    column-gap: 0;
     row-gap: 18px;
     margin-bottom: 70px;
     flex-wrap: wrap;
@@ -48,7 +49,7 @@ body {
 
 .brand-subtitle {
     flex-basis: 100%;
-    margin-top: 2px;
+    margin-top: 10px;
     color: #d8b4fe;
     font-size: 45px;
     line-height: 1;
@@ -78,48 +79,24 @@ body {
       0 0 46px rgba(34, 197, 94, .22);
 }
 
-.brand-box {
-    width: 72px;
-    height: 72px;
-    border-radius: 17px;
-    background: linear-gradient(145deg, rgba(34,211,238,.16), rgba(124,58,237,.24));
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(34,211,238,.26);
-    box-shadow:
-        inset 0 0 18px rgba(34,211,238,.12),
-        0 0 18px rgba(34,211,238,.22),
-        0 0 30px rgba(124,58,237,.25);
-}
-
-.brand-box img {
-    width: 200%;
-    height: 200%;
-    object-fit: contain;
-    filter: brightness(1.2) contrast(1.1);
-}
-
 .brand-text {
+    width: 100%;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    column-gap: 8px;
+    column-gap: 14px;
     min-width: 0;
 }
 
 .brand-name {
     display: flex;
     flex-direction: column;
-    font-size: 24px;
+    font-size: 36px;
     font-weight: 900;
-    line-height: 1;
+    line-height: .96;
     letter-spacing: .3px;
     white-space: nowrap;
+    padding-left: 18px;
     color: #86efac;
     background: linear-gradient(180deg, #f0fdf4 0%, #86efac 38%, #22c55e 100%);
     -webkit-background-clip: text;
@@ -140,8 +117,8 @@ body {
 }
 
 .yin-yang {
-  width: 58px;
-  height: 58px;
+  width: 72px;
+  height: 72px;
   margin-left: 0;
   border-radius: 50%;
   position: relative;
@@ -152,7 +129,7 @@ body {
 }
 
 .yin-yang img {
-  width: 90px;
+  width: 110px;
   height: auto;
   display: block;
   position: absolute;
@@ -742,17 +719,25 @@ h1 {
 /* Телефон */
 @media (max-width: 600px) {
   .main {
-    padding: 28px 20px;
+    padding: 24px 10px;
   }
 
   .brand {
     margin-bottom: 35px;
   }
 
+  .brand-name {
+    font-size: 28px;
+  }
+
   .yin-yang {
-    width: 52px;
-    height: 52px;
+    width: 64px;
+    height: 64px;
     margin-left: 0;
+  }
+
+  .yin-yang img {
+    width: 96px;
   }
 
   .menu {
@@ -773,6 +758,50 @@ h1 {
 
   .search::after {
     border-radius: 19px;
+  }
+
+  #lessonTitle,
+  #lessonText {
+    width: 100%;
+  }
+
+  #lessonTitle {
+    margin-top: 34px;
+    padding: 28px 14px 12px;
+    border-radius: 20px 20px 0 0;
+    font-size: 34px;
+  }
+
+  #lessonText {
+    padding: 6px 10px 28px;
+    border-radius: 0 0 20px 20px;
+    font-size: 18px;
+  }
+
+  .lesson-content {
+    gap: 14px;
+  }
+
+  .lesson-intro {
+    font-size: 20px;
+  }
+
+  .lesson-section {
+    padding: 22px 14px;
+    border-radius: 16px;
+  }
+
+  .lesson-section h2 {
+    font-size: 27px;
+  }
+
+  .lesson-section h3 {
+    font-size: 19px;
+  }
+
+  .lesson-section p {
+    font-size: 17px;
+    line-height: 1.58;
   }
 
   .search-icon {
@@ -2636,6 +2665,669 @@ td {
   border-radius: 8px;
   background: #7cff00;
   cursor: pointer;
+}
+
+.tech-support-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.tech-support-modal.active {
+  display: flex;
+  animation: supportFade .22s ease both;
+}
+
+.tech-support-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(34, 197, 94, .12), transparent 34%),
+    rgba(1, 6, 14, .72);
+  backdrop-filter: blur(8px);
+}
+
+.tech-support-dialog {
+  position: relative;
+  width: min(560px, 100%);
+  overflow: hidden;
+  padding: 34px;
+  border-radius: 18px;
+  color: #ecfeff;
+  background:
+    linear-gradient(145deg, rgba(8, 9, 30, .88), rgba(3, 42, 33, .78)),
+    rgba(255,255,255,.06);
+  border: 1px solid rgba(168, 85, 247, .42);
+  box-shadow:
+    inset 0 0 28px rgba(34, 211, 238, .08),
+    0 0 34px rgba(124, 58, 237, .26),
+    0 28px 90px rgba(0, 0, 0, .55);
+  backdrop-filter: blur(18px);
+  animation: supportPop .28s cubic-bezier(.2, .9, .2, 1) both;
+}
+
+.tech-support-orb {
+  position: absolute;
+  right: -90px;
+  top: -90px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(34, 197, 94, .32), transparent 62%);
+  border: 1px solid rgba(34, 197, 94, .18);
+  box-shadow: 0 0 50px rgba(124, 58, 237, .22);
+  pointer-events: none;
+}
+
+.tech-support-close {
+  position: absolute;
+  z-index: 5;
+  right: 18px;
+  top: 16px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(216, 180, 254, .35);
+  border-radius: 12px;
+  color: #f5d0fe;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  background: rgba(15, 23, 42, .68);
+  box-shadow: inset 0 0 12px rgba(124, 58, 237, .15);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.tech-support-close:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 197, 94, .65);
+  box-shadow: 0 0 18px rgba(34, 197, 94, .22);
+}
+
+.tech-support-kicker {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: #86efac;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow:
+    0 0 14px rgba(34, 197, 94, .55),
+    0 0 22px rgba(124, 58, 237, .3);
+}
+
+.tech-support-dialog h2 {
+  margin: 0 0 16px;
+  text-align: center;
+  color: #f8fafc;
+  font-size: 38px;
+  line-height: 1;
+  text-shadow:
+    0 0 18px rgba(34, 197, 94, .32),
+    0 0 28px rgba(124, 58, 237, .26);
+}
+
+.tech-support-dialog p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  max-width: 460px;
+  color: #d1fae5;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.tech-support-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 14px;
+  color: white;
+  font-weight: 900;
+  text-decoration: none;
+  background: linear-gradient(135deg, #6d28d9, #16a34a);
+  box-shadow: 0 0 24px rgba(34, 197, 94, .28);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.tech-support-link:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 28px rgba(34, 197, 94, .42),
+    0 0 34px rgba(124, 58, 237, .25);
+}
+
+body.support-modal-open {
+  overflow: hidden;
+}
+
+@keyframes supportFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes supportPop {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .tech-support-modal {
+    padding: 16px;
+  }
+
+  .tech-support-dialog {
+    padding: 28px 22px;
+    border-radius: 16px;
+  }
+
+  .tech-support-dialog h2 {
+    font-size: 30px;
+  }
+
+  .tech-support-dialog p {
+    font-size: 16px;
+  }
+
+  .tech-support-link {
+    width: 100%;
+  }
+}
+
+/* Responsive stability layer
+   Keeps the cyberpunk Green-Y layout inside mobile/tablet viewports without changing desktop styling. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
+.app,
+.main,
+.page,
+.top,
+.search,
+.courses,
+.cards,
+.course,
+.card,
+.lesson-content,
+.lesson-section,
+.chat-shell,
+.topic-box,
+.comment-box,
+.profile-dashboard,
+.profile-main-card,
+.profile-progress-card,
+.profile-stat-card,
+.profile-admin-card,
+.logic-review-panel,
+.logic-answer-group,
+.test-admin-panel,
+.test-card-open,
+.test-user-box,
+.test-form,
+.test-result,
+.question,
+.rating-page,
+.rating-board {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#lessonTitle,
+#lessonText,
+.lesson-intro,
+.lesson-section h2,
+.lesson-section h3,
+.lesson-section p,
+.lesson-list,
+.card h3,
+.card p,
+.course h2,
+.course p,
+.question h3,
+.question label,
+.comment-card p,
+.profile-name-row h2,
+.profile-info-grid p,
+.logic-review-question,
+.logic-review-text {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* Tablet layout: sidebar becomes a compact top block and grids lose fixed desktop pressure. */
+@media (max-width: 1024px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    padding: 30px 20px 24px;
+  }
+
+  .brand {
+    max-width: 430px;
+    margin: 0 auto 30px;
+  }
+
+  .brand-text {
+    max-width: 330px;
+    margin: 0 auto;
+  }
+
+  .menu {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .menu-item {
+    width: 100%;
+    min-height: 68px;
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .support {
+    display: none;
+  }
+
+  .main {
+    width: 100%;
+    padding: 34px 20px 52px;
+  }
+
+  .top {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 46px;
+  }
+
+  .search {
+    width: 100%;
+    max-width: none;
+  }
+
+  .top-actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .courses,
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  #lessonTitle,
+  #lessonText {
+    width: 100%;
+  }
+
+  #lessonTitle {
+    margin-top: 44px;
+  }
+
+  .profile-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-page {
+    padding: 24px;
+  }
+
+  .rating-board {
+    margin-top: 120px;
+  }
+}
+
+/* Phone layout: one-column content, smaller typography, tighter readable lesson containers. */
+@media (max-width: 640px) {
+  .sidebar {
+    padding: 22px 12px 18px;
+  }
+
+  .brand {
+    row-gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .brand-text {
+    max-width: 270px;
+    column-gap: 10px;
+  }
+
+  .brand-name {
+    padding-left: 10px;
+    font-size: clamp(31px, 9.6vw, 39px);
+  }
+
+  .brand-subtitle {
+    margin-top: 16px;
+    font-size: clamp(42px, 15vw, 58px);
+  }
+
+  .yin-yang {
+    width: 66px;
+    height: 66px;
+  }
+
+  .yin-yang img {
+    width: 98px;
+  }
+
+  .menu {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .menu-item {
+    min-height: 62px;
+    border-radius: 18px;
+  }
+
+  .main {
+    padding: 18px 8px 36px;
+  }
+
+  h1,
+  .title {
+    font-size: clamp(26px, 7.5vw, 34px);
+    margin-bottom: 24px;
+  }
+
+  .top {
+    margin-bottom: 34px;
+  }
+
+  .search {
+    min-height: 58px;
+    padding: 0 14px;
+    gap: 10px;
+    border-radius: 20px;
+  }
+
+  .search::after {
+    border-radius: 19px;
+  }
+
+  .search input {
+    font-size: 16px;
+  }
+
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .top-actions {
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .courses,
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .course,
+  .card {
+    width: 100%;
+    min-height: auto;
+    padding: 24px 20px;
+    border-radius: 22px;
+  }
+
+  .course h2,
+  .card h3 {
+    font-size: clamp(22px, 6.4vw, 28px);
+  }
+
+  .course p,
+  .card p {
+    font-size: 16px;
+  }
+
+  #lesson.active {
+    align-items: stretch;
+    min-height: auto;
+  }
+
+  #lesson .back {
+    align-self: flex-start;
+  }
+
+  #lessonTitle {
+    margin-top: 24px;
+    padding: 24px 10px 10px;
+    border-radius: 18px 18px 0 0;
+    font-size: clamp(27px, 8vw, 36px);
+    line-height: 1.08;
+  }
+
+  #lessonText {
+    padding: 4px 6px 24px;
+    border-radius: 0 0 18px 18px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .lesson-content {
+    gap: 14px;
+  }
+
+  .lesson-intro {
+    font-size: clamp(18px, 5.4vw, 22px);
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .lesson-section {
+    width: 100%;
+    padding: 18px 10px;
+    border-radius: 14px;
+  }
+
+  .lesson-section h2 {
+    font-size: clamp(23px, 7vw, 30px);
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .lesson-section h3 {
+    font-size: clamp(18px, 5vw, 21px);
+    line-height: 1.25;
+  }
+
+  .lesson-section p,
+  .lesson-list {
+    font-size: clamp(16px, 4.6vw, 18px);
+    line-height: 1.55;
+  }
+
+  .lesson-list {
+    grid-template-columns: 1fr;
+    padding-left: 18px;
+  }
+
+  .topic-box,
+  .comment-box,
+  .test-admin-panel,
+  .profile-admin-card,
+  .admin-code-row,
+  .logic-review-head {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chat-shell {
+    min-height: 560px;
+    border-radius: 10px;
+  }
+
+  .chat-header {
+    grid-template-columns: 1fr;
+    padding: 22px 18px;
+  }
+
+  .discussion-tabs {
+    padding: 16px 18px 0;
+  }
+
+  .comments-list {
+    min-height: 260px;
+    padding: 20px 16px;
+  }
+
+  .comment-card {
+    max-width: 100%;
+  }
+
+  .comment-author {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .comment-card small {
+    white-space: normal;
+  }
+
+  .profile-main-card,
+  .profile-progress-card,
+  .profile-stat-card,
+  .profile-admin-card,
+  .logic-review-panel,
+  .test-card-open,
+  .test-user-box,
+  .test-form,
+  .test-result,
+  .question {
+    width: 100%;
+    padding: 20px 16px;
+  }
+
+  .profile-main-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .profile-name-row {
+    justify-content: center;
+  }
+
+  .profile-info-grid p,
+  .profile-progress-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .profile-progress-card,
+  .profile-stat-card {
+    text-align: center;
+  }
+
+  .xp-panel small {
+    position: static;
+    display: block;
+    margin-top: 8px;
+  }
+
+  .question h3 {
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  .question label {
+    font-size: 16px;
+  }
+
+  .rating-page {
+    padding: 18px 8px 34px;
+  }
+
+  .rating-board {
+    margin-top: 42px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rating-board table {
+    min-width: 560px;
+  }
+
+  .tech-support-dialog {
+    padding: 28px 18px;
+  }
+}
+
+/* Very small phones: reduce side pressure even more for long Russian/English technical text. */
+@media (max-width: 380px) {
+  .main {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  #lessonTitle {
+    font-size: 26px;
+  }
+
+  .lesson-section {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .lesson-section p,
+  .lesson-list {
+    font-size: 15.5px;
+  }
 }
 
 

@@ -1777,6 +1777,9 @@ const burgerMenu = document.getElementById("burgerMenu");
 const menuSearch = document.getElementById("menuSearch");
 const menuHome = document.getElementById("menuHome");
 const menuLogout = document.getElementById("menuLogout");
+const techSupportBtn = document.getElementById("techSupportBtn");
+const techSupportModal = document.getElementById("techSupportModal");
+const techSupportClose = document.getElementById("techSupportClose");
 
 const translations = {
   en: {
@@ -2276,6 +2279,40 @@ profileRole?.addEventListener("change", async () => {
 
   profileRole.value = selectedRole;
   await saveUserPreferences({ display_role: selectedRole });
+});
+
+function openTechSupportModal() {
+  if (!techSupportModal) return;
+  techSupportModal.classList.add("active");
+  techSupportModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("support-modal-open");
+}
+
+function closeTechSupportModal() {
+  if (!techSupportModal) return;
+  techSupportModal.classList.remove("active");
+  techSupportModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("support-modal-open");
+}
+
+techSupportBtn?.addEventListener("click", openTechSupportModal);
+techSupportClose?.addEventListener("click", event => {
+  event.stopPropagation();
+  closeTechSupportModal();
+});
+
+techSupportModal?.addEventListener("click", event => {
+  const closeTarget = event.target.closest("[data-tech-support-close]");
+
+  if (closeTarget) {
+    closeTechSupportModal();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && techSupportModal?.classList.contains("active")) {
+    closeTechSupportModal();
+  }
 });
 
 burgerBtn.addEventListener("click", () => {

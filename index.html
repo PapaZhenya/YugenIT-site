@@ -51,9 +51,6 @@
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-box">
-        <img src="logo.png" alt="logo">
-      </div>
       <div class="brand-text">
         <div class="brand-name">
           <span>Team</span>
@@ -74,9 +71,9 @@
     </nav>
 
     <div class="support">
-      <h3>Support 24/7</h3>
-      <p>Contact us anytime</p>
-      <button>Start →</button>
+      <h3>Tech Support</h3>
+      <p>Техподдержка GreenV</p>
+      <button id="techSupportBtn" type="button">Open →</button>
     </div>
   </aside>
 <main class="main">
@@ -446,6 +443,25 @@
     </section>
   </main>
 </div>
+
+<div class="tech-support-modal" id="techSupportModal" aria-hidden="true">
+  <div class="tech-support-backdrop" data-tech-support-close></div>
+  <div class="tech-support-dialog" role="dialog" aria-modal="true" aria-labelledby="techSupportTitle">
+    <button class="tech-support-close" id="techSupportClose" type="button" aria-label="Close tech support" data-tech-support-close>×</button>
+    <div class="tech-support-orb" aria-hidden="true"></div>
+    <span class="tech-support-kicker">Green-Y Support</span>
+    <h2 id="techSupportTitle">Техподдержка</h2>
+    <p>
+      Приветствую, охотник-IT!<br>
+      Понимаю, у тебя может быть много вопросов. Я сам был таким.<br>
+      Вот здесь ты найдешь решение многим вопросам.
+    </p>
+    <a class="tech-support-link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">
+      Открыть ChatGPT
+    </a>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>

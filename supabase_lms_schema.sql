@@ -167,6 +167,89 @@ alter table public.admin_rating_adjustments add column if not exists rating_delt
 alter table public.admin_rating_adjustments add column if not exists reason text;
 alter table public.admin_rating_adjustments add column if not exists created_at timestamptz not null default now();
 
+create table if not exists public.logic_ai_reviews (
+  id uuid primary key default gen_random_uuid(),
+  logic_answer_id uuid not null references public.logic_answers(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  username text not null,
+  test_name text not null,
+  question_number integer not null check (question_number between 1 and 10),
+  ai_score numeric(3,1) not null check (ai_score >= 0 and ai_score <= 5),
+  max_score integer not null default 5,
+  ai_feedback text not null,
+  xp_awarded integer not null default 0 check (xp_awarded >= 0),
+  rating_awarded integer not null default 0 check (rating_awarded >= 0),
+  model text not null,
+  raw_response jsonb not null default '{}'::jsonb,
+  reviewed_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (logic_answer_id)
+);
+
+alter table public.logic_ai_reviews add column if not exists logic_answer_id uuid references public.logic_answers(id) on delete cascade;
+alter table public.logic_ai_reviews add column if not exists user_id uuid references auth.users(id) on delete cascade;
+alter table public.logic_ai_reviews add column if not exists username text;
+alter table public.logic_ai_reviews add column if not exists test_name text;
+alter table public.logic_ai_reviews add column if not exists question_number integer;
+alter table public.logic_ai_reviews add column if not exists ai_score numeric(3,1);
+alter table public.logic_ai_reviews add column if not exists max_score integer not null default 5;
+alter table public.logic_ai_reviews add column if not exists ai_feedback text;
+alter table public.logic_ai_reviews add column if not exists xp_awarded integer not null default 0;
+alter table public.logic_ai_reviews add column if not exists rating_awarded integer not null default 0;
+alter table public.logic_ai_reviews add column if not exists model text;
+alter table public.logic_ai_reviews add column if not exists raw_response jsonb not null default '{}'::jsonb;
+alter table public.logic_ai_reviews add column if not exists reviewed_at timestamptz not null default now();
+alter table public.logic_ai_reviews add column if not exists created_at timestamptz not null default now();
+alter table public.logic_ai_reviews add column if not exists updated_at timestamptz not null default now();
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'logic_ai_reviews_logic_answer_id_key'
+      and conrelid = 'public.logic_ai_reviews'::regclass
+  ) then
+    alter table public.logic_ai_reviews
+    add constraint logic_ai_reviews_logic_answer_id_key unique (logic_answer_id);
+  end if;
+end;
+$$;
+
+create table if not exists public.logic_ai_review_adjustments (
+  id uuid primary key default gen_random_uuid(),
+  review_id uuid not null references public.logic_ai_reviews(id) on delete cascade,
+  logic_answer_id uuid not null references public.logic_answers(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  username text not null,
+  admin_user_id uuid not null references auth.users(id) on delete cascade,
+  admin_username text not null,
+  old_score numeric(3,1) not null,
+  new_score numeric(3,1) not null,
+  old_feedback text,
+  new_feedback text not null,
+  xp_delta integer not null,
+  rating_delta integer not null,
+  reason text not null check (char_length(trim(reason)) > 0),
+  created_at timestamptz not null default now()
+);
+
+alter table public.logic_ai_review_adjustments add column if not exists review_id uuid references public.logic_ai_reviews(id) on delete cascade;
+alter table public.logic_ai_review_adjustments add column if not exists logic_answer_id uuid references public.logic_answers(id) on delete cascade;
+alter table public.logic_ai_review_adjustments add column if not exists user_id uuid references auth.users(id) on delete cascade;
+alter table public.logic_ai_review_adjustments add column if not exists username text;
+alter table public.logic_ai_review_adjustments add column if not exists admin_user_id uuid references auth.users(id) on delete cascade;
+alter table public.logic_ai_review_adjustments add column if not exists admin_username text;
+alter table public.logic_ai_review_adjustments add column if not exists old_score numeric(3,1);
+alter table public.logic_ai_review_adjustments add column if not exists new_score numeric(3,1);
+alter table public.logic_ai_review_adjustments add column if not exists old_feedback text;
+alter table public.logic_ai_review_adjustments add column if not exists new_feedback text;
+alter table public.logic_ai_review_adjustments add column if not exists xp_delta integer;
+alter table public.logic_ai_review_adjustments add column if not exists rating_delta integer;
+alter table public.logic_ai_review_adjustments add column if not exists reason text;
+alter table public.logic_ai_review_adjustments add column if not exists created_at timestamptz not null default now();
+
 insert into public.test_settings (test_name, is_open)
 values ('Первый тест', true)
 on conflict (test_name) do nothing;
@@ -535,6 +618,238 @@ begin
 end;
 $$;
 
+create or replace function public.apply_logic_ai_review(
+  p_logic_answer_id uuid,
+  p_ai_score numeric,
+  p_ai_feedback text,
+  p_model text,
+  p_raw_response jsonb
+)
+returns table (
+  review_id uuid,
+  logic_answer_id uuid,
+  ai_score numeric,
+  max_score integer,
+  xp_awarded integer,
+  rating_awarded integer,
+  ai_feedback text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_answer public.logic_answers%rowtype;
+  v_review public.logic_ai_reviews%rowtype;
+  v_score numeric(3,1);
+  v_xp_awarded integer;
+  v_rating_awarded integer;
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  select * into v_answer
+  from public.logic_answers
+  where id = p_logic_answer_id;
+
+  if v_answer.id is null then
+    raise exception 'Logic answer not found';
+  end if;
+
+  if auth.uid() <> v_answer.user_id and not public.is_admin() then
+    raise exception 'Not allowed to review this answer';
+  end if;
+
+  select * into v_review
+  from public.logic_ai_reviews
+  where logic_ai_reviews.logic_answer_id = p_logic_answer_id;
+
+  if v_review.id is not null then
+    return query
+    select
+      v_review.id,
+      v_review.logic_answer_id,
+      v_review.ai_score,
+      v_review.max_score,
+      v_review.xp_awarded,
+      v_review.rating_awarded,
+      v_review.ai_feedback;
+    return;
+  end if;
+
+  v_score := least(greatest(coalesce(p_ai_score, 0), 0), 5);
+  v_xp_awarded := round(v_score * 10);
+  v_rating_awarded := round(v_score * 2);
+
+  insert into public.logic_ai_reviews (
+    logic_answer_id,
+    user_id,
+    username,
+    test_name,
+    question_number,
+    ai_score,
+    max_score,
+    ai_feedback,
+    xp_awarded,
+    rating_awarded,
+    model,
+    raw_response
+  )
+  values (
+    p_logic_answer_id,
+    v_answer.user_id,
+    v_answer.username,
+    v_answer.test_name,
+    v_answer.question_number,
+    v_score,
+    5,
+    trim(coalesce(p_ai_feedback, '')),
+    v_xp_awarded,
+    v_rating_awarded,
+    coalesce(p_model, 'unknown'),
+    coalesce(p_raw_response, '{}'::jsonb)
+  )
+  returning * into v_review;
+
+  update public.profiles
+  set
+    xp = public.profiles.xp + v_xp_awarded,
+    rating = public.profiles.rating + v_rating_awarded,
+    level = public.calculate_lms_level(public.profiles.xp + v_xp_awarded)
+  where profiles.id = v_answer.user_id;
+
+  return query
+  select
+    v_review.id,
+    v_review.logic_answer_id,
+    v_review.ai_score,
+    v_review.max_score,
+    v_review.xp_awarded,
+    v_review.rating_awarded,
+    v_review.ai_feedback;
+end;
+$$;
+
+create or replace function public.admin_override_logic_ai_review(
+  p_review_id uuid,
+  p_new_score numeric,
+  p_new_feedback text,
+  p_reason text
+)
+returns table (
+  review_id uuid,
+  username text,
+  ai_score numeric,
+  xp_awarded integer,
+  rating_awarded integer
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_admin_user_id uuid := auth.uid();
+  v_admin_username text;
+  v_review public.logic_ai_reviews%rowtype;
+  v_old_score numeric(3,1);
+  v_old_feedback text;
+  v_old_xp integer;
+  v_old_rating integer;
+  v_new_score numeric(3,1);
+  v_new_xp integer;
+  v_new_rating integer;
+  v_xp_delta integer;
+  v_rating_delta integer;
+begin
+  if v_admin_user_id is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if not public.is_admin() then
+    raise exception 'Admin role required';
+  end if;
+
+  if char_length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'Override reason is required';
+  end if;
+
+  select profiles.username into v_admin_username
+  from public.profiles
+  where profiles.id = v_admin_user_id
+    and profiles.role = 'admin';
+
+  select * into v_review
+  from public.logic_ai_reviews
+  where id = p_review_id;
+
+  if v_review.id is null then
+    raise exception 'AI review not found';
+  end if;
+
+  v_old_score := v_review.ai_score;
+  v_old_feedback := v_review.ai_feedback;
+  v_old_xp := v_review.xp_awarded;
+  v_old_rating := v_review.rating_awarded;
+  v_new_score := least(greatest(coalesce(p_new_score, 0), 0), 5);
+  v_new_xp := round(v_new_score * 10);
+  v_new_rating := round(v_new_score * 2);
+  v_xp_delta := v_new_xp - v_old_xp;
+  v_rating_delta := v_new_rating - v_old_rating;
+
+  update public.logic_ai_reviews
+  set
+    ai_score = v_new_score,
+    ai_feedback = trim(coalesce(p_new_feedback, v_review.ai_feedback)),
+    xp_awarded = v_new_xp,
+    rating_awarded = v_new_rating,
+    updated_at = now()
+  where id = p_review_id
+  returning * into v_review;
+
+  update public.profiles
+  set
+    xp = greatest(public.profiles.xp + v_xp_delta, 0),
+    rating = greatest(public.profiles.rating + v_rating_delta, 0),
+    level = public.calculate_lms_level(greatest(public.profiles.xp + v_xp_delta, 0))
+  where profiles.id = v_review.user_id;
+
+  insert into public.logic_ai_review_adjustments (
+    review_id,
+    logic_answer_id,
+    user_id,
+    username,
+    admin_user_id,
+    admin_username,
+    old_score,
+    new_score,
+    old_feedback,
+    new_feedback,
+    xp_delta,
+    rating_delta,
+    reason
+  )
+  values (
+    p_review_id,
+    v_review.logic_answer_id,
+    v_review.user_id,
+    v_review.username,
+    v_admin_user_id,
+    v_admin_username,
+    v_old_score,
+    v_new_score,
+    v_old_feedback,
+    v_review.ai_feedback,
+    v_xp_delta,
+    v_rating_delta,
+    trim(p_reason)
+  );
+
+  return query
+  select v_review.id, v_review.username, v_review.ai_score, v_review.xp_awarded, v_review.rating_awarded;
+end;
+$$;
+
 alter table public.profiles enable row level security;
 alter table public.test_results enable row level security;
 alter table public.logic_answers enable row level security;
@@ -545,6 +860,8 @@ alter table public.admin_messages enable row level security;
 alter table public.notification_reads enable row level security;
 alter table public.admin_test_attempts enable row level security;
 alter table public.admin_rating_adjustments enable row level security;
+alter table public.logic_ai_reviews enable row level security;
+alter table public.logic_ai_review_adjustments enable row level security;
 
 drop policy if exists "Profiles are readable by authenticated users" on public.profiles;
 drop policy if exists "Users can insert own profile" on public.profiles;
@@ -769,8 +1086,59 @@ to authenticated
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "Users can read own AI reviews" on public.logic_ai_reviews;
+drop policy if exists "Admins can read all AI reviews" on public.logic_ai_reviews;
+drop policy if exists "Service can insert AI reviews" on public.logic_ai_reviews;
+drop policy if exists "Admins can manage AI reviews" on public.logic_ai_reviews;
+
+create policy "Users can read own AI reviews"
+on public.logic_ai_reviews for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Admins can read all AI reviews"
+on public.logic_ai_reviews for select
+to authenticated
+using (public.is_admin());
+
+create policy "Service can insert AI reviews"
+on public.logic_ai_reviews for insert
+to authenticated
+with check (auth.uid() = user_id or public.is_admin());
+
+create policy "Admins can manage AI reviews"
+on public.logic_ai_reviews for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+drop policy if exists "Admins can read AI review adjustments" on public.logic_ai_review_adjustments;
+drop policy if exists "Admins can insert AI review adjustments" on public.logic_ai_review_adjustments;
+drop policy if exists "Admins can manage AI review adjustments" on public.logic_ai_review_adjustments;
+
+create policy "Admins can read AI review adjustments"
+on public.logic_ai_review_adjustments for select
+to authenticated
+using (public.is_admin());
+
+create policy "Admins can insert AI review adjustments"
+on public.logic_ai_review_adjustments for insert
+to authenticated
+with check (
+  public.is_admin()
+  and auth.uid() = admin_user_id
+);
+
+create policy "Admins can manage AI review adjustments"
+on public.logic_ai_review_adjustments for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
 grant execute on function public.is_admin() to authenticated;
 grant execute on function public.apply_admin_code(text) to authenticated;
 grant execute on function public.submit_test_attempt(text, text, integer, integer, jsonb) to authenticated;
 grant execute on function public.admin_adjust_user_points(uuid, integer, integer, text) to authenticated;
+grant execute on function public.apply_logic_ai_review(uuid, numeric, text, text, jsonb) to authenticated;
+grant execute on function public.admin_override_logic_ai_review(uuid, numeric, text, text) to authenticated;
 grant execute on function public.handle_new_user_profile() to authenticated;

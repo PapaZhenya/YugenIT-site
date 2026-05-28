@@ -1,0 +1,4 @@
+project_id = "yawxydwdrfmlpsymgqbq"
+
+[functions.grade-logic-answers]
+verify_jwt = true

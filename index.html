@@ -441,6 +441,46 @@
 
   <div id="testResult" class="test-result"></div>
   </section>
+
+<div class="test-results-overlay" id="testResultsOverlay" aria-hidden="true">
+  <div class="test-results-modal" role="dialog" aria-modal="true" aria-labelledby="testResultsTitle">
+    <button class="test-results-close" id="closeTestResultsBtn" type="button" aria-label="Close test results">x</button>
+
+    <div class="test-results-hero">
+      <div>
+        <span class="results-kicker">GreenY Certification</span>
+        <h2 id="testResultsTitle">Review Answers</h2>
+        <p id="testResultsStatusText">Keep Learning</p>
+      </div>
+
+      <div class="results-ring" id="resultsRing" style="--score-percent: 0;">
+        <div>
+          <strong id="resultsPercent">0%</strong>
+          <span>accuracy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-metrics" id="resultsMetrics"></div>
+
+    <div class="results-toolbar">
+      <div class="results-tabs" id="resultsFilterTabs" role="tablist" aria-label="Question result filters">
+        <button type="button" class="active" data-results-filter="all">All Questions</button>
+        <button type="button" data-results-filter="correct">Correct</button>
+        <button type="button" data-results-filter="wrong">Wrong</button>
+      </div>
+      <button class="review-mistakes-btn" id="reviewMistakesOnlyBtn" type="button">Review Mistakes Only</button>
+    </div>
+
+    <div class="results-questions" id="resultsQuestions"></div>
+
+    <div class="results-actions">
+      <button id="backToDashboardBtn" type="button">Back to Dashboard</button>
+      <button id="closeReviewBtn" type="button">Close Review</button>
+    </div>
+  </div>
+</div>
+
 <section id="tests" class="page rating-page">
 
   <div class="rating-hero">
@@ -497,7 +537,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20260528-admin-tools-v1"></script>
+<script src="script.js?v=20260528-results-v1"></script>
 </body>
 </html>
 

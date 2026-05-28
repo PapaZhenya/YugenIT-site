@@ -9,6 +9,7 @@ const USER_PREFERENCES_TABLE = "user_preferences";
 const DISCUSSION_COMMENTS_TABLE = "discussion_comments";
 const ADMIN_MESSAGES_TABLE = "admin_messages";
 const NOTIFICATION_READS_TABLE = "notification_reads";
+const LOGIC_AI_REVIEWS_TABLE = "logic_ai_reviews";
 const FIRST_TEST_ID = "first-test";
 const FIRST_TEST_NAME = "Первый тест";
 const XP_PER_CORRECT_ANSWER = 10;
@@ -2081,6 +2082,56 @@ function groupLogicAnswers(answers) {
   }, {});
 }
 
+function renderAiReviewSummary(aiResult) {
+  if (!aiResult) return "";
+
+  const reviews = aiResult.reviews || [];
+
+  return `
+    <div class="ai-review-result">
+      <div class="ai-review-summary">
+        <span>AI logic review</span>
+        <strong>${Number(aiResult.totalScore || 0).toFixed(1)} / ${aiResult.maxScore || 50}</strong>
+        <small>XP +${aiResult.xpAwarded || 0} | Rating +${aiResult.ratingAwarded || 0}</small>
+      </div>
+      <div class="ai-review-items">
+        ${reviews.map((review, index) => `
+          <div class="ai-review-item">
+            <b>Logic ${index + 1}: ${Number(review.ai_score || 0).toFixed(1)} / ${review.max_score || 5}</b>
+            <p>${escapeHtml(review.ai_feedback || "No feedback")}</p>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+async function runAiLogicReview() {
+  testResult.innerHTML += `
+    <div class="ai-checking-box">
+      <strong>Checking answer with AI...</strong>
+      <p>OpenAI is reviewing logical answers and calculating bonus XP/rating.</p>
+    </div>
+  `;
+
+  const { data, error } = await db.functions.invoke("grade-logic-answers", {
+    body: { testName: FIRST_TEST_NAME }
+  });
+
+  if (error || data?.error) {
+    console.error(error || data.error);
+    testResult.innerHTML += `
+      <div class="ai-review-error">
+        <strong>AI review unavailable</strong>
+        <p>${escapeHtml(data?.error || error?.message || "Try again later.")}</p>
+      </div>
+    `;
+    return null;
+  }
+
+  return data;
+}
+
 async function renderAdminLogicAnswers() {
   const profile = await getCurrentUserProfile();
 
@@ -2097,7 +2148,7 @@ async function renderAdminLogicAnswers() {
 
   const { data, error } = await db
     .from(LOGIC_ANSWERS_TABLE)
-    .select("user_id, username, test_name, question_number, question_text, answer_text, created_at")
+    .select("id, user_id, username, test_name, question_number, question_text, answer_text, created_at")
     .order("created_at", { ascending: false })
     .order("question_number", { ascending: true });
 
@@ -2116,6 +2167,15 @@ async function renderAdminLogicAnswers() {
     return;
   }
 
+  const { data: aiReviews, error: aiError } = await db
+    .from(LOGIC_AI_REVIEWS_TABLE)
+    .select("id, logic_answer_id, ai_score, max_score, ai_feedback, xp_awarded, rating_awarded, reviewed_at");
+
+  if (aiError) {
+    console.error(aiError);
+  }
+
+  const reviewsByAnswerId = new Map((aiReviews || []).map(review => [review.logic_answer_id, review]));
   const groupedAnswers = Object.values(groupLogicAnswers(data));
 
   logicAnswersList.innerHTML = groupedAnswers.map(group => `
@@ -2129,13 +2189,30 @@ async function renderAdminLogicAnswers() {
       </header>
       ${group.answers
         .sort((a, b) => a.question_number - b.question_number)
-        .map(answer => `
+        .map(answer => {
+          const review = reviewsByAnswerId.get(answer.id);
+          return `
           <div class="logic-review-answer">
             <strong>Вопрос ${answer.question_number}</strong>
             <p class="logic-review-question">${escapeHtml(answer.question_text)}</p>
             <p class="logic-review-text">${escapeHtml(answer.answer_text || "Ответ не заполнен")}</p>
+            ${review ? `
+              <div class="logic-ai-admin-review">
+                <span>AI score: <b>${Number(review.ai_score || 0).toFixed(1)} / ${review.max_score || 5}</b></span>
+                <small>XP +${review.xp_awarded || 0} | Rating +${review.rating_awarded || 0}</small>
+                <p>${escapeHtml(review.ai_feedback || "")}</p>
+                <div class="logic-ai-override">
+                  <input type="number" min="0" max="5" step="0.5" value="${Number(review.ai_score || 0)}" data-ai-score="${review.id}">
+                  <input type="text" placeholder="Override reason" data-ai-reason="${review.id}">
+                  <button type="button" data-ai-override="${review.id}">Save AI score</button>
+                </div>
+              </div>
+            ` : `
+              <div class="logic-ai-pending">AI review pending</div>
+            `}
           </div>
-        `)
+        `;
+        })
         .join("")}
     </article>
   `).join("");
@@ -2519,6 +2596,20 @@ const testUsername = document.getElementById("testUsername");
 const testResult = document.getElementById("testResult");
 const autoQuestions = document.getElementById("autoQuestions");
 const logicQuestionsBox = document.getElementById("logicQuestions");
+const testResultsOverlay = document.getElementById("testResultsOverlay");
+const closeTestResultsBtn = document.getElementById("closeTestResultsBtn");
+const resultsRing = document.getElementById("resultsRing");
+const resultsPercent = document.getElementById("resultsPercent");
+const testResultsStatusText = document.getElementById("testResultsStatusText");
+const resultsMetrics = document.getElementById("resultsMetrics");
+const resultsQuestions = document.getElementById("resultsQuestions");
+const resultsFilterTabs = document.getElementById("resultsFilterTabs");
+const reviewMistakesOnlyBtn = document.getElementById("reviewMistakesOnlyBtn");
+const backToDashboardBtn = document.getElementById("backToDashboardBtn");
+const closeReviewBtn = document.getElementById("closeReviewBtn");
+let isSubmittingFirstTest = false;
+let latestTestResultState = null;
+let activeResultsFilter = "all";
 
 const testQuestions = [
   {
@@ -2945,6 +3036,39 @@ const TEST_OPTION_TEXT_FALLBACKS = {
   }
 };
 
+const TEST_EXPLANATIONS = {
+  q1: "Loop часто проявляется нестабильным DHCP и резким ростом broadcast-трафика, потому что кадры начинают циркулировать по сети.",
+  q2: "Если IP-пинг проходит, а доменные имена не открываются, проблема чаще всего находится в DNS-резолвинге.",
+  q3: "VoIP чувствителен к jitter и потерям UDP-пакетов, поэтому качество звонков падает даже при обычной скорости интернета.",
+  q4: "При конфликте IP два устройства претендуют на один адрес, из-за чего появляется частичная потеря доступа к ресурсам.",
+  q5: "Кабельная сеть может работать нормально, а Wi-Fi падать из-за пересечения каналов и помех между точками доступа.",
+  q6: "VPN особенно чувствителен к packet loss и jitter: туннель остаётся подключенным, но работает нестабильно.",
+  q7: "VLAN разделяет широковещательные домены и помогает изолировать разные группы устройств.",
+  q8: "Broadcast storm перегружает коммутаторы большим количеством широковещательных кадров.",
+  q9: "Loop часто нагружает CPU коммутаторов, потому что сетевое оборудование обрабатывает лавину кадров.",
+  q10: "Для стабильного корпоративного Wi-Fi важны одинаковый SSID, корректная безопасность и грамотное распределение каналов.",
+  q11: "NAT masquerade подменяет внутренние IP-адреса при выходе устройств в интернет.",
+  q12: "Bridge в MikroTik обычно объединяет интерфейсы в один L2-сегмент.",
+  q13: "Torch показывает трафик в реальном времени и помогает быстро понять, кто и что загружает.",
+  q14: "Высокий ping внутри LAN чаще всего связан с перегрузкой канала, петлёй или проблемой коммутации.",
+  q15: "WireGuard считается современным и быстрым VPN-протоколом с простой криптографической моделью.",
+  q16: "PPTP считается небезопасным из-за устаревших механизмов шифрования и аутентификации.",
+  q17: "Roaming ломается, когда точки доступа имеют разные SSID или несовместимые настройки безопасности.",
+  q18: "DHCP автоматически выдаёт клиентам IP-адрес, шлюз, DNS и другие сетевые настройки.",
+  q19: "Неверная subnet mask мешает устройству правильно понимать, какие адреса находятся в локальной сети.",
+  q20: "При отсутствии интернета первым делом проверяют IP, gateway и доступность шлюза.",
+  q21: "STP предотвращает сетевые петли на втором уровне модели OSI.",
+  q22: "В Wi-Fi packet loss чаще всего вызывают помехи, слабый сигнал или перегруженный эфир.",
+  q23: "RDP по умолчанию использует TCP-порт 3389.",
+  q24: "Локальные права администратора повышают риск установки вредоносного ПО и неконтролируемых изменений.",
+  q25: "Слишком много клиентов на одном канале перегружает эфир и снижает качество Wi-Fi.",
+  q26: "Телефония чувствительна к задержкам и jitter, поэтому качество речи быстро падает при перегрузке.",
+  q27: "APIPA-адрес 169.254.x.x обычно означает, что клиент не получил адрес от DHCP.",
+  q28: "VLAN чаще всего используют для сегментации офисной сети.",
+  q29: "Отдельный VLAN для телефонии защищает VoIP от пользовательского трафика и упрощает QoS.",
+  q30: "При медленном интернете проверяют потери пакетов, загрузку канала и задержки."
+};
+
 function getQuestionOptionText(question, optionKey) {
   return question.options?.[optionKey] || TEST_OPTION_TEXT_FALLBACKS[question.id]?.[optionKey] || "";
 }
@@ -2995,6 +3119,220 @@ function getSaveResultErrorMessage(error) {
   }
 
   return `Не удалось сохранить результат теста: ${message}`;
+}
+
+function getSelectedAnswer(questionId) {
+  return document.querySelector(`input[name="${questionId}"]:checked`)?.value || "";
+}
+
+function getPassLevel(percent) {
+  if (percent >= 85) {
+    return {
+      label: "Excellent",
+      headline: "Excellent Work",
+      tone: "excellent"
+    };
+  }
+
+  if (percent >= 60) {
+    return {
+      label: "Good",
+      headline: "Keep Learning",
+      tone: "good"
+    };
+  }
+
+  return {
+    label: "Fail",
+    headline: "You Need More Practice",
+    tone: "fail"
+  };
+}
+
+function buildQuestionReview() {
+  return TEST_QUESTION_FALLBACKS.map((fallbackQuestion, index) => {
+    const question = getTestQuestion(testQuestions[index] || fallbackQuestion, index);
+    const selected = getSelectedAnswer(question.id);
+    const isCorrect = selected === question.correct;
+
+    return {
+      id: question.id,
+      number: question.number,
+      question: question.question,
+      options: TEST_OPTION_KEYS.map(optionKey => ({
+        key: optionKey,
+        text: getQuestionOptionText(question, optionKey)
+      })),
+      selected,
+      correct: question.correct,
+      isCorrect,
+      explanation: question.explanation || TEST_EXPLANATIONS[question.id] || ""
+    };
+  });
+}
+
+function getMetricMarkup(label, value, detail = "") {
+  return `
+    <article class="result-metric">
+      <span>${escapeHtml(label)}</span>
+      <strong data-count-to="${escapeHtml(value)}">${escapeHtml(value)}</strong>
+      ${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
+    </article>
+  `;
+}
+
+function renderResultMetrics(resultState) {
+  const level = getPassLevel(resultState.percent);
+
+  resultsMetrics.innerHTML = [
+    getMetricMarkup("Correct answers", resultState.correct, `of ${resultState.total}`),
+    getMetricMarkup("Wrong answers", resultState.wrong, "review recommended"),
+    getMetricMarkup("Score", `${resultState.correct} / ${resultState.total}`, "final result"),
+    getMetricMarkup("Earned XP", `+${resultState.xpEarned}`, "synced with profile"),
+    getMetricMarkup("Pass level", level.label, `${resultState.percent}% accuracy`)
+  ].join("");
+}
+
+function renderResultQuestions(resultState, filter = activeResultsFilter) {
+  const filteredQuestions = resultState.questions.filter(question => {
+    if (filter === "correct") return question.isCorrect;
+    if (filter === "wrong") return !question.isCorrect;
+    return true;
+  });
+
+  if (!filteredQuestions.length) {
+    resultsQuestions.innerHTML = `
+      <div class="results-empty-state">
+        <strong>No questions in this filter</strong>
+        <span>Switch to All Questions to review the full attempt.</span>
+      </div>
+    `;
+    return;
+  }
+
+  resultsQuestions.innerHTML = filteredQuestions.map(question => {
+    const statusLabel = question.isCorrect ? "Correct" : "Wrong";
+    const statusIcon = question.isCorrect ? "✅" : "❌";
+    const selectedText = question.selected
+      ? `${question.selected}) ${question.options.find(option => option.key === question.selected)?.text || ""}`
+      : "No answer selected";
+    const correctText = `${question.correct}) ${question.options.find(option => option.key === question.correct)?.text || ""}`;
+
+    const optionsMarkup = question.options.map(option => {
+      const isSelected = option.key === question.selected;
+      const isCorrect = option.key === question.correct;
+      const classNames = [
+        "result-option",
+        isCorrect ? "correct-option" : "",
+        isSelected && !isCorrect ? "wrong-option" : "",
+        isSelected ? "selected-option" : ""
+      ].filter(Boolean).join(" ");
+
+      return `
+        <li class="${classNames}">
+          <span>${option.key}</span>
+          <p>${escapeHtml(option.text)}</p>
+        </li>
+      `;
+    }).join("");
+
+    return `
+      <article class="result-question-card ${question.isCorrect ? "is-correct" : "is-wrong"}" data-result-card="${question.id}">
+        <button class="result-question-toggle" type="button" data-result-toggle="${question.id}">
+          <span>Question ${question.number}</span>
+          <strong>${statusIcon} ${statusLabel}</strong>
+        </button>
+        <div class="result-question-body">
+          <h3>${escapeHtml(question.question)}</h3>
+          <ul>${optionsMarkup}</ul>
+          <div class="answer-compare">
+            <p><b>Your answer:</b> ${escapeHtml(selectedText)}</p>
+            <p><b>Correct answer:</b> ${escapeHtml(correctText)}</p>
+          </div>
+          ${!question.isCorrect && question.explanation ? `
+            <div class="answer-explanation">
+              <span>Explanation</span>
+              <p>${escapeHtml(question.explanation)}</p>
+            </div>
+          ` : ""}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function animateResultCounters() {
+  resultsMetrics.querySelectorAll("[data-count-to]").forEach(counter => {
+    const rawValue = counter.dataset.countTo || "";
+    const target = Number(rawValue.replace(/[^\d.-]/g, ""));
+
+    if (!Number.isFinite(target) || rawValue.includes("/")) return;
+
+    let frame = 0;
+    const totalFrames = 24;
+    const prefix = rawValue.trim().startsWith("+") ? "+" : "";
+
+    const tick = () => {
+      frame++;
+      const value = Math.round((target * frame) / totalFrames);
+      counter.textContent = `${prefix}${value}`;
+
+      if (frame < totalFrames) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  });
+}
+
+function launchResultConfetti() {
+  if (!testResultsOverlay) return;
+
+  const confetti = document.createElement("div");
+  confetti.className = "result-confetti";
+
+  for (let index = 0; index < 42; index++) {
+    const particle = document.createElement("i");
+    particle.style.setProperty("--x", `${Math.random() * 100}%`);
+    particle.style.setProperty("--delay", `${Math.random() * .5}s`);
+    particle.style.setProperty("--spin", `${Math.random() * 360}deg`);
+    confetti.appendChild(particle);
+  }
+
+  testResultsOverlay.appendChild(confetti);
+  setTimeout(() => confetti.remove(), 2600);
+}
+
+function showAnswerReview(resultState) {
+  if (!testResultsOverlay) return;
+
+  latestTestResultState = resultState;
+  activeResultsFilter = "all";
+  const level = getPassLevel(resultState.percent);
+
+  testResultsStatusText.textContent = level.headline;
+  testResultsOverlay.dataset.tone = level.tone;
+  resultsPercent.textContent = `${resultState.percent}%`;
+  resultsRing.style.setProperty("--score-percent", resultState.percent);
+  renderResultMetrics(resultState);
+  renderResultQuestions(resultState, activeResultsFilter);
+  resultsFilterTabs?.querySelectorAll("button").forEach(button => {
+    button.classList.toggle("active", button.dataset.resultsFilter === activeResultsFilter);
+  });
+
+  testResultsOverlay.classList.add("active");
+  testResultsOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("results-open");
+  animateResultCounters();
+
+  if (resultState.percent >= 85) {
+    launchResultConfetti();
+  }
+}
+
+function closeTestResults() {
+  testResultsOverlay?.classList.remove("active");
+  testResultsOverlay?.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("results-open");
 }
 
 function renderTestQuestions() {
@@ -3111,6 +3449,11 @@ backToClasses.addEventListener("click", () => {
 firstTestForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  if (isSubmittingFirstTest) {
+    alert("Test submission is already in progress.");
+    return;
+  }
+
   if (!isFirstTestOpen()) {
     alert("Тест закрыт администратором. Отправка недоступна.");
     showPage("classes");
@@ -3144,24 +3487,10 @@ firstTestForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  let correct = 0;
-  let wrong = 0;
-
-  TEST_QUESTION_FALLBACKS.forEach((fallbackQuestion, index) => {
-    const q = getTestQuestion(testQuestions[index] || fallbackQuestion, index);
-    const selected = document.querySelector(`input[name="${q.id}"]:checked`);
-
-    if (!selected) {
-      wrong++;
-      return;
-    }
-
-    if (selected.value === q.correct) {
-      correct++;
-    } else {
-      wrong++;
-    }
-  });
+  const submitButton = firstTestForm.querySelector(".submit-test-btn");
+  const questionReview = buildQuestionReview();
+  const correct = questionReview.filter(question => question.isCorrect).length;
+  const wrong = questionReview.length - correct;
 
   const total = TEST_QUESTION_FALLBACKS.length;
   const percent = Math.round((correct / total) * 100);
@@ -3181,6 +3510,12 @@ firstTestForm.addEventListener("submit", async (event) => {
     return;
   }
 
+  isSubmittingFirstTest = true;
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Saving Results...";
+  }
+
   const { data: submitData, error: saveResultError } = await db
     .rpc("submit_test_attempt", {
       p_test_name: FIRST_TEST_NAME,
@@ -3192,12 +3527,28 @@ firstTestForm.addEventListener("submit", async (event) => {
 
   if (saveResultError) {
     console.error(saveResultError);
+    isSubmittingFirstTest = false;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Finish Test";
+    }
     alert(getSaveResultErrorMessage(saveResultError));
     return;
   }
 
   const submittedResult = Array.isArray(submitData) ? submitData[0] : submitData;
   const xpEarned = submittedResult?.xp_earned || (correct * XP_PER_CORRECT_ANSWER) + TEST_COMPLETION_BONUS_XP;
+  const resultState = {
+    username,
+    correct,
+    wrong,
+    total,
+    percent,
+    xpEarned,
+    completedAt: new Date().toISOString(),
+    questions: questionReview
+  };
+
   await renderUsers();
   testResult.innerHTML = `
     <h2>Test finished</h2>
@@ -3211,10 +3562,119 @@ firstTestForm.addEventListener("submit", async (event) => {
   `;
 
   firstTestForm.style.display = "none";
+  showAnswerReview(resultState);
+
+  if (profile.role !== "admin") {
+    const aiResult = await runAiLogicReview();
+
+    if (aiResult) {
+      testResult.innerHTML += renderAiReviewSummary(aiResult);
+      await renderUsers();
+    }
+  } else {
+    testResult.innerHTML += `
+      <div class="ai-review-result">
+        <div class="ai-review-summary">
+          <span>Admin test attempt</span>
+          <strong>AI grading skipped</strong>
+          <small>This run is stored separately and does not affect XP or rating.</small>
+        </div>
+      </div>
+    `;
+  }
 
   if (typeof renderUsers === "function") {
     await renderUsers();
   }
+
+  isSubmittingFirstTest = false;
+  if (submitButton) {
+    submitButton.disabled = false;
+    submitButton.textContent = "Finish Test";
+  }
+});
+
+resultsFilterTabs?.addEventListener("click", event => {
+  const button = event.target.closest("[data-results-filter]");
+
+  if (!button || !latestTestResultState) return;
+
+  activeResultsFilter = button.dataset.resultsFilter;
+  resultsFilterTabs.querySelectorAll("button").forEach(tab => tab.classList.toggle("active", tab === button));
+  renderResultQuestions(latestTestResultState, activeResultsFilter);
+});
+
+reviewMistakesOnlyBtn?.addEventListener("click", () => {
+  if (!latestTestResultState) return;
+
+  activeResultsFilter = "wrong";
+  resultsFilterTabs?.querySelectorAll("button").forEach(tab => {
+    tab.classList.toggle("active", tab.dataset.resultsFilter === "wrong");
+  });
+  renderResultQuestions(latestTestResultState, activeResultsFilter);
+});
+
+resultsQuestions?.addEventListener("click", event => {
+  const toggle = event.target.closest("[data-result-toggle]");
+
+  if (!toggle) return;
+
+  const card = toggle.closest(".result-question-card");
+  card?.classList.toggle("collapsed");
+});
+
+closeTestResultsBtn?.addEventListener("click", closeTestResults);
+
+testResultsOverlay?.addEventListener("click", event => {
+  if (event.target === testResultsOverlay) {
+    closeTestResults();
+  }
+});
+
+backToDashboardBtn?.addEventListener("click", () => {
+  closeTestResults();
+  showPage("classes");
+});
+
+closeReviewBtn?.addEventListener("click", closeTestResults);
+
+logicAnswersList?.addEventListener("click", async event => {
+  const button = event.target.closest("[data-ai-override]");
+
+  if (!button) return;
+
+  const reviewId = button.dataset.aiOverride;
+  const scoreInput = logicAnswersList.querySelector(`[data-ai-score="${reviewId}"]`);
+  const reasonInput = logicAnswersList.querySelector(`[data-ai-reason="${reviewId}"]`);
+  const newScore = Number(scoreInput?.value);
+  const reason = reasonInput?.value.trim() || "";
+
+  if (!Number.isFinite(newScore) || newScore < 0 || newScore > 5) {
+    alert("Score must be between 0 and 5.");
+    return;
+  }
+
+  if (!reason) {
+    alert("Reason is required.");
+    return;
+  }
+
+  const { error } = await db.rpc("admin_override_logic_ai_review", {
+    p_review_id: reviewId,
+    p_new_score: newScore,
+    p_new_feedback: `Manual admin override: ${reason}`,
+    p_reason: reason
+  });
+
+  if (error) {
+    console.error(error);
+    alert(`Не удалось изменить AI score: ${error.message}`);
+    return;
+  }
+
+  alert("AI score updated and XP/rating recalculated.");
+  await renderUsers();
+  renderAdminLogicAnswers();
 });
 
 adminPointButtons.forEach(button => {

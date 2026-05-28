@@ -2776,6 +2776,8 @@ const testQuestions = [
   }
 ];
 
+const TEST_QUESTION_FALLBACKS = JSON.parse(JSON.stringify(testQuestions));
+
 const logicQuestions = [
   "В офисе периодически пропадает интернет у всех устройств. С чего начнешь диагностику?",
   "Пользователь говорит, что интернет “лагает”, но только у него. Какие проверки сделаешь первыми?",
@@ -2840,14 +2842,59 @@ function getQuestionOptionText(question, optionKey) {
   return question.options?.[optionKey] || TEST_OPTION_TEXT_FALLBACKS[question.id]?.[optionKey] || "";
 }
 
+function getTestQuestion(question, index) {
+  const fallbackQuestion = TEST_QUESTION_FALLBACKS[index];
+  const mergedQuestion = {
+    ...fallbackQuestion,
+    ...question,
+    options: {
+      ...(fallbackQuestion?.options || {}),
+      ...(question?.options || {})
+    }
+  };
+
+  return mergedQuestion;
+}
+
 function getLogicQuestionText(question, index) {
   return question || LOGIC_QUESTION_FALLBACKS[index] || "";
+}
+
+function getSaveResultErrorMessage(error) {
+  const message = error?.message || "Unknown Supabase error";
+
+  if (error?.code === "23505") {
+    return "Этот пользователь уже проходил тест.";
+  }
+
+  if (message.includes("Authentication required")) {
+    return "Сессия входа истекла. Выйдите и войдите в аккаунт заново.";
+  }
+
+  if (message.includes("Test is closed")) {
+    return "Тест закрыт администратором.";
+  }
+
+  if (message.includes("Exactly 10 logic answers")) {
+    return "Не отправились все 10 логических ответов. Обновите страницу и попробуйте ещё раз.";
+  }
+
+  if (message.includes("Invalid total question count")) {
+    return "Не отправились все 30 вопросов теста. Обновите страницу и попробуйте ещё раз.";
+  }
+
+  if (message.toLowerCase().includes("row-level security")) {
+    return "Supabase заблокировал сохранение по RLS-политике. Проверьте SQL-схему и права таблиц.";
+  }
+
+  return `Не удалось сохранить результат теста: ${message}`;
 }
 
 function renderTestQuestions() {
   autoQuestions.innerHTML = "";
 
-  testQuestions.forEach(q => {
+  TEST_QUESTION_FALLBACKS.forEach((fallbackQuestion, index) => {
+    const q = getTestQuestion(testQuestions[index] || fallbackQuestion, index);
     const optionsMarkup = TEST_OPTION_KEYS.map(optionKey => `
         <label><input type="radio" name="${q.id}" value="${optionKey}"> ${optionKey}) ${getQuestionOptionText(q, optionKey)}</label>
     `).join("");
@@ -2993,7 +3040,8 @@ firstTestForm.addEventListener("submit", async (event) => {
   let correct = 0;
   let wrong = 0;
 
-  testQuestions.forEach(q => {
+  TEST_QUESTION_FALLBACKS.forEach((fallbackQuestion, index) => {
+    const q = getTestQuestion(testQuestions[index] || fallbackQuestion, index);
     const selected = document.querySelector(`input[name="${q.id}"]:checked`);
 
     if (!selected) {
@@ -3008,7 +3056,7 @@ firstTestForm.addEventListener("submit", async (event) => {
     }
   });
 
-  const total = testQuestions.length;
+  const total = TEST_QUESTION_FALLBACKS.length;
   const percent = Math.round((correct / total) * 100);
   const logicAnswersPayload = LOGIC_QUESTION_FALLBACKS.map((fallbackQuestion, index) => {
     const question = logicQuestions[index] || fallbackQuestion;
@@ -3021,6 +3069,11 @@ firstTestForm.addEventListener("submit", async (event) => {
     };
   });
 
+  if (total !== 30 || logicAnswersPayload.length !== 10) {
+    alert("Не удалось подготовить тест к отправке. Обновите страницу и попробуйте ещё раз.");
+    return;
+  }
+
   const { data: submitData, error: saveResultError } = await db
     .rpc("submit_test_attempt", {
       p_test_name: FIRST_TEST_NAME,
@@ -3031,13 +3084,8 @@ firstTestForm.addEventListener("submit", async (event) => {
     });
 
   if (saveResultError) {
-    if (saveResultError.code === "23505") {
-      alert("This user has already passed this test.");
-      return;
-    }
-
     console.error(saveResultError);
-    alert("Не удалось сохранить результат теста.");
+    alert(getSaveResultErrorMessage(saveResultError));
     return;
   }
 

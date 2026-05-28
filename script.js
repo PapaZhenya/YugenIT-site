@@ -2789,18 +2789,73 @@ const logicQuestions = [
   "Почему разделение сети по VLAN повышает безопасность и стабильность офиса?"
 ];
 
+const LOGIC_QUESTION_FALLBACKS = [
+  "В офисе периодически пропадает интернет у всех устройств. С чего начнешь диагностику?",
+  "Пользователь говорит, что интернет лагает, но только у него. Какие проверки сделаешь первыми?",
+  "Как определить, проблема в сети или в конкретном ПК?",
+  "В сети резко вырос ping и загрузка коммутаторов. Какие причины наиболее вероятны?",
+  "В офисе плохо работает VoIP только вечером. Почему это может происходить?",
+  "Почему loop считается одной из самых опасных проблем в локальной сети?",
+  "Как понять, что проблема именно в DNS, а не в интернете?",
+  "Почему не рекомендуется ставить максимальную мощность на все Wi-Fi точки?",
+  "Что лучше для офиса: один мощный роутер или несколько точек доступа? И почему?",
+  "Почему разделение сети по VLAN повышает безопасность и стабильность офиса?"
+];
+
+const TEST_OPTION_KEYS = ["A", "B", "C", "D"];
+const TEST_OPTION_TEXT_FALLBACKS = {
+  q4: {
+    A: "Частичная потеря доступа к локальным ресурсам",
+    B: "Рост broadcast-трафика во всей сети",
+    C: "Ошибка авторизации доменных пользователей",
+    D: "Автоматическое отключение DHCP-сервера"
+  },
+  q6: {
+    A: "Высокий jitter и packet loss",
+    B: "Слишком большой DHCP pool",
+    C: "Конфликт NetBIOS имен",
+    D: "Неправильная работа STP"
+  },
+  q12: {
+    A: "Объединение интерфейсов в один L2-сегмент",
+    B: "Балансировка интернет-каналов",
+    C: "Создание VPN-туннеля",
+    D: "Ограничение скорости пользователей"
+  },
+  q18: {
+    A: "Автоматически выдает сетевые настройки клиентам",
+    B: "Шифрует трафик между VLAN",
+    C: "Управляет DNS cache",
+    D: "Балансирует нагрузку каналов"
+  },
+  q19: {
+    A: "Устройство не сможет корректно определять локальную сеть",
+    B: "DHCP перестанет работать на всех устройствах",
+    C: "Пропадет DNS",
+    D: "Отключится Wi-Fi адаптер"
+  }
+};
+
+function getQuestionOptionText(question, optionKey) {
+  return question.options?.[optionKey] || TEST_OPTION_TEXT_FALLBACKS[question.id]?.[optionKey] || "";
+}
+
+function getLogicQuestionText(question, index) {
+  return question || LOGIC_QUESTION_FALLBACKS[index] || "";
+}
+
 function renderTestQuestions() {
   autoQuestions.innerHTML = "";
 
   testQuestions.forEach(q => {
+    const optionsMarkup = TEST_OPTION_KEYS.map(optionKey => `
+        <label><input type="radio" name="${q.id}" value="${optionKey}"> ${optionKey}) ${getQuestionOptionText(q, optionKey)}</label>
+    `).join("");
+
     autoQuestions.innerHTML += `
       <div class="question">
         <h3>${q.number}. ${q.question}</h3>
-
-        <label><input type="radio" name="${q.id}" value="A"> A) ${q.options.A}</label>
-        <label><input type="radio" name="${q.id}" value="B"> B) ${q.options.B}</label>
-        <label><input type="radio" name="${q.id}" value="C"> C) ${q.options.C}</label>
-        <label><input type="radio" name="${q.id}" value="D"> D) ${q.options.D}</label>
+${optionsMarkup}
       </div>
     `;
   });
@@ -2809,11 +2864,14 @@ function renderTestQuestions() {
 function renderLogicQuestions() {
   logicQuestionsBox.innerHTML = "";
 
-  logicQuestions.forEach((question, index) => {
+  LOGIC_QUESTION_FALLBACKS.forEach((fallbackQuestion, index) => {
+    const question = logicQuestions[index] || fallbackQuestion;
+    const questionText = getLogicQuestionText(question, index);
+
     logicQuestionsBox.innerHTML += `
       <div class="question">
         <h3>Логическое задание ${index + 1}</h3>
-        <p>${question}</p>
+        <p>${questionText}</p>
         <textarea class="logic-answer" name="logic${index + 1}" placeholder="Write your answer here..."></textarea>
       </div>
     `;
@@ -2952,12 +3010,13 @@ firstTestForm.addEventListener("submit", async (event) => {
 
   const total = testQuestions.length;
   const percent = Math.round((correct / total) * 100);
-  const logicAnswersPayload = logicQuestions.map((question, index) => {
+  const logicAnswersPayload = LOGIC_QUESTION_FALLBACKS.map((fallbackQuestion, index) => {
+    const question = logicQuestions[index] || fallbackQuestion;
     const textarea = document.querySelector(`textarea[name="logic${index + 1}"]`);
 
     return {
       question_number: index + 1,
-      question_text: question,
+      question_text: getLogicQuestionText(question, index),
       answer_text: textarea?.value.trim() || ""
     };
   });

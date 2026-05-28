@@ -1115,9 +1115,9 @@ function getTotalCoursesCount() {
 
 function getRatingPosition(username) {
   const sortedProfiles = [...profilesCache].sort((a, b) => {
-    const xpDiff = (Number(b.xp) || 0) - (Number(a.xp) || 0);
-    if (xpDiff !== 0) return xpDiff;
-    return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+    const ratingDiff = (Number(b.rating) || 0) - (Number(a.rating) || 0);
+    if (ratingDiff !== 0) return ratingDiff;
+    return new Date(a.created_at || 0) - new Date(b.created_at || 0);
   });
   const index = sortedProfiles.findIndex(result => result.username === username);
   return index === -1 ? "---" : `#${index + 1}`;
@@ -1397,14 +1397,11 @@ async function renderUsers() {
     .map(user => ({
       username: user.username,
       region: user.region || "SD",
-      xp: Number(user.xp) || 0,
       level: Number(user.level) || 1,
       rating: Number(user.rating) || 0,
       createdAt: user.created_at
     }))
     .sort((a, b) => {
-      const xpDiff = b.xp - a.xp;
-      if (xpDiff !== 0) return xpDiff;
       const ratingDiff = b.rating - a.rating;
       if (ratingDiff !== 0) return ratingDiff;
       return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
@@ -1443,7 +1440,7 @@ async function renderUsers() {
 
         <td>
           <span class="rating-score">
-            ${user.xp} XP / ${user.rating}
+            ${user.rating}
           </span>
         </td>
       `;
@@ -1784,14 +1781,14 @@ const techSupportClose = document.getElementById("techSupportClose");
 const translations = {
   en: {
     home: "Home",
-    progress: "Progress",
+    courses: "Courses",
     tech: "Tech Moments",
     classes: "Classes and Tests",
     tests: "Rating",
     settings: "Settings",
 
     unfinishedCourses: "Your unfinished courses",
-    allInfo: "All Informations",
+    allInfo: "All Basic Information",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
@@ -1829,14 +1826,14 @@ const translations = {
 
   ru: {
     home: "Главная",
-    progress: "Прогресс",
+    courses: "Курсы",
     tech: "Тех. моменты",
     classes: "Тесты и задания",
     tests: "Рейтинг",
     settings: "Настройки",
 
     unfinishedCourses: "Ваши незавершённые курсы",
-    allInfo: "Вся информация",
+    allInfo: "All Basic Information",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
@@ -1874,14 +1871,14 @@ const translations = {
 
   uk: {
     home: "Головна",
-    progress: "Прогрес",
+    courses: "Курси",
     tech: "Тех. моменти",
     classes: "Класи",
     tests: "Рейтинг",
     settings: "Налаштування",
 
     unfinishedCourses: "Ваші незавершені курси",
-    allInfo: "Уся інформація",
+    allInfo: "All Basic Information",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Вивчайте сучасні хмарні системи, віртуальні сервери та корпоративні платформи.",
@@ -1919,14 +1916,14 @@ const translations = {
 
   es: {
     home: "Inicio",
-    progress: "Progreso",
+    courses: "Cursos",
     tech: "Momentos técnicos",
     classes: "Clases",
     tests: "Clasificación",
     settings: "Configuración",
 
     unfinishedCourses: "Tus cursos sin terminar",
-    allInfo: "Toda la información",
+    allInfo: "All Basic Information",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Aprende sistemas cloud modernos, servidores virtuales y plataformas empresariales.",
@@ -2424,7 +2421,7 @@ function applyLanguage(lang) {
   const t = translations[lang] || translations.en;
 
   document.querySelector('[data-page="home"]').innerHTML = `<img class="menu-icon" src="home.jpg" alt=""> <span>${t.home}</span>`;
-  document.querySelector('[data-page="progress"]').innerHTML = `<img class="menu-icon" src="progress.jpg" alt=""> <span>${t.progress}</span>`;
+  document.querySelector('[data-page="courses"]').innerHTML = `<img class="menu-icon" src="progress.jpg" alt=""> <span>${t.courses}</span>`;
   document.querySelector('[data-page="messages"]').innerHTML = `<img class="menu-icon" src="tech.moments.jpg" alt=""> <span>${t.tech}</span>`;
   document.querySelector('[data-page="classes"]').innerHTML = `<img class="menu-icon" src="classesandtest.jpg" alt=""> <span>${t.classes}</span>`;
   document.querySelector('[data-page="tests"]').innerHTML = `<img class="menu-icon" src="rating.menu.jpg" alt=""> <span>${t.tests}</span>`;

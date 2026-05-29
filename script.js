@@ -1604,6 +1604,7 @@ async function renderUsers() {
         <td>
           <select class="region-select" data-username="${user.username}">
             <option value="SD" ${user.region === "SD" ? "selected" : ""}>SD</option>
+            <option value="SR" ${user.region === "SR" ? "selected" : ""}>SR</option>
             <option value="PC" ${user.region === "PC" ? "selected" : ""}>PC</option>
             <option value="COL" ${user.region === "COL" ? "selected" : ""}>COL</option>
           </select>

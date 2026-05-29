@@ -3663,6 +3663,12 @@ body.results-open {
   padding: 8px 14px;
 
   outline: none;
+
+  text-transform: uppercase;
+}
+
+.region-select option {
+  text-transform: uppercase;
 }
 
 .region-select:focus {

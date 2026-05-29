@@ -210,6 +210,10 @@
           <select id="adminPointsUser"></select>
         </label>
         <label>
+          Find user
+          <input id="adminRetakeSearch" type="search" placeholder="username or email">
+        </label>
+        <label>
           Amount
           <input id="adminPointsAmount" type="number" min="1" step="1" placeholder="100">
         </label>
@@ -225,6 +229,15 @@
         <button type="button" data-adjust-kind="xp" data-adjust-direction="remove">Remove XP</button>
         <button type="button" data-adjust-kind="rating" data-adjust-direction="add">Add Rating</button>
         <button type="button" data-adjust-kind="rating" data-adjust-direction="remove">Remove Rating</button>
+      </div>
+
+      <div class="admin-retake-panel">
+        <div>
+          <span>Reset test attempt</span>
+          <strong>Allow retake</strong>
+          <small>Сбрасывает только прохождение выбранного пользователя для первого теста.</small>
+        </div>
+        <button id="allowRetakeBtn" type="button">Разрешить пройти заново</button>
       </div>
     </div>
   </div>

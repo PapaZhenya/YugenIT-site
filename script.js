@@ -1325,6 +1325,60 @@ async function adjustUserPoints(kind, direction) {
   alert("Изменение сохранено.");
 }
 
+async function allowUserTestRetake() {
+  const profile = await getCurrentUserProfile();
+
+  if (!profile || profile.role !== "admin") {
+    alert("Нет прав администратора.");
+    return;
+  }
+
+  const targetUserId = adminPointsUser?.value;
+  const targetUser = profilesCache.find(user => user.id === targetUserId);
+
+  if (!targetUserId || !targetUser) {
+    alert("Пользователь не найден.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to reset this user’s test attempt?\n\nUser: ${targetUser.username}`);
+
+  if (!confirmed) return;
+
+  setAdminPointsStatus("Resetting test attempt...");
+
+  const { data, error } = await db.rpc("admin_reset_test_attempt", {
+    p_target_user_id: targetUserId,
+    p_test_name: FIRST_TEST_NAME,
+    p_reason: "Admin allowed test retake"
+  });
+
+  if (error) {
+    console.error(error);
+    const message = error.message || "Database error";
+
+    if (message.includes("Admin role required")) {
+      alert("Нет прав администратора.");
+    } else if (message.includes("Target user not found")) {
+      alert("Пользователь не найден.");
+    } else if (message.includes("Test attempt not found")) {
+      alert("Этот пользователь ещё не проходил тест.");
+    } else {
+      alert(`Ошибка базы данных: ${message}`);
+    }
+
+    setAdminPointsStatus("Reset failed");
+    return;
+  }
+
+  const result = Array.isArray(data) ? data[0] : data;
+  await getUsers();
+  await renderUsers();
+  renderAdminUserOptions();
+  setAdminPointsStatus(`Retake allowed for ${result?.username || targetUser.username}`);
+  alert("Test attempt has been reset for this user.");
+}
+
 async function applyAdminCode(code) {
   const { data, error } = await db
     .rpc("apply_admin_code", {
@@ -1404,11 +1458,19 @@ function renderAdminUserOptions() {
   if (!adminPointsUser) return;
 
   const selectedUserId = adminPointsUser.value;
+  const searchTerm = adminRetakeSearch?.value.trim().toLowerCase() || "";
   adminPointsUser.innerHTML = "";
 
   profilesCache
     .slice()
     .sort((a, b) => (a.username || "").localeCompare(b.username || ""))
+    .filter(user => {
+      if (!searchTerm) return true;
+
+      return [user.username, user.email, user.id]
+        .filter(Boolean)
+        .some(value => String(value).toLowerCase().includes(searchTerm));
+    })
     .forEach(user => {
       const option = document.createElement("option");
       option.value = user.id;
@@ -1418,6 +1480,13 @@ function renderAdminUserOptions() {
 
   if (selectedUserId && profilesCache.some(user => user.id === selectedUserId)) {
     adminPointsUser.value = selectedUserId;
+  }
+
+  if (!adminPointsUser.options.length) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "No users found";
+    adminPointsUser.appendChild(option);
   }
 }
 
@@ -1824,10 +1893,12 @@ const adminCodeInput = document.getElementById("adminCodeInput");
 const activateAdminBtn = document.getElementById("activateAdminBtn");
 const adminPointsPanel = document.getElementById("adminPointsPanel");
 const adminPointsUser = document.getElementById("adminPointsUser");
+const adminRetakeSearch = document.getElementById("adminRetakeSearch");
 const adminPointsAmount = document.getElementById("adminPointsAmount");
 const adminPointsReason = document.getElementById("adminPointsReason");
 const adminPointsStatus = document.getElementById("adminPointsStatus");
 const adminPointButtons = document.querySelectorAll("[data-adjust-kind]");
+const allowRetakeBtn = document.getElementById("allowRetakeBtn");
 
 const burgerBtn = document.getElementById("burgerBtn");
 const burgerMenu = document.getElementById("burgerMenu");
@@ -3682,6 +3753,9 @@ adminPointButtons.forEach(button => {
     adjustUserPoints(button.dataset.adjustKind, button.dataset.adjustDirection);
   });
 });
+
+adminRetakeSearch?.addEventListener("input", renderAdminUserOptions);
+allowRetakeBtn?.addEventListener("click", allowUserTestRetake);
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("authModal").style.display = "flex";

@@ -167,6 +167,35 @@ alter table public.admin_rating_adjustments add column if not exists rating_delt
 alter table public.admin_rating_adjustments add column if not exists reason text;
 alter table public.admin_rating_adjustments add column if not exists created_at timestamptz not null default now();
 
+create table if not exists public.admin_test_resets (
+  id uuid primary key default gen_random_uuid(),
+  target_user_id uuid not null references auth.users(id) on delete cascade,
+  target_username text not null,
+  admin_user_id uuid not null references auth.users(id) on delete cascade,
+  admin_username text not null,
+  test_name text not null,
+  removed_test_results integer not null default 0,
+  removed_logic_answers integer not null default 0,
+  removed_ai_reviews integer not null default 0,
+  xp_delta integer not null default 0,
+  rating_delta integer not null default 0,
+  reason text not null check (char_length(trim(reason)) > 0),
+  created_at timestamptz not null default now()
+);
+
+alter table public.admin_test_resets add column if not exists target_user_id uuid references auth.users(id) on delete cascade;
+alter table public.admin_test_resets add column if not exists target_username text;
+alter table public.admin_test_resets add column if not exists admin_user_id uuid references auth.users(id) on delete cascade;
+alter table public.admin_test_resets add column if not exists admin_username text;
+alter table public.admin_test_resets add column if not exists test_name text;
+alter table public.admin_test_resets add column if not exists removed_test_results integer not null default 0;
+alter table public.admin_test_resets add column if not exists removed_logic_answers integer not null default 0;
+alter table public.admin_test_resets add column if not exists removed_ai_reviews integer not null default 0;
+alter table public.admin_test_resets add column if not exists xp_delta integer not null default 0;
+alter table public.admin_test_resets add column if not exists rating_delta integer not null default 0;
+alter table public.admin_test_resets add column if not exists reason text;
+alter table public.admin_test_resets add column if not exists created_at timestamptz not null default now();
+
 create table if not exists public.logic_ai_reviews (
   id uuid primary key default gen_random_uuid(),
   logic_answer_id uuid not null references public.logic_answers(id) on delete cascade,
@@ -618,6 +647,159 @@ begin
 end;
 $$;
 
+create or replace function public.admin_reset_test_attempt(
+  p_target_user_id uuid,
+  p_test_name text,
+  p_reason text default 'Admin allowed test retake'
+)
+returns table (
+  target_user_id uuid,
+  username text,
+  removed_test_results integer,
+  removed_logic_answers integer,
+  removed_ai_reviews integer,
+  xp_delta integer,
+  rating_delta integer
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_admin_user_id uuid := auth.uid();
+  v_admin_username text;
+  v_target_username text;
+  v_removed_test_results integer := 0;
+  v_removed_logic_answers integer := 0;
+  v_removed_ai_reviews integer := 0;
+  v_test_xp integer := 0;
+  v_test_rating integer := 0;
+  v_ai_xp integer := 0;
+  v_ai_rating integer := 0;
+  v_xp_delta integer := 0;
+  v_rating_delta integer := 0;
+begin
+  if v_admin_user_id is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if not public.is_admin() then
+    raise exception 'Admin role required';
+  end if;
+
+  if p_target_user_id is null then
+    raise exception 'Target user not found';
+  end if;
+
+  if char_length(trim(coalesce(p_test_name, ''))) = 0 then
+    raise exception 'Test name is required';
+  end if;
+
+  if char_length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'Reset reason is required';
+  end if;
+
+  select profiles.username into v_admin_username
+  from public.profiles
+  where profiles.id = v_admin_user_id
+    and profiles.role = 'admin';
+
+  if v_admin_username is null then
+    raise exception 'Admin profile not found';
+  end if;
+
+  select profiles.username into v_target_username
+  from public.profiles
+  where profiles.id = p_target_user_id;
+
+  if v_target_username is null then
+    raise exception 'Target user not found';
+  end if;
+
+  select
+    coalesce(sum(test_results.xp_earned), 0)::integer,
+    coalesce(sum(test_results.score), 0)::integer,
+    count(*)::integer
+  into v_test_xp, v_test_rating, v_removed_test_results
+  from public.test_results
+  where test_results.user_id = p_target_user_id
+    and test_results.test_name = p_test_name;
+
+  select
+    coalesce(sum(logic_ai_reviews.xp_awarded), 0)::integer,
+    coalesce(sum(logic_ai_reviews.rating_awarded), 0)::integer,
+    count(*)::integer
+  into v_ai_xp, v_ai_rating, v_removed_ai_reviews
+  from public.logic_ai_reviews
+  where logic_ai_reviews.user_id = p_target_user_id
+    and logic_ai_reviews.test_name = p_test_name;
+
+  select count(*)::integer into v_removed_logic_answers
+  from public.logic_answers
+  where logic_answers.user_id = p_target_user_id
+    and logic_answers.test_name = p_test_name;
+
+  if v_removed_test_results = 0 and v_removed_logic_answers = 0 and v_removed_ai_reviews = 0 then
+    raise exception 'Test attempt not found';
+  end if;
+
+  delete from public.test_results
+  where test_results.user_id = p_target_user_id
+    and test_results.test_name = p_test_name;
+
+  delete from public.logic_answers
+  where logic_answers.user_id = p_target_user_id
+    and logic_answers.test_name = p_test_name;
+
+  v_xp_delta := -1 * (v_test_xp + v_ai_xp);
+  v_rating_delta := -1 * (v_test_rating + v_ai_rating);
+
+  update public.profiles
+  set
+    xp = greatest(public.profiles.xp + v_xp_delta, 0),
+    rating = greatest(public.profiles.rating + v_rating_delta, 0),
+    level = public.calculate_lms_level(greatest(public.profiles.xp + v_xp_delta, 0))
+  where profiles.id = p_target_user_id;
+
+  insert into public.admin_test_resets (
+    target_user_id,
+    target_username,
+    admin_user_id,
+    admin_username,
+    test_name,
+    removed_test_results,
+    removed_logic_answers,
+    removed_ai_reviews,
+    xp_delta,
+    rating_delta,
+    reason
+  )
+  values (
+    p_target_user_id,
+    v_target_username,
+    v_admin_user_id,
+    v_admin_username,
+    p_test_name,
+    v_removed_test_results,
+    v_removed_logic_answers,
+    v_removed_ai_reviews,
+    v_xp_delta,
+    v_rating_delta,
+    trim(p_reason)
+  );
+
+  return query
+  select
+    p_target_user_id,
+    v_target_username,
+    v_removed_test_results,
+    v_removed_logic_answers,
+    v_removed_ai_reviews,
+    v_xp_delta,
+    v_rating_delta;
+end;
+$$;
+
 create or replace function public.apply_logic_ai_review(
   p_logic_answer_id uuid,
   p_ai_score numeric,
@@ -860,6 +1042,7 @@ alter table public.admin_messages enable row level security;
 alter table public.notification_reads enable row level security;
 alter table public.admin_test_attempts enable row level security;
 alter table public.admin_rating_adjustments enable row level security;
+alter table public.admin_test_resets enable row level security;
 alter table public.logic_ai_reviews enable row level security;
 alter table public.logic_ai_review_adjustments enable row level security;
 
@@ -1086,6 +1269,29 @@ to authenticated
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "Admins can read test resets" on public.admin_test_resets;
+drop policy if exists "Admins can insert test resets" on public.admin_test_resets;
+drop policy if exists "Admins can manage test resets" on public.admin_test_resets;
+
+create policy "Admins can read test resets"
+on public.admin_test_resets for select
+to authenticated
+using (public.is_admin());
+
+create policy "Admins can insert test resets"
+on public.admin_test_resets for insert
+to authenticated
+with check (
+  public.is_admin()
+  and auth.uid() = admin_user_id
+);
+
+create policy "Admins can manage test resets"
+on public.admin_test_resets for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
 drop policy if exists "Users can read own AI reviews" on public.logic_ai_reviews;
 drop policy if exists "Admins can read all AI reviews" on public.logic_ai_reviews;
 drop policy if exists "Service can insert AI reviews" on public.logic_ai_reviews;
@@ -1139,6 +1345,7 @@ grant execute on function public.is_admin() to authenticated;
 grant execute on function public.apply_admin_code(text) to authenticated;
 grant execute on function public.submit_test_attempt(text, text, integer, integer, jsonb) to authenticated;
 grant execute on function public.admin_adjust_user_points(uuid, integer, integer, text) to authenticated;
+grant execute on function public.admin_reset_test_attempt(uuid, text, text) to authenticated;
 grant execute on function public.apply_logic_ai_review(uuid, numeric, text, text, jsonb) to authenticated;
 grant execute on function public.admin_override_logic_ai_review(uuid, numeric, text, text) to authenticated;
 grant execute on function public.handle_new_user_profile() to authenticated;

@@ -3367,6 +3367,51 @@ body.results-open {
   box-shadow: 0 0 20px rgba(34, 197, 94, .24);
 }
 
+.admin-retake-panel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(168, 85, 247, .3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(76, 29, 149, .2), rgba(3, 111, 72, .18)),
+    rgba(2, 8, 23, .42);
+}
+
+.admin-retake-panel span,
+.admin-retake-panel small {
+  display: block;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.admin-retake-panel strong {
+  display: block;
+  margin: 4px 0;
+  color: #f8fafc;
+  font-size: 20px;
+}
+
+.admin-retake-panel button {
+  min-height: 46px;
+  border: 1px solid rgba(34, 197, 94, .36);
+  border-radius: 8px;
+  padding: 0 18px;
+  color: #ecfeff;
+  font-weight: 900;
+  background: linear-gradient(135deg, rgba(76, 29, 149, .88), rgba(22, 101, 52, .86));
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.admin-retake-panel button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 197, 94, .68);
+  box-shadow: 0 0 20px rgba(168, 85, 247, .22);
+}
+
 .ai-checking-box,
 .ai-review-result,
 .ai-review-error {
@@ -3488,6 +3533,7 @@ body.results-open {
   .admin-points-head,
   .admin-points-grid,
   .admin-points-actions,
+  .admin-retake-panel,
   .logic-ai-override,
   .admin-code-row {
     grid-template-columns: 1fr;
@@ -3498,6 +3544,7 @@ body.results-open {
   .admin-code-row input,
   .admin-code-row button,
   .admin-points-actions button,
+  .admin-retake-panel button,
   .logic-ai-override button,
   .test-admin-panel button {
     width: 100%;
@@ -4258,6 +4305,7 @@ select {
   .admin-points-head,
   .admin-points-grid,
   .admin-points-actions,
+  .admin-retake-panel,
   .logic-ai-override,
   .admin-code-row,
   .logic-review-head {

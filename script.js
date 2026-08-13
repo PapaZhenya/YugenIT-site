@@ -1039,6 +1039,8 @@ function renderModuleQuiz(moduleId) {
         <div class="quiz-question" data-type="open">
           <p class="quiz-question-text">${q.id}. ${q.text}</p>
           <textarea class="quiz-open-input" placeholder="Ваш ответ..."></textarea>
+          <button type="button" class="chatgpt-check-btn">Проверить в ChatGPT →</button>
+          <p class="chatgpt-check-status" hidden></p>
         </div>
       `;
     }
@@ -1066,7 +1068,7 @@ function renderModuleQuiz(moduleId) {
   return `
     <section class="lesson-section module-quiz">
       <h2>Мини-тест</h2>
-      <p>Ответьте на вопросы и нажмите «Проверить ответы», чтобы увидеть результат. Открытые вопросы не проверяются автоматически — используйте их для самопроверки.</p>
+      <p>Ответьте на вопросы и нажмите «Проверить ответы», чтобы увидеть результат. Для открытых вопросов нажмите «Проверить в ChatGPT» — вопрос и ваш ответ скопируются в буфер обмена, останется вставить их в открывшийся чат.</p>
       <form class="module-quiz-form" data-module="${moduleId}">
         ${questionsMarkup}
         <button type="submit" class="submit-test-btn">Проверить ответы</button>
@@ -1114,6 +1116,39 @@ document.addEventListener("submit", event => {
 
   event.preventDefault();
   gradeModuleQuiz(form);
+});
+
+document.addEventListener("click", event => {
+  const chatGptBtn = event.target.closest(".chatgpt-check-btn");
+  if (!chatGptBtn) return;
+
+  const questionEl = chatGptBtn.closest(".quiz-question");
+  const statusEl = questionEl?.querySelector(".chatgpt-check-status");
+  const questionText = questionEl?.querySelector(".quiz-question-text")?.textContent.trim() || "";
+  const answerText = questionEl?.querySelector(".quiz-open-input")?.value.trim() || "";
+
+  const setStatus = message => {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.hidden = false;
+  };
+
+  if (!answerText) {
+    setStatus("Сначала напишите ответ.");
+    return;
+  }
+
+  const prompt = [
+    "Проверь мой ответ на вопрос по курсу «Кибербезопасность с нуля до junior».",
+    `Вопрос: ${questionText}`,
+    `Мой ответ: ${answerText}`,
+    "Скажи, что верно, чего не хватает, и оцени по шкале от 0 до 5."
+  ].join("\n\n");
+
+  navigator.clipboard?.writeText(prompt).catch(() => {});
+  window.open("https://chatgpt.com", "_blank", "noopener,noreferrer");
+
+  setStatus("Вопрос и ответ скопированы в буфер обмена — вставьте их в открывшийся чат ChatGPT (Ctrl+V).");
 });
 
 function renderCourseModule(course, moduleId) {

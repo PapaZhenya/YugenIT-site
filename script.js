@@ -1035,12 +1035,24 @@ function renderModuleQuiz(moduleId) {
     const inputName = `quiz-${moduleId}-${index}`;
 
     if (q.type === "open") {
+      const selfScoreName = `selfscore-${moduleId}-${index}`;
+      const selfScoreOptions = [0, 1, 2, 3].map(value => `
+        <label class="quiz-self-score-option">
+          <input type="radio" name="${selfScoreName}" value="${value}">
+          ${value}
+        </label>
+      `).join("");
+
       return `
         <div class="quiz-question" data-type="open">
           <p class="quiz-question-text">${q.id}. ${q.text}</p>
           <textarea class="quiz-open-input" placeholder="Ваш ответ..."></textarea>
           <button type="button" class="chatgpt-check-btn">Проверить в ChatGPT →</button>
           <p class="chatgpt-check-status" hidden></p>
+          <div class="quiz-self-score">
+            <span>Моя оценка (после ответа ChatGPT):</span>
+            ${selfScoreOptions}
+          </div>
         </div>
       `;
     }
@@ -1068,7 +1080,7 @@ function renderModuleQuiz(moduleId) {
   return `
     <section class="lesson-section module-quiz">
       <h2>Мини-тест</h2>
-      <p>Ответьте на вопросы и нажмите «Проверить ответы», чтобы увидеть результат. Для открытых вопросов нажмите «Проверить в ChatGPT» — вопрос и ваш ответ скопируются в буфер обмена, останется вставить их в открывшийся чат.</p>
+      <p>Тестовые вопросы — 1 балл за верный ответ. Письменные — до 3 баллов: нажмите «Проверить в ChatGPT», прочитайте разбор и честно выставите себе оценку от 0 до 3. Нажмите «Проверить ответы», чтобы увидеть общий результат.</p>
       <form class="module-quiz-form" data-module="${moduleId}">
         ${questionsMarkup}
         <button type="submit" class="submit-test-btn">Проверить ответы</button>
@@ -1079,10 +1091,12 @@ function renderModuleQuiz(moduleId) {
 }
 
 function gradeModuleQuiz(form) {
-  const gradableQuestions = form.querySelectorAll(".quiz-question[data-input-name]");
-  let correctCount = 0;
+  const closedQuestions = form.querySelectorAll(".quiz-question[data-input-name]");
+  const openQuestions = form.querySelectorAll('.quiz-question[data-type="open"]');
+  let earnedPoints = 0;
+  let maxPoints = 0;
 
-  gradableQuestions.forEach(questionEl => {
+  closedQuestions.forEach(questionEl => {
     const inputName = questionEl.dataset.inputName;
     const correctValue = questionEl.dataset.correct;
     const selected = form.querySelector(`input[name="${inputName}"]:checked`);
@@ -1092,9 +1106,10 @@ function gradeModuleQuiz(form) {
     questionEl.classList.remove("is-correct", "is-wrong");
     questionEl.classList.add(isCorrect ? "is-correct" : "is-wrong");
 
+    maxPoints += 1;
     if (isCorrect) {
-      correctCount++;
-      feedback.textContent = "Верно!";
+      earnedPoints += 1;
+      feedback.textContent = "Верно! (+1 балл)";
     } else {
       feedback.textContent = selected
         ? `Неверно. Правильный ответ: ${correctValue}`
@@ -1103,9 +1118,17 @@ function gradeModuleQuiz(form) {
     feedback.hidden = false;
   });
 
+  openQuestions.forEach(questionEl => {
+    const selected = questionEl.querySelector(".quiz-self-score input:checked");
+    const points = selected ? Number(selected.value) : 0;
+
+    maxPoints += 3;
+    earnedPoints += points;
+  });
+
   const scoreEl = form.parentElement.querySelector(".quiz-score");
   if (scoreEl) {
-    scoreEl.textContent = `Результат: ${correctCount} из ${gradableQuestions.length} правильных ответов.`;
+    scoreEl.textContent = `Результат: ${earnedPoints} из ${maxPoints} баллов.`;
     scoreEl.hidden = false;
   }
 }

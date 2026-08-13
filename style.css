@@ -1150,6 +1150,28 @@ h1 {
   color: #a5f3fc;
 }
 
+.quiz-self-score {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(34, 211, 238, .14);
+  color: #d1fae5;
+  font-size: 15px;
+}
+
+.quiz-self-score-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(34, 211, 238, .18);
+  cursor: pointer;
+}
+
 .lesson-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(180px, 1fr));

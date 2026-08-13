@@ -1027,6 +1027,95 @@ function renderCourseHome(course) {
   `;
 }
 
+function renderModuleQuiz(moduleId) {
+  const questions = window.CYBER_COURSE_QUIZZES?.[moduleId];
+  if (!questions || !questions.length) return "";
+
+  const questionsMarkup = questions.map((q, index) => {
+    const inputName = `quiz-${moduleId}-${index}`;
+
+    if (q.type === "open") {
+      return `
+        <div class="quiz-question" data-type="open">
+          <p class="quiz-question-text">${q.id}. ${q.text}</p>
+          <textarea class="quiz-open-input" placeholder="Ваш ответ..."></textarea>
+        </div>
+      `;
+    }
+
+    const options = q.type === "tf"
+      ? { "Верно": "Верно", "Неверно": "Неверно" }
+      : q.options;
+
+    const optionsMarkup = Object.entries(options).map(([value, label]) => `
+      <label class="quiz-option">
+        <input type="radio" name="${inputName}" value="${value}">
+        ${q.type === "mc" ? `${value}) ` : ""}${label}
+      </label>
+    `).join("");
+
+    return `
+      <div class="quiz-question" data-type="${q.type}" data-input-name="${inputName}" data-correct="${q.correct}">
+        <p class="quiz-question-text">${q.id}. ${q.text}</p>
+        ${optionsMarkup}
+        <p class="quiz-answer-feedback" hidden></p>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <section class="lesson-section module-quiz">
+      <h2>Мини-тест</h2>
+      <p>Ответьте на вопросы и нажмите «Проверить ответы», чтобы увидеть результат. Открытые вопросы не проверяются автоматически — используйте их для самопроверки.</p>
+      <form class="module-quiz-form" data-module="${moduleId}">
+        ${questionsMarkup}
+        <button type="submit" class="submit-test-btn">Проверить ответы</button>
+      </form>
+      <p class="quiz-score" hidden></p>
+    </section>
+  `;
+}
+
+function gradeModuleQuiz(form) {
+  const gradableQuestions = form.querySelectorAll(".quiz-question[data-input-name]");
+  let correctCount = 0;
+
+  gradableQuestions.forEach(questionEl => {
+    const inputName = questionEl.dataset.inputName;
+    const correctValue = questionEl.dataset.correct;
+    const selected = form.querySelector(`input[name="${inputName}"]:checked`);
+    const feedback = questionEl.querySelector(".quiz-answer-feedback");
+    const isCorrect = selected?.value === correctValue;
+
+    questionEl.classList.remove("is-correct", "is-wrong");
+    questionEl.classList.add(isCorrect ? "is-correct" : "is-wrong");
+
+    if (isCorrect) {
+      correctCount++;
+      feedback.textContent = "Верно!";
+    } else {
+      feedback.textContent = selected
+        ? `Неверно. Правильный ответ: ${correctValue}`
+        : `Вопрос пропущен. Правильный ответ: ${correctValue}`;
+    }
+    feedback.hidden = false;
+  });
+
+  const scoreEl = form.parentElement.querySelector(".quiz-score");
+  if (scoreEl) {
+    scoreEl.textContent = `Результат: ${correctCount} из ${gradableQuestions.length} правильных ответов.`;
+    scoreEl.hidden = false;
+  }
+}
+
+document.addEventListener("submit", event => {
+  const form = event.target.closest(".module-quiz-form");
+  if (!form) return;
+
+  event.preventDefault();
+  gradeModuleQuiz(form);
+});
+
 function renderCourseModule(course, moduleId) {
   const mod = course.modules.find(item => item.id === moduleId);
   if (!mod) return course.cardText;
@@ -1034,6 +1123,7 @@ function renderCourseModule(course, moduleId) {
   return `
     <button type="button" class="back course-home-link" data-course="${course.id}">← К программе курса</button>
     ${mod.html}
+    ${renderModuleQuiz(moduleId)}
   `;
 }
 

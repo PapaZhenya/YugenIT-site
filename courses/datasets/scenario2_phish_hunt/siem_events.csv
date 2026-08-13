@@ -1,0 +1,31 @@
+event_id,timestamp,host,user,source,event_type,detail
+1,2025-05-06 10:48:00,WKS-03,rlee,Sysmon,ProcessCreate,outlook.exe
+2,2025-05-06 09:46:00,WKS-02,rlee,Sysmon,ProcessCreate,teams.exe
+3,2025-05-06 09:03:00,WKS-01,rlee,Sysmon,ProcessCreate,outlook.exe
+4,2025-05-06 09:07:00,WKS-03,rlee,Sysmon,ProcessCreate,chrome.exe
+5,2025-05-06 10:48:00,WKS-03,mwong,Sysmon,ProcessCreate,excel.exe
+6,2025-05-06 10:06:00,WKS-03,mwong,Sysmon,ProcessCreate,outlook.exe
+7,2025-05-06 10:28:00,WKS-01,mwong,Sysmon,ProcessCreate,excel.exe
+8,2025-05-06 10:02:00,WKS-02,jsmith,Sysmon,ProcessCreate,excel.exe
+9,2025-05-06 09:01:00,WKS-03,jsmith,Sysmon,ProcessCreate,chrome.exe
+10,2025-05-06 10:37:00,WKS-01,mwong,Sysmon,ProcessCreate,teams.exe
+11,2025-05-06 10:19:00,WKS-02,mwong,Sysmon,ProcessCreate,teams.exe
+12,2025-05-06 09:22:00,WKS-01,mwong,Sysmon,ProcessCreate,outlook.exe
+13,2025-05-06 09:24:00,WKS-01,mwong,Sysmon,ProcessCreate,outlook.exe
+14,2025-05-06 09:11:00,WKS-03,rlee,Sysmon,ProcessCreate,outlook.exe
+15,2025-05-06 09:53:00,WKS-01,rlee,Sysmon,ProcessCreate,chrome.exe
+16,2025-05-06 10:42:00,MAIL,jsmith,MailGW,EmailReceived,From: hr-portal@benefits-update[.]com Subj: 'Action required: update your payroll' Attach: Invoice_0456.docm
+17,2025-05-06 10:45:00,WKS-02,jsmith,Sysmon,ProcessCreate,WINWORD.EXE opened Invoice_0456.docm
+18,2025-05-06 10:45:05,WKS-02,jsmith,Sysmon,ProcessCreate,WINWORD.EXE -> cmd.exe /c powershell -enc <base64>
+19,2025-05-06 10:45:07,WKS-02,jsmith,Sysmon,NetworkConnect,powershell.exe -> 91.219.236.14:443 (unknown)
+20,2025-05-06 10:45:20,WKS-02,jsmith,Sysmon,FileCreate,C:\Users\jsmith\AppData\Roaming\svchost.exe
+21,2025-05-06 10:46:00,WKS-02,jsmith,Sysmon,RegistrySet,HKCU\...\Run\Updater = svchost.exe
+22,2025-05-06 10:51:00,WKS-02,jsmith,Sysmon,ProcessCreate,whoami /all
+23,2025-05-06 10:51:05,WKS-02,jsmith,Sysmon,ProcessCreate,net group 'Domain Admins' /domain
+24,2025-05-06 10:51:20,WKS-02,jsmith,Sysmon,ProcessCreate,nltest /dclist:
+25,2025-05-06 10:57:00,WKS-02,jsmith,Sysmon,ProcessCreate,lsass.exe accessed by suspicious handle (mimikatz-like)
+26,2025-05-06 11:05:00,WKS-02,jsmith,Sysmon,NetworkConnect,-> FILE-SRV:445 SMB
+27,2025-05-06 11:05:10,FILE-SRV,svc_admin,WinEvent,Logon(4624) Type=3,NTLM logon from WKS-02 as svc_admin
+28,2025-05-06 11:07:00,FILE-SRV,svc_admin,Sysmon,ProcessCreate,cmd.exe -> copy \\FILE-SRV\finance\*.xlsx to local
+29,2025-05-06 11:15:00,FILE-SRV,svc_admin,Sysmon,FileCreate,C:\Windows\Temp\arch.rar
+30,2025-05-06 11:16:00,FILE-SRV,svc_admin,Sysmon,NetworkConnect,-> 91.219.236.14:443 upload 240MB

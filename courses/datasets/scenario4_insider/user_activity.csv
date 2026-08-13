@@ -1,0 +1,174 @@
+id,timestamp,user,system,action,detail
+13,2025-09-03 09:02:00,s.orlov,CRM,view,opened account #3756
+39,2025-09-03 09:03:00,k.belova,CRM,view,opened account #7209
+33,2025-09-03 09:04:00,a.petrov,CRM,view,opened account #8030
+5,2025-09-03 09:12:00,d.kozlov,CRM,view,opened account #3578
+2,2025-09-03 09:14:00,k.belova,CRM,view,opened account #7394
+52,2025-09-03 09:36:00,m.ivanova,FileShare,read,/proposals/doc37.pdf
+50,2025-09-03 09:49:00,m.ivanova,FileShare,read,/marketing/doc44.pdf
+47,2025-09-03 09:52:00,m.ivanova,FileShare,read,/pricing/doc30.pdf
+26,2025-09-03 09:53:00,k.belova,CRM,view,opened account #8321
+7,2025-09-03 10:01:00,a.petrov,CRM,view,opened account #3077
+6,2025-09-03 10:19:00,k.belova,CRM,view,opened account #8805
+20,2025-09-03 10:25:00,k.belova,CRM,view,opened account #3720
+4,2025-09-03 10:34:00,k.belova,CRM,view,opened account #9087
+55,2025-09-03 10:42:00,k.belova,FileShare,read,/proposals/doc13.pdf
+32,2025-09-03 10:50:00,a.petrov,CRM,view,opened account #7938
+28,2025-09-03 10:53:00,m.ivanova,CRM,view,opened account #6979
+25,2025-09-03 10:57:00,d.kozlov,CRM,view,opened account #4671
+18,2025-09-03 11:17:00,d.kozlov,CRM,view,opened account #2290
+49,2025-09-03 11:19:00,m.ivanova,FileShare,read,/marketing/doc23.pdf
+22,2025-09-03 11:22:00,a.petrov,CRM,view,opened account #2663
+16,2025-09-03 11:44:00,s.orlov,CRM,view,opened account #3748
+46,2025-09-03 11:45:00,s.orlov,FileShare,read,/proposals/doc21.pdf
+9,2025-09-03 11:52:00,a.petrov,CRM,view,opened account #3808
+17,2025-09-03 11:56:00,k.belova,CRM,view,opened account #8944
+37,2025-09-03 12:00:00,m.ivanova,CRM,view,opened account #3660
+42,2025-09-03 12:11:00,s.orlov,FileShare,read,/proposals/doc35.pdf
+53,2025-09-03 12:11:00,a.petrov,FileShare,read,/proposals/doc48.pdf
+3,2025-09-03 12:14:00,s.orlov,CRM,view,opened account #5507
+30,2025-09-03 12:15:00,a.petrov,CRM,view,opened account #6071
+27,2025-09-03 12:32:00,k.belova,CRM,view,opened account #7900
+54,2025-09-03 12:44:00,m.ivanova,FileShare,read,/pricing/doc27.pdf
+45,2025-09-03 12:58:00,m.ivanova,FileShare,read,/proposals/doc15.pdf
+36,2025-09-03 13:09:00,m.ivanova,CRM,view,opened account #7925
+8,2025-09-03 13:18:00,m.ivanova,CRM,view,opened account #3946
+14,2025-09-03 13:24:00,s.orlov,CRM,view,opened account #6825
+43,2025-09-03 13:39:00,m.ivanova,FileShare,read,/proposals/doc2.pdf
+51,2025-09-03 13:56:00,m.ivanova,FileShare,read,/proposals/doc44.pdf
+34,2025-09-03 14:05:00,k.belova,CRM,view,opened account #4358
+15,2025-09-03 14:10:00,d.kozlov,CRM,view,opened account #7613
+40,2025-09-03 14:26:00,a.petrov,CRM,view,opened account #8937
+24,2025-09-03 14:40:00,d.kozlov,CRM,view,opened account #8733
+29,2025-09-03 15:05:00,m.ivanova,CRM,view,opened account #9662
+10,2025-09-03 15:07:00,m.ivanova,CRM,view,opened account #4829
+23,2025-09-03 15:12:00,d.kozlov,CRM,view,opened account #8052
+35,2025-09-03 15:46:00,s.orlov,CRM,view,opened account #8012
+38,2025-09-03 15:50:00,d.kozlov,CRM,view,opened account #9202
+41,2025-09-03 15:50:00,k.belova,FileShare,read,/proposals/doc30.pdf
+19,2025-09-03 15:54:00,d.kozlov,CRM,view,opened account #5204
+1,2025-09-03 16:21:00,d.kozlov,CRM,view,opened account #3158
+31,2025-09-03 16:36:00,a.petrov,CRM,view,opened account #9756
+48,2025-09-03 16:37:00,k.belova,FileShare,read,/proposals/doc19.pdf
+44,2025-09-03 16:42:00,m.ivanova,FileShare,read,/proposals/doc33.pdf
+11,2025-09-03 16:45:00,d.kozlov,CRM,view,opened account #2000
+21,2025-09-03 16:46:00,s.orlov,CRM,view,opened account #8873
+12,2025-09-03 16:47:00,s.orlov,CRM,view,opened account #6512
+87,2025-09-04 09:04:00,m.ivanova,CRM,view,opened account #5477
+63,2025-09-04 09:09:00,d.kozlov,CRM,view,opened account #1677
+78,2025-09-04 09:11:00,d.kozlov,CRM,view,opened account #7520
+71,2025-09-04 09:28:00,m.ivanova,CRM,view,opened account #8297
+74,2025-09-04 09:37:00,a.petrov,CRM,view,opened account #3078
+98,2025-09-04 09:39:00,d.kozlov,FileShare,read,/proposals/doc12.pdf
+58,2025-09-04 09:51:00,a.petrov,CRM,view,opened account #4941
+79,2025-09-04 10:14:00,k.belova,CRM,view,opened account #5316
+65,2025-09-04 10:24:00,m.ivanova,CRM,view,opened account #3338
+101,2025-09-04 10:29:00,s.orlov,FileShare,read,/marketing/doc19.pdf
+95,2025-09-04 10:30:00,a.petrov,CRM,view,opened account #5389
+62,2025-09-04 10:34:00,s.orlov,CRM,view,opened account #3126
+84,2025-09-04 10:42:00,s.orlov,CRM,view,opened account #5257
+105,2025-09-04 10:52:00,d.kozlov,FileShare,read,/proposals/doc36.pdf
+76,2025-09-04 10:55:00,m.ivanova,CRM,view,opened account #1088
+85,2025-09-04 11:17:00,m.ivanova,CRM,view,opened account #8156
+91,2025-09-04 11:18:00,m.ivanova,CRM,view,opened account #7045
+99,2025-09-04 11:18:00,k.belova,FileShare,read,/proposals/doc37.pdf
+93,2025-09-04 11:41:00,d.kozlov,CRM,view,opened account #7110
+66,2025-09-04 11:45:00,d.kozlov,CRM,view,opened account #4605
+77,2025-09-04 11:46:00,k.belova,CRM,view,opened account #9120
+64,2025-09-04 11:49:00,d.kozlov,CRM,view,opened account #7563
+90,2025-09-04 11:53:00,a.petrov,CRM,view,opened account #5105
+110,2025-09-04 12:03:00,m.ivanova,FileShare,read,/pricing/doc22.pdf
+60,2025-09-04 12:24:00,a.petrov,CRM,view,opened account #6029
+57,2025-09-04 12:26:00,m.ivanova,CRM,view,opened account #8829
+73,2025-09-04 12:38:00,m.ivanova,CRM,view,opened account #6226
+86,2025-09-04 12:42:00,s.orlov,CRM,view,opened account #9232
+88,2025-09-04 12:43:00,a.petrov,CRM,view,opened account #8705
+92,2025-09-04 12:44:00,d.kozlov,CRM,view,opened account #1866
+106,2025-09-04 12:53:00,s.orlov,FileShare,read,/pricing/doc20.pdf
+68,2025-09-04 13:12:00,a.petrov,CRM,view,opened account #5728
+94,2025-09-04 13:14:00,s.orlov,CRM,view,opened account #3266
+69,2025-09-04 13:25:00,m.ivanova,CRM,view,opened account #4562
+103,2025-09-04 13:29:00,d.kozlov,FileShare,read,/pricing/doc7.pdf
+80,2025-09-04 13:30:00,a.petrov,CRM,view,opened account #8279
+108,2025-09-04 13:37:00,a.petrov,FileShare,read,/proposals/doc30.pdf
+96,2025-09-04 13:49:00,s.orlov,FileShare,read,/pricing/doc2.pdf
+102,2025-09-04 14:27:00,a.petrov,FileShare,read,/marketing/doc6.pdf
+107,2025-09-04 14:30:00,a.petrov,FileShare,read,/marketing/doc13.pdf
+75,2025-09-04 14:34:00,a.petrov,CRM,view,opened account #5014
+67,2025-09-04 14:38:00,m.ivanova,CRM,view,opened account #6828
+89,2025-09-04 14:44:00,d.kozlov,CRM,view,opened account #1372
+81,2025-09-04 14:46:00,k.belova,CRM,view,opened account #8589
+100,2025-09-04 14:50:00,m.ivanova,FileShare,read,/proposals/doc8.pdf
+70,2025-09-04 15:17:00,s.orlov,CRM,view,opened account #5913
+104,2025-09-04 16:04:00,k.belova,FileShare,read,/proposals/doc16.pdf
+72,2025-09-04 16:05:00,a.petrov,CRM,view,opened account #8522
+56,2025-09-04 16:06:00,k.belova,CRM,view,opened account #8251
+97,2025-09-04 16:13:00,a.petrov,FileShare,read,/pricing/doc38.pdf
+83,2025-09-04 16:14:00,m.ivanova,CRM,view,opened account #8529
+82,2025-09-04 16:32:00,a.petrov,CRM,view,opened account #1666
+61,2025-09-04 16:39:00,d.kozlov,CRM,view,opened account #7974
+59,2025-09-04 16:42:00,s.orlov,CRM,view,opened account #9194
+109,2025-09-04 16:45:00,m.ivanova,FileShare,read,/proposals/doc46.pdf
+111,2025-09-05 09:02:00,k.belova,CRM,view,opened account #5286
+116,2025-09-05 09:07:00,d.kozlov,CRM,view,opened account #2405
+147,2025-09-05 09:18:00,m.ivanova,CRM,view,opened account #6690
+163,2025-09-05 09:27:00,k.belova,FileShare,read,/marketing/doc26.pdf
+115,2025-09-05 09:49:00,m.ivanova,CRM,view,opened account #9900
+152,2025-09-05 09:52:00,m.ivanova,FileShare,read,/marketing/doc23.pdf
+135,2025-09-05 10:00:00,k.belova,CRM,view,opened account #2615
+164,2025-09-05 10:02:00,a.petrov,FileShare,read,/pricing/doc35.pdf
+156,2025-09-05 10:22:00,s.orlov,FileShare,read,/proposals/doc7.pdf
+162,2025-09-05 10:28:00,a.petrov,FileShare,read,/marketing/doc27.pdf
+155,2025-09-05 10:32:00,k.belova,FileShare,read,/pricing/doc27.pdf
+112,2025-09-05 10:36:00,m.ivanova,CRM,view,opened account #8242
+145,2025-09-05 10:56:00,m.ivanova,CRM,view,opened account #7934
+159,2025-09-05 11:10:00,a.petrov,FileShare,read,/pricing/doc46.pdf
+134,2025-09-05 11:21:00,d.kozlov,CRM,view,opened account #9099
+150,2025-09-05 11:23:00,d.kozlov,CRM,view,opened account #4651
+124,2025-09-05 11:34:00,d.kozlov,CRM,view,opened account #8915
+137,2025-09-05 11:39:00,k.belova,CRM,view,opened account #7549
+149,2025-09-05 11:41:00,k.belova,CRM,view,opened account #2282
+153,2025-09-05 11:57:00,s.orlov,FileShare,read,/pricing/doc41.pdf
+119,2025-09-05 11:59:00,k.belova,CRM,view,opened account #1472
+139,2025-09-05 12:06:00,k.belova,CRM,view,opened account #8865
+132,2025-09-05 12:07:00,d.kozlov,CRM,view,opened account #4824
+142,2025-09-05 12:22:00,a.petrov,CRM,view,opened account #2376
+148,2025-09-05 12:30:00,s.orlov,CRM,view,opened account #9633
+138,2025-09-05 12:35:00,s.orlov,CRM,view,opened account #6118
+141,2025-09-05 12:46:00,a.petrov,CRM,view,opened account #1844
+117,2025-09-05 12:50:00,a.petrov,CRM,view,opened account #1163
+123,2025-09-05 12:52:00,a.petrov,CRM,view,opened account #3109
+126,2025-09-05 12:52:00,a.petrov,CRM,view,opened account #5685
+120,2025-09-05 12:55:00,m.ivanova,CRM,view,opened account #6628
+113,2025-09-05 13:06:00,m.ivanova,CRM,view,opened account #6381
+125,2025-09-05 13:10:00,s.orlov,CRM,view,opened account #8127
+144,2025-09-05 13:15:00,m.ivanova,CRM,view,opened account #6711
+151,2025-09-05 13:17:00,d.kozlov,FileShare,read,/proposals/doc45.pdf
+130,2025-09-05 14:00:00,a.petrov,CRM,view,opened account #6839
+131,2025-09-05 14:05:00,a.petrov,CRM,view,opened account #3232
+118,2025-09-05 14:09:00,s.orlov,CRM,view,opened account #7936
+122,2025-09-05 14:23:00,d.kozlov,CRM,view,opened account #4836
+129,2025-09-05 14:35:00,k.belova,CRM,view,opened account #5166
+136,2025-09-05 14:38:00,s.orlov,CRM,view,opened account #1494
+127,2025-09-05 14:52:00,a.petrov,CRM,view,opened account #3737
+165,2025-09-05 15:05:00,s.orlov,FileShare,read,/pricing/doc8.pdf
+143,2025-09-05 15:06:00,k.belova,CRM,view,opened account #1629
+160,2025-09-05 15:20:00,a.petrov,FileShare,read,/proposals/doc40.pdf
+146,2025-09-05 15:24:00,a.petrov,CRM,view,opened account #5074
+133,2025-09-05 15:34:00,k.belova,CRM,view,opened account #8214
+158,2025-09-05 15:50:00,m.ivanova,FileShare,read,/marketing/doc30.pdf
+140,2025-09-05 16:00:00,m.ivanova,CRM,view,opened account #9746
+121,2025-09-05 16:08:00,s.orlov,CRM,view,opened account #5249
+154,2025-09-05 16:17:00,a.petrov,FileShare,read,/proposals/doc24.pdf
+114,2025-09-05 16:37:00,k.belova,CRM,view,opened account #6146
+128,2025-09-05 16:53:00,d.kozlov,CRM,view,opened account #7697
+161,2025-09-05 16:53:00,a.petrov,FileShare,read,/marketing/doc32.pdf
+157,2025-09-05 16:55:00,d.kozlov,FileShare,read,/proposals/doc48.pdf
+166,2025-09-05 17:00:00,d.kozlov,CRM,export,"BULK export ALL customer accounts (4,812 rows) to CSV"
+167,2025-09-05 17:02:00,d.kozlov,FileShare,read,/pricing/master_pricelist_2025.xlsx
+168,2025-09-05 17:03:00,d.kozlov,FileShare,read,/proposals/full_pipeline_export.xlsx
+169,2025-09-05 17:06:00,d.kozlov,USB,write,copied 214MB to removable drive E: (SanDisk)
+170,2025-09-05 17:09:00,d.kozlov,Email,send,to personal d.kozlov87@mail-ext.com attach: clients.csv (4.1MB)
+171,2025-09-05 17:12:00,d.kozlov,Cloud,upload,personal Google Drive: pipeline.zip 190MB
+172,2025-09-05 17:20:00,d.kozlov,CRM,view,opened competitor-mapping report
+173,2025-09-05 17:40:00,m.ivanova,CRM,export,export 12 accounts to CSV (assigned territory)

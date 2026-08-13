@@ -1,0 +1,111 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Единый изолированный лабораторный стенд для всех практик курса: атакующая машина и мишени видят только друг друга, но не домашнюю сеть и интернет.</p>
+
+  <section class="lesson-section">
+    <h2>Состав</h2>
+    <p>Единый изолированный стенд для всех практик курса: атакующая машина и мишени «видят»
+    только друг друга, но не домашнюю/рабочую сеть и (для мишеней) не интернет.</p>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Роль</th><th>Машина</th><th>Назначение</th></tr>
+        <tr><td>Атакующий</td><td>Kali Linux</td><td>Nmap, Wireshark, Burp/ZAP, Hydra, John — блоки 2–4</td></tr>
+        <tr><td>Мишень (сеть)</td><td>Metasploitable 2</td><td>Уязвимые сетевые службы — недели 4, 6</td></tr>
+        <tr><td>Мишень (веб)</td><td>DVWA + OWASP Juice Shop (Docker)</td><td>Веб-уязвимости — неделя 5</td></tr>
+        <tr><td>Защита (опц.)</td><td>Ubuntu + Wazuh/ELK</td><td>SIEM и мониторинг — недели 7–8, 10</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Требования</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Параметр</th><th>Минимум</th><th>Рекомендуется</th></tr>
+        <tr><td>ОЗУ</td><td>8 ГБ</td><td>16 ГБ+</td></tr>
+        <tr><td>Место</td><td>60 ГБ</td><td>120 ГБ SSD</td></tr>
+        <tr><td>CPU</td><td>2 ядра + VT-x/AMD-V</td><td>4+ ядра</td></tr>
+      </table>
+    </div>
+    <blockquote>Если ВМ не стартуют или тормозят — почти всегда выключен VT-x/AMD-V в BIOS/UEFI.
+    На Windows при конфликте отключите компонент Hyper-V.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Шаги</h2>
+
+    <h3>1. Изолированная сеть (в первую очередь!)</h3>
+    <blockquote>⚠️ Мишени намеренно уязвимы — их нельзя выпускать в интернет.</blockquote>
+    <ol>
+      <li>В VirtualBox создайте Host-Only или Internal Network (напр. <code>lab-net</code>), подсеть 10.10.10.0/24.</li>
+      <li>Схема адаптеров:
+        <ul>
+          <li><strong>Kali:</strong> Внутренняя сеть <code>lab-net</code> + NAT (интернет по необходимости).</li>
+          <li><strong>Мишени:</strong> только Внутренняя сеть <code>lab-net</code> (без NAT!).</li>
+        </ul>
+      </li>
+      <li>Проверка изоляции: с мишени <code>ping 8.8.8.8</code> — ответа быть НЕ должно; с Kali <code>ping &lt;IP мишени&gt;</code> — должен идти.</li>
+    </ol>
+
+    <h3>2. Kali Linux</h3>
+    <ol>
+      <li>Скачайте готовый образ Kali для VirtualBox с kali.org.</li>
+      <li>Импортируйте, настройте адаптеры по схеме выше.</li>
+      <li>Войдите (kali/kali), смените пароль.</li>
+      <li>Обновите: <code>sudo apt update &amp;&amp; sudo apt -y full-upgrade</code>.</li>
+    </ol>
+
+    <h3>3. Metasploitable 2</h3>
+    <ol>
+      <li>Скачайте образ Metasploitable 2.</li>
+      <li>Создайте ВМ (512–1024 МБ), подключите диск.</li>
+      <li>Единственный адаптер — Внутренняя сеть <code>lab-net</code>.</li>
+      <li>Войдите (msfadmin/msfadmin), узнайте IP: <code>ip addr</code>.</li>
+    </ol>
+
+    <h3>4. Веб-мишени (Docker)</h3>
+    <pre><code>sudo apt update && sudo apt -y install docker.io
+sudo systemctl enable --now docker
+sudo docker run -d -p 80:80  --name dvwa  vulnerables/web-dvwa
+sudo docker run -d -p 3000:3000 --name juice bkimminich/juice-shop</code></pre>
+    <p>Проверьте с Kali: <code>http://&lt;IP&gt;/</code> (DVWA) и <code>http://&lt;IP&gt;:3000/</code> (Juice Shop).</p>
+    <blockquote>Docker тянет образы из интернета РАЗОВО. Скачайте с временно включённым NAT, затем верните адаптер во Внутреннюю сеть.</blockquote>
+
+    <h3>5. Снапшоты</h3>
+    <ul>
+      <li>После чистой настройки КАЖДОЙ машины — снапшот <code>clean</code>.</li>
+      <li>Перед рискованным занятием — ещё один снапшот.</li>
+      <li>После поломки — откат к <code>clean</code> (ПКМ → Снимки → Восстановить).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Чек-лист готовности</h2>
+    <ul>
+      <li>VirtualBox + Extension Pack установлены</li>
+      <li>Виртуализация включена, ВМ стартуют быстро</li>
+      <li>Создана внутренняя сеть <code>lab-net</code></li>
+      <li>Kali: адаптеры lab-net + NAT, система обновлена</li>
+      <li>Metasploitable: только lab-net, IP известен</li>
+      <li>Веб-мишени открываются с Kali</li>
+      <li>С мишени НЕТ интернета (<code>ping 8.8.8.8</code> не проходит)</li>
+      <li>С Kali проходит ping до всех мишеней</li>
+      <li>На каждой ВМ есть снапшот <code>clean</code></li>
+      <li>(опц.) SIEM принимает события</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Частые проблемы</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Симптом</th><th>Решение</th></tr>
+        <tr><td>ВМ не стартует / медленно</td><td>Включить VT-x/AMD-V; отключить Hyper-V на Windows</td></tr>
+        <tr><td>Kali не видит мишень</td><td>Обе машины в одном адаптере «Внутренняя сеть lab-net»</td></tr>
+        <tr><td>Мишень выходит в интернет</td><td>Убрать NAT/мост, оставить только внутреннюю сеть</td></tr>
+        <tr><td>Docker не тянет образы</td><td>Временно включить NAT, скачать, вернуть внутреннюю сеть</td></tr>
+        <tr><td>Всё виснет</td><td>Запускать только нужные ВМ; SIEM — по требованию</td></tr>
+        <tr><td>Сломал мишень</td><td>Откатиться к снапшоту <code>clean</code></td></tr>
+      </table>
+    </div>
+  </section>
+</div>

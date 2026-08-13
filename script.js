@@ -999,6 +999,79 @@ const mikrotikBasicsContent = `
 
 let activeLessonTopic = null;
 
+const COURSES = [window.CYBER_COURSE].filter(Boolean);
+let activeCourseId = null;
+
+function findCourse(courseId) {
+  return COURSES.find(course => course.id === courseId);
+}
+
+function renderCourseHome(course) {
+  const items = course.modules.map(mod => `
+    <li>
+      <button type="button" class="course-module-link" data-course="${course.id}" data-module="${mod.id}">
+        <span class="course-module-title">${mod.title}</span>
+        <span class="course-module-arrow" aria-hidden="true">→</span>
+      </button>
+    </li>
+  `).join("");
+
+  return `
+    <div class="lesson-content">
+      <p class="lesson-intro">${course.cardText}</p>
+      <section class="lesson-section">
+        <h2>Программа курса</h2>
+        <ul class="course-module-list">${items}</ul>
+      </section>
+    </div>
+  `;
+}
+
+function renderCourseModule(course, moduleId) {
+  const mod = course.modules.find(item => item.id === moduleId);
+  if (!mod) return course.cardText;
+
+  return `
+    <button type="button" class="back course-home-link" data-course="${course.id}">← К программе курса</button>
+    ${mod.html}
+  `;
+}
+
+function openCourseHome(courseId) {
+  const course = findCourse(courseId);
+  if (!course) return;
+
+  activeCourseId = courseId;
+  activeLessonTopic = null;
+  document.getElementById("lessonTitle").textContent = course.title;
+  document.getElementById("lessonText").innerHTML = renderCourseHome(course);
+  document.getElementById("lesson").classList.add("active");
+  applySearchFilter();
+}
+
+function openCourseModule(courseId, moduleId) {
+  const course = findCourse(courseId);
+  const mod = course?.modules.find(item => item.id === moduleId);
+  if (!course || !mod) return;
+
+  document.getElementById("lessonTitle").textContent = mod.title;
+  document.getElementById("lessonText").innerHTML = renderCourseModule(course, moduleId);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("lessonText")?.addEventListener("click", event => {
+  const moduleLink = event.target.closest(".course-module-link");
+  if (moduleLink) {
+    openCourseModule(moduleLink.dataset.course, moduleLink.dataset.module);
+    return;
+  }
+
+  const homeLink = event.target.closest(".course-home-link");
+  if (homeLink) {
+    openCourseHome(homeLink.dataset.course);
+  }
+});
+
 function getLessonContentHtml(topic) {
   const ruContent =
     topic === "domain" ? cloudBasicsContent :
@@ -1714,7 +1787,14 @@ cards.forEach(card => {
 
     pages.forEach(page => page.classList.remove("active"));
 
+    const course = findCourse(topic);
+    if (course) {
+      openCourseHome(topic);
+      return;
+    }
+
     activeLessonTopic = topic;
+    activeCourseId = null;
     document.getElementById("lessonTitle").textContent = lessons[topic].title;
     document.getElementById("lessonText").innerHTML = getLessonContentHtml(topic) || lessons[topic].text;
 
@@ -2532,6 +2612,11 @@ function htmlToSearchText(html) {
 }
 
 function getTopicSearchText(topic) {
+  const course = findCourse(topic);
+  if (course) {
+    return course.modules.map(mod => `${mod.title} ${htmlToSearchText(mod.html)}`).join(" ");
+  }
+
   const lessonText = lessons[topic]?.text || "";
   const topicContent = getLessonContentHtml(topic);
 

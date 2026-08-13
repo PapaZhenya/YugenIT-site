@@ -1937,9 +1937,6 @@ const translations = {
     unfinishedCourses: "Your unfinished courses",
     allInfo: "All Basic Information",
 
-    coursesPageTitle: "Courses",
-    coursesPageIntro: "The full catalog is being built here. Open any topic below to start with what's already available.",
-
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
 
@@ -1984,9 +1981,6 @@ const translations = {
 
     unfinishedCourses: "Ваши незавершённые курсы",
     allInfo: "All Basic Information",
-
-    coursesPageTitle: "Курсы",
-    coursesPageIntro: "Здесь формируется полный каталог курсов. Откройте любую тему ниже, чтобы начать с уже доступных материалов.",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
@@ -2033,9 +2027,6 @@ const translations = {
     unfinishedCourses: "Ваші незавершені курси",
     allInfo: "All Basic Information",
 
-    coursesPageTitle: "Курси",
-    coursesPageIntro: "Тут формується повний каталог курсів. Відкрийте будь-яку тему нижче, щоб почати з уже доступних матеріалів.",
-
     domainTitle: "CLOUD BASICS",
     domainText: "Вивчайте сучасні хмарні системи, віртуальні сервери та корпоративні платформи.",
 
@@ -2080,9 +2071,6 @@ const translations = {
 
     unfinishedCourses: "Tus cursos sin terminar",
     allInfo: "All Basic Information",
-
-    coursesPageTitle: "Cursos",
-    coursesPageIntro: "Aquí se está construyendo el catálogo completo. Abre cualquier tema de abajo para empezar con lo ya disponible.",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Aprende sistemas cloud modernos, servidores virtuales y plataformas empresariales.",

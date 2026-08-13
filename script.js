@@ -996,6 +996,27 @@ const mikrotikBasicsContent = `
     </section>
   </div>
 `;
+
+let activeLessonTopic = null;
+
+function getLessonContentHtml(topic) {
+  const ruContent =
+    topic === "domain" ? cloudBasicsContent :
+    topic === "docker" ? dockerContent :
+    topic === "linux" ? linuxContent :
+    topic === "devops" ? devopsContent :
+    topic === "networking" ? networkingContent :
+    topic === "server" ? windowsServerContent :
+    topic === "security" ? securityContent :
+    topic === "mikrotik" ? mikrotikBasicsContent :
+    "";
+
+  const lang = languageSelect?.value || "en";
+  if (lang === "ru") return ruContent;
+
+  return window.LESSON_I18N?.[topic]?.[lang] || ruContent;
+}
+
 async function getUsers() {
   const { data, error } = await db
     .from(PROFILES_TABLE)
@@ -1693,17 +1714,9 @@ cards.forEach(card => {
 
     pages.forEach(page => page.classList.remove("active"));
 
+    activeLessonTopic = topic;
     document.getElementById("lessonTitle").textContent = lessons[topic].title;
-    document.getElementById("lessonText").innerHTML =
-      topic === "domain" ? cloudBasicsContent :
-      topic === "docker" ? dockerContent :
-      topic === "linux" ? linuxContent :
-      topic === "devops" ? devopsContent :
-      topic === "networking" ? networkingContent :
-      topic === "server" ? windowsServerContent :
-      topic === "security" ? securityContent :
-      topic === "mikrotik" ? mikrotikBasicsContent :
-      lessons[topic].text;
+    document.getElementById("lessonText").innerHTML = getLessonContentHtml(topic) || lessons[topic].text;
 
     document.getElementById("lesson").classList.add("active");
     applySearchFilter();
@@ -2520,16 +2533,7 @@ function htmlToSearchText(html) {
 
 function getTopicSearchText(topic) {
   const lessonText = lessons[topic]?.text || "";
-  const topicContent =
-    topic === "domain" ? cloudBasicsContent :
-    topic === "docker" ? dockerContent :
-    topic === "linux" ? linuxContent :
-    topic === "devops" ? devopsContent :
-    topic === "networking" ? networkingContent :
-    topic === "server" ? windowsServerContent :
-    topic === "security" ? securityContent :
-    topic === "mikrotik" ? mikrotikBasicsContent :
-    "";
+  const topicContent = getLessonContentHtml(topic);
 
   return `${lessonText} ${htmlToSearchText(topicContent)}`;
 }
@@ -2616,6 +2620,11 @@ function applyLanguage(lang) {
   element.textContent = t[key];
 }
   });
+
+  if (activeLessonTopic && document.getElementById("lesson")?.classList.contains("active")) {
+    document.getElementById("lessonText").innerHTML =
+      getLessonContentHtml(activeLessonTopic) || lessons[activeLessonTopic]?.text || "";
+  }
 
   applySearchFilter();
 }

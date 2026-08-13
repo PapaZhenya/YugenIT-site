@@ -2604,6 +2604,30 @@ td {
   line-height: 1.55;
 }
 
+.courses-hero {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeLift .45s ease both;
+}
+
+.courses-hero-icon {
+  font-size: 58px;
+  line-height: 1;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, .5)) drop-shadow(0 0 30px rgba(124, 58, 237, .3));
+}
+
+.courses-hero h1 {
+  margin: 0;
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #ecfeff;
+  text-shadow:
+    0 0 18px rgba(34, 197, 94, .34),
+    0 0 32px rgba(124, 58, 237, .28);
+}
+
 .test-admin-panel {
   display: none;
   align-items: center;

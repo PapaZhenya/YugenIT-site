@@ -165,21 +165,25 @@ async function gradeAnswer(openAiKey: string, answer: LogicAnswer): Promise<AiGr
 
 async function saveReview(
   supabaseUrl: string,
-  anonKey: string,
-  authHeader: string,
+  serviceRoleKey: string,
   answer: LogicAnswer,
   grade: AiGrade,
 ) {
   const model = Deno.env.get("OPENAI_MODEL") || "gpt-4o-mini";
+  // Uses the service_role key (never the caller's JWT): apply_logic_ai_review
+  // only grants EXECUTE to service_role so a user can't call it directly with
+  // a self-chosen score. p_caller_user_id pins the write to the answer's
+  // actual owner, which we derived from the caller's verified JWT above.
   const response = await fetch(`${supabaseUrl}/rest/v1/rpc/apply_logic_ai_review`, {
     method: "POST",
     headers: {
-      apikey: anonKey,
-      Authorization: authHeader,
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       p_logic_answer_id: answer.id,
+      p_caller_user_id: answer.user_id,
       p_ai_score: grade.score,
       p_ai_feedback: grade.feedback,
       p_model: model,
@@ -203,10 +207,11 @@ Deno.serve(async (request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const openAiKey = Deno.env.get("OPENAI_API_KEY");
     const authHeader = request.headers.get("Authorization");
 
-    if (!supabaseUrl || !anonKey || !openAiKey) {
+    if (!supabaseUrl || !anonKey || !serviceRoleKey || !openAiKey) {
       return jsonResponse({ error: "Missing Edge Function environment variables." }, 500);
     }
 
@@ -227,7 +232,7 @@ Deno.serve(async (request) => {
 
     for (const answer of answers) {
       const grade = await gradeAnswer(openAiKey, answer);
-      reviews.push(await saveReview(supabaseUrl, anonKey, authHeader, answer, grade));
+      reviews.push(await saveReview(supabaseUrl, serviceRoleKey, answer, grade));
     }
 
     const totalScore = reviews.reduce((sum, review) => sum + Number(review?.ai_score || 0), 0);

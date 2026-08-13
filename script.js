@@ -1,5 +1,5 @@
-﻿const SUPABASE_URL = "https://yawxydwdrfmlpsymgqbq.supabase.co";
-const SUPABASE_KEY = "sb_publishable_E8hzSOWCNWUU2ds65v1RXQ_muZMbzq2";
+﻿const SUPABASE_URL = window.APP_CONFIG.SUPABASE_URL;
+const SUPABASE_KEY = window.APP_CONFIG.SUPABASE_KEY;
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const PROFILES_TABLE = "profiles";
 const TEST_RESULTS_TABLE = "test_results";
@@ -1015,7 +1015,11 @@ async function getCurrentSupabaseUser() {
   const { data, error } = await db.auth.getUser();
 
   if (error) {
-    console.error(error);
+    // AuthSessionMissingError just means no one is logged in yet (guest
+    // browsing) — expected on every page load, not a real error.
+    if (error.name !== "AuthSessionMissingError") {
+      console.error(error);
+    }
     return null;
   }
 
@@ -1184,6 +1188,12 @@ function calculateLevelProgress(totalXp) {
   };
 }
 
+const USERNAME_PATTERN = /^[\p{L}\p{N} _.-]{3,24}$/u;
+
+function isValidUsername(value) {
+  return USERNAME_PATTERN.test(value);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -1262,22 +1272,37 @@ function updateRoleOptions(level) {
   });
 }
 
-const ADMIN_ACCESS_CODE = "mls234692";
-const ADMIN_REVOKE_CODE = "nomls234692";
-
 function isSiteAdmin(username) {
   const profile = profilesCache.find(user => user.username === username);
   return profile?.role === "admin";
 }
 
+function requireAdmin(profile, message) {
+  if (!profile || profile.role !== "admin") {
+    alert(message);
+    return false;
+  }
+  return true;
+}
+
+let isSubmittingAdminAction = false;
+
 async function adjustUserPoints(kind, direction) {
+  if (isSubmittingAdminAction) return;
+
   const profile = await getCurrentUserProfile();
 
-  if (!profile || profile.role !== "admin") {
-    alert("Только админ может менять XP и рейтинг.");
-    return;
-  }
+  if (!requireAdmin(profile, "Только админ может менять XP и рейтинг.")) return;
 
+  isSubmittingAdminAction = true;
+  try {
+    await doAdjustUserPoints(kind, direction);
+  } finally {
+    isSubmittingAdminAction = false;
+  }
+}
+
+async function doAdjustUserPoints(kind, direction) {
   const targetUserId = adminPointsUser?.value;
   const amount = Number(adminPointsAmount?.value);
   const reason = adminPointsReason?.value.trim() || "";
@@ -1326,13 +1351,21 @@ async function adjustUserPoints(kind, direction) {
 }
 
 async function allowUserTestRetake() {
+  if (isSubmittingAdminAction) return;
+
   const profile = await getCurrentUserProfile();
 
-  if (!profile || profile.role !== "admin") {
-    alert("Нет прав администратора.");
-    return;
-  }
+  if (!requireAdmin(profile, "Нет прав администратора.")) return;
 
+  isSubmittingAdminAction = true;
+  try {
+    await doAllowUserTestRetake();
+  } finally {
+    isSubmittingAdminAction = false;
+  }
+}
+
+async function doAllowUserTestRetake() {
   const targetUserId = adminPointsUser?.value;
   const targetUser = profilesCache.find(user => user.id === targetUserId);
 
@@ -1377,23 +1410,6 @@ async function allowUserTestRetake() {
   renderAdminUserOptions();
   setAdminPointsStatus(`Retake allowed for ${result?.username || targetUser.username}`);
   alert("Test attempt has been reset for this user.");
-}
-
-async function applyAdminCode(code) {
-  const { data, error } = await db
-    .rpc("apply_admin_code", {
-      p_code: code
-    });
-
-  if (error) {
-    console.error(error);
-    return null;
-  }
-
-  currentProfileCache = null;
-  await getCurrentUserProfile();
-  await getUsers();
-  return data;
 }
 
 function isFirstTestOpen() {
@@ -1543,24 +1559,19 @@ function updateTestAccessUi() {
 }
 
 async function renderUsers() {
-  const tableBodies = [ratingList].filter(Boolean);
-  if (tableBodies.length === 0) return;
+  if (!ratingList) return;
 
   const users = await getUsers();
   await refreshTestResults();
 
-  tableBodies.forEach(tableBody => {
-    tableBody.innerHTML = "";
-  });
+  ratingList.innerHTML = "";
 
   if (users.length === 0) {
-    tableBodies.forEach(tableBody => {
-      tableBody.innerHTML = `
-        <tr>
-          <td colspan="4">No users yet.</td>
-        </tr>
-      `;
-    });
+    ratingList.innerHTML = `
+      <tr>
+        <td colspan="4">No users yet.</td>
+      </tr>
+    `;
     return;
   }
 
@@ -1578,47 +1589,45 @@ async function renderUsers() {
       return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
     });
 
-  tableBodies.forEach(tableBody => {
-    ratingUsers.forEach((user, index) => {
-      const row = document.createElement("tr");
+  ratingUsers.forEach((user, index) => {
+    const row = document.createElement("tr");
 
-      const trophy =
-        index === 0 ? "🏆" :
-        index === 1 ? "🥈" :
-        index === 2 ? "🥉" :
-        "";
+    const trophy =
+      index === 0 ? "🏆" :
+      index === 1 ? "🥈" :
+      index === 2 ? "🥉" :
+      "";
 
-      row.innerHTML = `
-        <td>
-          <span class="rating-position">
-            ${trophy} ${index + 1}
-          </span>
-        </td>
+    row.innerHTML = `
+      <td>
+        <span class="rating-position">
+          ${trophy} ${index + 1}
+        </span>
+      </td>
 
-        <td>
-          <span class="talent-name">
-            👤 ${user.username}
-          </span>
-        </td>
+      <td>
+        <span class="talent-name">
+          👤 ${escapeHtml(user.username)}
+        </span>
+      </td>
 
-        <td>
-          <select class="region-select" data-username="${user.username}">
-            <option value="SD" ${user.region === "SD" ? "selected" : ""}>SD</option>
-            <option value="SRB" ${user.region === "SRB" ? "selected" : ""}>SRB</option>
-            <option value="PC" ${user.region === "PC" ? "selected" : ""}>PC</option>
-            <option value="COL" ${user.region === "COL" ? "selected" : ""}>COL</option>
-          </select>
-        </td>
+      <td>
+        <select class="region-select" data-username="${escapeHtml(user.username)}">
+          <option value="SD" ${user.region === "SD" ? "selected" : ""}>SD</option>
+          <option value="SRB" ${user.region === "SRB" ? "selected" : ""}>SRB</option>
+          <option value="PC" ${user.region === "PC" ? "selected" : ""}>PC</option>
+          <option value="COL" ${user.region === "COL" ? "selected" : ""}>COL</option>
+        </select>
+      </td>
 
-        <td>
-          <span class="rating-score">
-            ${user.rating}
-          </span>
-        </td>
-      `;
+      <td>
+        <span class="rating-score">
+          ${user.rating}
+        </span>
+      </td>
+    `;
 
-      tableBody.appendChild(row);
-    });
+    ratingList.appendChild(row);
   });
 
   document.querySelectorAll(".region-select").forEach(select => {
@@ -1644,9 +1653,6 @@ async function renderUsers() {
     });
   });
 }
-function renderRating() {
-  renderUsers();
-}
 
 function setActiveMenuItem(pageId) {
   menuItems.forEach(btn => {
@@ -1671,8 +1677,8 @@ menuItems.forEach(item => {
     document.getElementById(pageId).classList.add("active");
 
     if (pageId === "tests") {
-  renderRating();
-}
+      await renderUsers();
+    }
     if (pageId === "classes") {
       await refreshTestAccess();
     }
@@ -1817,7 +1823,11 @@ async function renderComments() {
   });
 }
 
+let isSendingComment = false;
+
 sendComment.addEventListener("click", async () => {
+  if (isSendingComment) return;
+
   const profile = await getCurrentUserProfile();
   const text = commentText.value.trim();
 
@@ -1831,23 +1841,30 @@ sendComment.addEventListener("click", async () => {
     return;
   }
 
-  const { error } = await db
-    .from(DISCUSSION_COMMENTS_TABLE)
-    .insert([{
-      user_id: profile.id,
-      username: profile.username,
-      topic_id: activeDiscussionTopic,
-      text
-    }]);
+  isSendingComment = true;
+  sendComment.disabled = true;
+  try {
+    const { error } = await db
+      .from(DISCUSSION_COMMENTS_TABLE)
+      .insert([{
+        user_id: profile.id,
+        username: profile.username,
+        topic_id: activeDiscussionTopic,
+        text
+      }]);
 
-  if (error) {
-    console.error(error);
-    alert("Не удалось отправить сообщение.");
-    return;
+    if (error) {
+      console.error(error);
+      alert("Не удалось отправить сообщение.");
+      return;
+    }
+
+    commentText.value = "";
+    await renderComments();
+  } finally {
+    isSendingComment = false;
+    sendComment.disabled = false;
   }
-
-  commentText.value = "";
-  await renderComments();
 });
 
 commentText?.addEventListener("keydown", event => {
@@ -1890,8 +1907,6 @@ const profileRole = document.getElementById("profileRole");
 const profileOnline = document.getElementById("profileOnline");
 const profileAchievements = document.getElementById("profileAchievements");
 const adminStatus = document.getElementById("adminStatus");
-const adminCodeInput = document.getElementById("adminCodeInput");
-const activateAdminBtn = document.getElementById("activateAdminBtn");
 const adminPointsPanel = document.getElementById("adminPointsPanel");
 const adminPointsUser = document.getElementById("adminPointsUser");
 const adminRetakeSearch = document.getElementById("adminRetakeSearch");
@@ -1921,6 +1936,9 @@ const translations = {
 
     unfinishedCourses: "Your unfinished courses",
     allInfo: "All Basic Information",
+
+    coursesPageTitle: "Courses",
+    coursesPageIntro: "The full catalog is being built here. Open any topic below to start with what's already available.",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
@@ -1967,6 +1985,9 @@ const translations = {
     unfinishedCourses: "Ваши незавершённые курсы",
     allInfo: "All Basic Information",
 
+    coursesPageTitle: "Курсы",
+    coursesPageIntro: "Здесь формируется полный каталог курсов. Откройте любую тему ниже, чтобы начать с уже доступных материалов.",
+
     domainTitle: "CLOUD BASICS",
     domainText: "Изучайте современные облачные системы, виртуальные серверы и корпоративные платформы.",
 
@@ -2012,6 +2033,9 @@ const translations = {
     unfinishedCourses: "Ваші незавершені курси",
     allInfo: "All Basic Information",
 
+    coursesPageTitle: "Курси",
+    coursesPageIntro: "Тут формується повний каталог курсів. Відкрийте будь-яку тему нижче, щоб почати з уже доступних матеріалів.",
+
     domainTitle: "CLOUD BASICS",
     domainText: "Вивчайте сучасні хмарні системи, віртуальні сервери та корпоративні платформи.",
 
@@ -2056,6 +2080,9 @@ const translations = {
 
     unfinishedCourses: "Tus cursos sin terminar",
     allInfo: "All Basic Information",
+
+    coursesPageTitle: "Cursos",
+    coursesPageIntro: "Aquí se está construyendo el catálogo completo. Abre cualquier tema de abajo para empezar con lo ya disponible.",
 
     domainTitle: "CLOUD BASICS",
     domainText: "Aprende sistemas cloud modernos, servidores virtuales y plataformas empresariales.",
@@ -2438,46 +2465,6 @@ profileBtn.addEventListener("click", async () => {
   showPage("profile");
 });
 
-activateAdminBtn?.addEventListener("click", async () => {
-  const profile = await getCurrentUserProfile();
-  const username = profile?.username || "Guest";
-  const code = adminCodeInput.value.trim();
-
-  if (username === "Guest") {
-    alert("Сначала войдите в аккаунт.");
-    return;
-  }
-
-  if (code === ADMIN_REVOKE_CODE) {
-    const newRole = await applyAdminCode(code);
-    if (newRole !== "user") {
-      alert("Не удалось снять admin mode в Supabase.");
-      return;
-    }
-    adminCodeInput.value = "";
-    updateAdminStatus(username);
-    updateTestAccessUi();
-    alert("Admin mode отключён.");
-    return;
-  }
-
-  if (code !== ADMIN_ACCESS_CODE) {
-    alert("Неверный admin-код.");
-    return;
-  }
-
-  const newRole = await applyAdminCode(code);
-  if (newRole !== "admin") {
-    alert("Не удалось активировать admin mode в Supabase.");
-    return;
-  }
-
-  adminCodeInput.value = "";
-  updateAdminStatus(username);
-  updateTestAccessUi();
-  alert("Admin mode активирован.");
-});
-
 profileRole?.addEventListener("change", async () => {
   const level = Number(profileRole.dataset.level) || 0;
   const selectedRole = getAllowedRole(level, profileRole.value);
@@ -2680,6 +2667,7 @@ const reviewMistakesOnlyBtn = document.getElementById("reviewMistakesOnlyBtn");
 const backToDashboardBtn = document.getElementById("backToDashboardBtn");
 const closeReviewBtn = document.getElementById("closeReviewBtn");
 let isSubmittingFirstTest = false;
+let isSubmittingAuth = false;
 let latestTestResultState = null;
 let activeResultsFilter = "all";
 
@@ -3343,6 +3331,7 @@ function animateResultCounters() {
     let frame = 0;
     const totalFrames = 24;
     const prefix = rawValue.trim().startsWith("+") ? "+" : "";
+    const finalText = `${prefix}${target}`;
 
     const tick = () => {
       frame++;
@@ -3353,6 +3342,12 @@ function animateResultCounters() {
     };
 
     requestAnimationFrame(tick);
+    // Safety net: guarantees the true final value lands even if rAF stalls
+    // (e.g. the tab is backgrounded mid-animation), instead of leaving the
+    // counter permanently stuck on an intermediate number.
+    setTimeout(() => {
+      counter.textContent = finalText;
+    }, 1000);
   });
 }
 
@@ -3624,7 +3619,7 @@ firstTestForm.addEventListener("submit", async (event) => {
   await renderUsers();
   testResult.innerHTML = `
     <h2>Test finished</h2>
-    <p><b>User:</b> ${username}</p>
+    <p><b>User:</b> ${escapeHtml(username)}</p>
     <p><b>Correct answers:</b> ${correct}</p>
     <p><b>Wrong answers:</b> ${wrong}</p>
     <p><b>Score:</b> ${correct} / ${total}</p>
@@ -3653,10 +3648,6 @@ firstTestForm.addEventListener("submit", async (event) => {
         </div>
       </div>
     `;
-  }
-
-  if (typeof renderUsers === "function") {
-    await renderUsers();
   }
 
   isSubmittingFirstTest = false;
@@ -3781,6 +3772,16 @@ function showRegisterForm() {
   document.getElementById("showLogin").classList.remove("active");
 }
 async function registerUser() {
+  if (isSubmittingAuth) return;
+  isSubmittingAuth = true;
+  try {
+    await doRegisterUser();
+  } finally {
+    isSubmittingAuth = false;
+  }
+}
+
+async function doRegisterUser() {
   const username = document.getElementById("regUsername").value.trim();
   const email = document.getElementById("regEmail").value.trim().toLowerCase();
   const password = document.getElementById("regPassword").value.trim();
@@ -3788,6 +3789,11 @@ async function registerUser() {
 
   if (!username || !email || !password) {
     message.textContent = "Введите имя, email и пароль";
+    return;
+  }
+
+  if (!isValidUsername(username)) {
+    message.textContent = "Имя пользователя: 3-24 символа, только буквы, цифры, пробел, . _ -";
     return;
   }
 
@@ -3839,6 +3845,16 @@ async function registerUser() {
 }
 
 async function loginUser() {
+  if (isSubmittingAuth) return;
+  isSubmittingAuth = true;
+  try {
+    await doLoginUser();
+  } finally {
+    isSubmittingAuth = false;
+  }
+}
+
+async function doLoginUser() {
   const email = document.getElementById("loginEmail").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value.trim();
   const message = document.getElementById("authMessage");

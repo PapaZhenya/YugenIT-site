@@ -1,4 +1,11 @@
-project_id = "yawxydwdrfmlpsymgqbq"
+project_id = "aosqhfzkixboniwmupnh"
+
+[auth]
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
 
 [functions.grade-logic-answers]
 verify_jwt = true

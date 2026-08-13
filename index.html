@@ -17,9 +17,9 @@
     </div>
 
     <div id="loginForm">
-      <input id="loginEmail" type="email" placeholder="Email">
+      <input id="loginEmail" type="email" placeholder="Email" aria-label="Email">
       <div class="password-box">
-      <input id="loginPassword" type="password" placeholder="Пароль">
+      <input id="loginPassword" type="password" placeholder="Пароль" aria-label="Пароль">
 
       <button type="button"
           class="show-pass"
@@ -31,10 +31,10 @@
     </div>
 
     <div id="registerForm" style="display:none;">
-      <input id="regUsername" type="text" placeholder="Имя / IT Name">
-      <input id="regEmail" type="email" placeholder="Email">
+      <input id="regUsername" type="text" placeholder="Имя / IT Name" aria-label="Имя / IT Name">
+      <input id="regEmail" type="email" placeholder="Email" aria-label="Email">
       <div class="password-box">
-      <input id="regPassword" type="password" placeholder="Пароль">
+      <input id="regPassword" type="password" placeholder="Пароль" aria-label="Пароль">
 
       <button type="button"
           class="show-pass"
@@ -80,7 +80,7 @@
     <header class="top">
   <div class="search" id="topSearch">
     <span class="search-icon" aria-hidden="true">🔍</span>
-    <input id="globalSearchInput" type="text" placeholder="Search courses, topics, infrastructure..." autocomplete="off" />
+    <input id="globalSearchInput" type="text" placeholder="Search courses, topics, infrastructure..." aria-label="Search courses, topics, infrastructure" autocomplete="off" />
     <span class="search-glow" aria-hidden="true"></span>
   </div>
   <p class="search-status" id="searchStatus" aria-live="polite"></p>
@@ -126,7 +126,7 @@
   <div class="profile-dashboard">
     <div class="profile-main-card">
       <div class="profile-avatar-wrap">
-        <img class="profile-avatar" src="greenprofil.jpg" alt="Profile avatar">
+        <img class="profile-avatar" src="greenprofil.jpg" alt="Profile avatar" loading="lazy">
         <span class="profile-status-dot"></span>
       </div>
 
@@ -186,11 +186,7 @@
       <div>
         <span>Admin access</span>
         <strong id="adminStatus">User mode</strong>
-        <small>Введите admin-код для управления тестами или код отключения, чтобы снять права.</small>
-      </div>
-      <div class="admin-code-row">
-        <input id="adminCodeInput" type="password" placeholder="Admin code">
-        <button id="activateAdminBtn" type="button">Activate</button>
+        <small>Права администратора выдаются вручную в Supabase.</small>
       </div>
     </div>
 
@@ -367,7 +363,84 @@
       </div>
     </section>
 
-    <section id="courses" class="page"><h1>Courses</h1><p>Big courses will be added here.</p></section>
+    <section id="courses" class="page">
+      <h1 class="title" data-i18n="coursesPageTitle">Courses</h1>
+      <p data-i18n="coursesPageIntro">The full catalog is being built here. Open any topic below to start with what's already available.</p>
+
+      <div class="cards">
+        <div class="card" data-topic="security">
+          <div class="card-icon">🔐</div>
+          <h3 data-i18n="securityCardTitle">Security</h3>
+          <p data-i18n="securityCardText">
+           Основы безопасности сети и защиты пользователей.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="domain">
+          <div class="card-icon">☁️</div>
+          <h3 data-i18n="domainCardTitle">CLOUD BASICS</h3>
+          <p data-i18n="domainCardText">
+           Облачные системы, виртуальные серверы и корпоративные платформы.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="docker">
+          <div class="card-icon">🐳</div>
+          <h3 data-i18n="dockerCardTitle">Docker</h3>
+          <p data-i18n="dockerCardText">
+           Контейнеризация приложений, изолированные среды и удобный деплой сервисов.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="linux">
+          <div class="card-icon">🐧</div>
+          <h3 data-i18n="linuxCardTitle">Linux Administration</h3>
+          <p data-i18n="linuxCardText">
+           Управление Linux-серверами, настройка систем и работа с инфраструктурой.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="devops">
+          <div class="card-icon">⚙️</div>
+          <h3 data-i18n="devopsCardTitle">DevOps Basics</h3>
+          <p data-i18n="devopsCardText">
+           Автоматизация разработки, управление инфраструктурой и процессы CI/CD.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="networking">
+          <div class="card-icon">🌐</div>
+          <h3 data-i18n="networkingCardTitle">Computer Networking Basics</h3>
+          <p data-i18n="networkingCardText">
+           Основы компьютерных сетей, интернет-инфраструктуры и передачи данных между устройствами.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="mikrotik">
+          <div class="card-icon">📡</div>
+          <h3 data-i18n="mikrotikCardTitle">MikroTik</h3>
+          <p data-i18n="mikrotikCardText">
+           Настройка роутера, DHCP, IP, firewall и безопасность.
+          </p>
+          <b>→</b>
+        </div>
+
+        <div class="card" data-topic="server">
+          <div class="card-icon">🖥️</div>
+          <h3 data-i18n="serverCardTitle">Windows Server</h3>
+          <p data-i18n="serverCardText">
+           Роли сервера, DNS, DHCP, GPO и управление.
+          </p>
+          <b>→</b>
+        </div>
+      </div>
+    </section>
     <section id="messages" class="page">
   <div class="chat-shell">
     <div class="chat-header">
@@ -387,7 +460,7 @@
 
     <div class="comment-box">
       <div class="chat-current-user">
-        <img src="greenprofil.jpg" alt="">
+        <img src="greenprofil.jpg" alt="" loading="lazy">
         <span id="chatCurrentUser">Guest</span>
       </div>
       <textarea id="commentText" placeholder="Write a message..."></textarea>
@@ -550,7 +623,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20260528-results-v1"></script>
+<script src="config.js?v=20260813-newbackend-1"></script>
+<script src="script.js?v=20260813-newbackend-1"></script>
 </body>
 </html>
 

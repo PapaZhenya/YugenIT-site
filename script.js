@@ -999,7 +999,10 @@ const mikrotikBasicsContent = `
 
 let activeLessonTopic = null;
 
-const COURSES = [window.CYBER_COURSE].filter(Boolean);
+const COURSES = [
+  window.CYBER_COURSE && { ...window.CYBER_COURSE, quizzes: window.CYBER_COURSE_QUIZZES },
+  window.NETWORKING_COURSE && { ...window.NETWORKING_COURSE, quizzes: window.NETWORKING_COURSE_QUIZZES },
+].filter(Boolean);
 let activeCourseId = null;
 
 function findCourse(courseId) {
@@ -1027,8 +1030,8 @@ function renderCourseHome(course) {
   `;
 }
 
-function renderModuleQuiz(moduleId) {
-  const questions = window.CYBER_COURSE_QUIZZES?.[moduleId];
+function renderModuleQuiz(course, moduleId) {
+  const questions = course.quizzes?.[moduleId];
   if (!questions || !questions.length) return "";
 
   const questionsMarkup = questions.map((q, index) => {
@@ -1161,8 +1164,9 @@ document.addEventListener("click", event => {
     return;
   }
 
+  const courseTitle = findCourse(activeCourseId)?.title || "выбранному курсу";
   const prompt = [
-    "Проверь мой ответ на вопрос по курсу «Кибербезопасность с нуля до junior».",
+    `Проверь мой ответ на вопрос по курсу «${courseTitle}».`,
     `Вопрос: ${questionText}`,
     `Мой ответ: ${answerText}`,
     "Скажи, что верно, чего не хватает, и оцени по шкале от 0 до 5."
@@ -1181,7 +1185,7 @@ function renderCourseModule(course, moduleId) {
   return `
     <button type="button" class="back course-home-link" data-course="${course.id}">← К программе курса</button>
     ${mod.html}
-    ${renderModuleQuiz(moduleId)}
+    ${renderModuleQuiz(course, moduleId)}
   `;
 }
 

@@ -47,114 +47,18 @@ body {
     flex-wrap: wrap;
 }
 
-.brand-subtitle {
-    flex-basis: 100%;
-    margin-top: 10px;
-    color: #d8b4fe;
-    font-size: 45px;
-    line-height: 1;
-    font-weight: 800;
-    letter-spacing: 0;
-    text-align: center;
-    background: linear-gradient(180deg, #f5f3ff 0%, #d8b4fe 34%, #a855f7 72%, #7c3aed 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow:
-      0 0 14px rgba(168, 85, 247, .65),
-      0 0 28px rgba(34, 197, 94, .22);
-    filter: drop-shadow(0 0 10px rgba(168, 85, 247, .36));
-    cursor: default;
-    transition: transform .25s ease, filter .25s ease, text-shadow .25s ease;
-}
-
-.brand-subtitle:hover {
-    transform: translateY(-2px) scale(1.03);
-    filter:
-      drop-shadow(0 0 16px rgba(168, 85, 247, .72))
-      drop-shadow(0 0 18px rgba(34, 197, 94, .24));
-    text-shadow:
-      0 0 18px rgba(216, 180, 254, .9),
-      0 0 34px rgba(168, 85, 247, .72),
-      0 0 46px rgba(34, 197, 94, .22);
-}
-
-.brand-text {
+.brand-logo {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    column-gap: 14px;
-    min-width: 0;
+    max-width: 260px;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 18px rgba(34, 197, 94, .38)) drop-shadow(0 0 26px rgba(168, 85, 247, .28));
+    transition: transform .25s ease, filter .25s ease;
 }
 
-.brand-name {
-    display: flex;
-    flex-direction: column;
-    font-size: 36px;
-    font-weight: 900;
-    line-height: .96;
-    letter-spacing: .3px;
-    white-space: nowrap;
-    padding-left: 18px;
-    color: #86efac;
-    background: linear-gradient(180deg, #f0fdf4 0%, #86efac 38%, #22c55e 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow:
-      0 0 10px rgba(34, 197, 94, .65),
-      0 0 22px rgba(34, 211, 238, .22);
-    filter: drop-shadow(0 0 8px rgba(34, 197, 94, .45));
-    cursor: default;
-    transform-origin: left center;
-    transition: transform .25s ease, filter .25s ease, text-shadow .25s ease;
-}
-
-.brand-name:hover {
-    transform: translateY(-2px) scale(1.04);
-    filter:
-      drop-shadow(0 0 16px rgba(34, 197, 94, .86))
-      drop-shadow(0 0 20px rgba(34, 211, 238, .28));
-    text-shadow:
-      0 0 16px rgba(187, 247, 208, .95),
-      0 0 30px rgba(34, 197, 94, .82),
-      0 0 44px rgba(34, 211, 238, .3);
-}
-
-.brand-name span:first-child {
-    color: #dcfce7;
-}
-
-.brand-name span:last-child {
-    color: #4ade80;
-}
-
-.yin-yang {
-  width: 92px;
-  height: 92px;
-  margin-left: 0;
-  border-radius: 50%;
-  position: relative;
-  animation: rotateLogo 8s linear infinite;
-  flex-shrink: 0;
-  overflow: visible;
-  filter: drop-shadow(0 0 16px rgba(34, 197, 94, 0.58));
-}
-
-.yin-yang img {
-  width: 138px;
-  height: auto;
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-@keyframes rotateLogo {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.brand-logo:hover {
+    transform: translateY(-2px) scale(1.03);
+    filter: drop-shadow(0 0 24px rgba(34, 197, 94, .58)) drop-shadow(0 0 32px rgba(168, 85, 247, .42));
 }
 
 .menu {
@@ -1081,18 +985,8 @@ h1 {
     margin-bottom: 35px;
   }
 
-  .brand-name {
-    font-size: 28px;
-  }
-
-  .yin-yang {
-    width: 78px;
-    height: 78px;
-    margin-left: 0;
-  }
-
-  .yin-yang img {
-    width: 116px;
+  .brand-logo {
+    max-width: 200px;
   }
 
   .menu {
@@ -4060,8 +3954,8 @@ select {
     margin: 0 auto 30px;
   }
 
-  .brand-text {
-    max-width: 330px;
+  .brand-logo {
+    max-width: 230px;
     margin: 0 auto;
   }
 
@@ -4144,28 +4038,8 @@ select {
     margin-bottom: 22px;
   }
 
-  .brand-text {
-    max-width: 270px;
-    column-gap: 10px;
-  }
-
-  .brand-name {
-    padding-left: 10px;
-    font-size: clamp(31px, 9.6vw, 39px);
-  }
-
-  .brand-subtitle {
-    margin-top: 16px;
-    font-size: clamp(42px, 15vw, 58px);
-  }
-
-  .yin-yang {
-    width: 82px;
-    height: 82px;
-  }
-
-  .yin-yang img {
-    width: 122px;
+  .brand-logo {
+    max-width: 190px;
   }
 
   .menu {

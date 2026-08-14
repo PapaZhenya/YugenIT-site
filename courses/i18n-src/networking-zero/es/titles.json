@@ -1,0 +1,19 @@
+{
+  "title": "Redes desde cero: cómo funciona la comunicación",
+  "cardText": "Curso práctico: desde «qué pasa cuando pulsas Enter» hasta montar y diagnosticar tu propia red. 9 módulos, 3 partes.",
+  "modules": {
+    "overview": "Sobre el curso",
+    "program-map": "Mapa del curso",
+    "module-01": "Módulo 1. El viaje de un mensaje",
+    "module-02": "Módulo 2. Direcciones, nombres y puertos",
+    "module-03": "Módulo 3. Dos modelos que lo ordenan todo",
+    "module-04": "Módulo 4. La red local por dentro",
+    "module-05": "Módulo 5. Conectamos redes",
+    "module-06": "Módulo 6. La magia de la autoconfiguración: DHCP y NAT",
+    "module-07": "Módulo 7. Sin cables: Wi-Fi",
+    "module-08": "Módulo 8. Cuando algo se rompe: diagnóstico",
+    "module-09": "Módulo 9. Protección de la red",
+    "resources": "Herramientas y plataformas gratuitas",
+    "assessment": "Sistema de evaluación"
+  }
+}

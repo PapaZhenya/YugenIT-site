@@ -1,0 +1,193 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La semana 4 del bloque «Ataque» presenta el reconocimiento y el escaneo: enseña a distinguir la recopilación de información pasiva y activa, y a construir un mapa del objetivo con Nmap.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Distinguir el reconocimiento pasivo del activo</li>
+      <li>Escanear redes y servicios con Nmap</li>
+      <li>Construir un mapa del objetivo como base para la búsqueda de vulnerabilidades</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Etapas del reconocimiento:</p>
+    <pre><code>Pasivo (discreto) -&gt; whois, DNS, redes sociales, filtraciones
+        |
+Activo (deja rastros) -&gt; escaneo de puertos (Nmap)
+        |
+Mapa del objetivo: host -&gt; puertos -&gt; servicios -&gt; versiones -&gt; riesgo</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Todo ataque comienza con la recopilación de información. El defensor estudia las mismas técnicas para ver la infraestructura con los ojos del adversario.</p>
+    <p><strong>Reconocimiento pasivo y activo.</strong> El pasivo (OSINT) recopila datos de fuentes abiertas sin contacto con el objetivo (whois, DNS, redes sociales, bases de datos filtradas) — es discreto. El activo es un escaneo directo, deja rastros en los logs.</p>
+    <p><strong>Nmap — la herramienta de trabajo.</strong></p>
+    <ul>
+      <li><code>-sn</code> — detección de hosts activos sin escanear puertos.</li>
+      <li><code>-sV</code> — detección de versiones de los servicios (clave para buscar vulnerabilidades).</li>
+      <li><code>-p-</code> — los 65535 puertos.</li>
+      <li><code>-A</code> — agresivo: SO, versiones, scripts.</li>
+    </ul>
+    <p>Una versión desactualizada de un servicio es peligrosa porque ya existen vulnerabilidades conocidas publicadas para ella — solo queda aplicar un exploit ya disponible.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Reconocimiento pasivo (OSINT) en detalle</h3>
+    <p>OSINT es la recopilación desde fuentes abiertas sin contacto con el objetivo: dominios (whois), registros DNS, documentos públicos, redes sociales de empleados, bases de datos filtradas. Para el defensor esto también es importante: es útil saber qué información sobre tu organización está disponible desde fuera, y reducir la «exposición» innecesaria.</p>
+    <h3>Cómo leer los resultados de un escaneo</h3>
+    <p>Nmap muestra puertos, servicios y versiones. Lo clave para evaluar el riesgo son las <strong>versiones</strong>: un servicio desactualizado suele tener vulnerabilidades conocidas con exploits ya disponibles. El defensor ejecuta Nmap en su propia red para encontrar lo innecesario y lo desactualizado antes que el atacante.</p>
+    <h3>Fingerprinting de servicios y banners</h3>
+    <p>Muchos servicios «se presentan» al conectarse — informan su versión (banner). A partir de ellos se determina exactamente qué está funcionando. Para la defensa es útil eliminar la información innecesaria de los banners para no facilitar el reconocimiento.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué el defensor debe escanearse a sí mismo</h2>
+    <p>Un administrador ejecuta Nmap una vez al mes en su propia red y encuentra un servidor de pruebas olvidado con un puerto abierto y una versión antigua del servicio. Lo cierra antes de que lo encuentre un atacante. Escanearse «a uno mismo» no es un ataque, sino higiene: ves tu propia superficie de ataque con los ojos del adversario.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: de la IP al mapa del objetivo (en el laboratorio)</h2>
+    <ol>
+      <li>Detecta los hosts activos en tu red de laboratorio: <code>nmap -sn &lt;rango&gt;</code>.</li>
+      <li>Escanea la máquina de práctica: <code>nmap -sV &lt;IP&gt;</code>.</li>
+      <li>Anota los puertos y servicios abiertos.</li>
+      <li>Marca las versiones y subraya las desactualizadas.</li>
+      <li>Elabora una tabla: host → puerto → servicio → versión → riesgo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: informe de escaneo (en el laboratorio)</h2>
+    <p>En la máquina de práctica (Metasploitable), realiza un reconocimiento y elabora un mini-informe:</p>
+    <ul>
+      <li>objetivo, método, fecha;</li>
+      <li>tabla de servicios y versiones encontrados;</li>
+      <li>para 3 servicios — por qué es peligrosa la versión desactualizada;</li>
+      <li>recomendaciones (qué cerrar/actualizar).</li>
+    </ul>
+    <blockquote>⚠️ Solo tu propio laboratorio o plataformas explícitamente autorizadas. Escanear redes ajenas es ilegal.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>OSINT</strong> — reconocimiento a partir de fuentes abiertas.</li>
+      <li><strong>Reconocimiento pasivo / activo</strong> — sin contacto / con contacto (deja rastros).</li>
+      <li><strong>Nmap</strong> — escáner de redes y servicios.</li>
+      <li><strong>Banner</strong> — autopresentación del servicio con su versión.</li>
+      <li><strong>Mapa del objetivo</strong> — resumen de host/puerto/servicio/versión/riesgo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: escanear = hackear.</strong> En sí mismo es reconocimiento, pero escanear redes ajenas es ilegal.</li>
+      <li><strong>Error: ignorar las versiones.</strong> Precisamente las versiones antiguas cargan vulnerabilidades conocidas.</li>
+      <li><strong>Mito: si un puerto está abierto, es seguro porque «así se configuró».</strong> Cada puerto es una entrada potencial.</li>
+      <li><strong>Error: escanear lo que sea.</strong> Solo lo propio o lo autorizado.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Nmap es legal?</strong> La herramienta, sí; la legalidad depende de QUÉ estés escaneando.</li>
+      <li><strong>¿Para qué necesita el defensor hacer reconocimiento?</strong> Para ver su propia superficie de ataque antes que el enemigo.</li>
+      <li><strong>¿El reconocimiento pasivo es realmente discreto?</strong> Sí, no contacta al objetivo directamente.</li>
+      <li><strong>¿Qué hacer con un servicio antiguo encontrado?</strong> Actualizarlo o cerrarlo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Reconocimiento: <strong>pasivo</strong> (OSINT) → <strong>activo</strong> (escaneo).</li>
+      <li>Nmap: <code>-sn</code> (hosts), <code>-sV</code> (versiones), <code>-p-</code> (todos los puertos), <code>-A</code> (agresivo).</li>
+      <li>Versión desactualizada = vulnerabilidades conocidas.</li>
+      <li>Resultado — <strong>mapa del objetivo</strong>.</li>
+      <li>Solo tu propio laboratorio / plataformas autorizadas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <blockquote>⚠️ <strong>Marco legal.</strong> Todas las acciones — solo en un laboratorio aislado o en plataformas explícitamente autorizadas. Atacar sistemas ajenos sin permiso es ilegal.</blockquote>
+    <h3>Parte A. Reconocimiento pasivo</h3>
+    <ol>
+      <li>Elige un dominio de práctica y recopila datos abiertos (whois, registros DNS).</li>
+      <li>Anota qué lograste averiguar sin una sola solicitud activa.</li>
+    </ol>
+    <h3>Parte B. Detección de hosts y puertos</h3>
+    <ol>
+      <li>Detecta los hosts activos: <code>nmap -sn &lt;rango&gt;</code>.</li>
+      <li>Escanea Metasploitable: <code>nmap -sV &lt;IP&gt;</code>.</li>
+      <li>Anota los puertos y servicios abiertos.</li>
+    </ol>
+    <h3>Parte C. Mapa del objetivo</h3>
+    <ol>
+      <li>Determina las versiones de los servicios y marca las desactualizadas.</li>
+      <li>Construye una tabla: host → puerto → servicio → versión → riesgo.</li>
+      <li>Elabora un informe de escaneo (objetivo, método, hallazgos).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Reconocimiento pasivo (seguro)</h3>
+    <ol>
+      <li>Sobre un dominio de práctica, recopila datos abiertos (whois, registros DNS públicos).</li>
+      <li>Anota qué lograste averiguar sin contacto con el objetivo.</li>
+    </ol>
+    <h3>Parte E. Comparación de versiones</h3>
+    <ol>
+      <li>Para 3 servicios de tu escaneo, averigua cuál es la versión actual.</li>
+      <li>Evalúa el riesgo de desactualización en una escala baja/media/alta.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Para tres servicios encontrados, describe el riesgo de la versión desactualizada.</li>
+      <li>Explica por qué es útil que un defensor escanee su red con regularidad.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica la diferencia entre reconocimiento pasivo y activo.</li>
+      <li>Describe por qué el defensor debe escanear su propia red.</li>
+      <li>¿Qué es el banner de un servicio y cómo ayuda al reconocimiento?</li>
+      <li>Elabora un mapa del objetivo para la máquina de práctica.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿En qué se diferencia el reconocimiento pasivo del activo?</li>
+      <li>¿Qué flag de Nmap detecta las versiones de los servicios?</li>
+      <li>¿Por qué es peligrosa una versión desactualizada de un servicio?</li>
+      <li>¿Qué incluye el «mapa del objetivo»?</li>
+      <li>¿Es legal escanear una red ajena?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Nmap / Network Security</a></li>
+      <li><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box — Starting Point</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Conexión con la espiral del curso.</strong> El mapa del objetivo es la entrada directa a la semana 5: los servicios web encontrados se convertirán en el objeto de la búsqueda de vulnerabilidades.</blockquote>
+  </section>
+</div>

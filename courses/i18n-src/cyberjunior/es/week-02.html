@@ -1,0 +1,202 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La segunda semana del bloque «Fundamento» analiza el modelo TCP/IP, el direccionamiento IP, los puertos y protocolos, y enseña a leer tráfico en Wireshark, comprendiendo la diferencia entre HTTP y HTTPS.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Comprender el modelo TCP/IP y el recorrido de un paquete</li>
+      <li>Manejar el direccionamiento IP, los puertos y los protocolos</li>
+      <li>Leer tráfico en Wireshark y ver la diferencia entre HTTP/HTTPS</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>El recorrido del paquete y dónde se puede escuchar:</p>
+    <pre><code>[ El atacante puede escuchar aquí ]
+        |
+[ Tú ] --HTTP (¡abierto!)--> [ Wi-Fi ] --> [ Router ] --> [ Servidor ]
+[ Tú ] --HTTPS (cifrado)----> ...lo mismo, pero interceptar es inútil...</code></pre>
+    <p>Los puertos = puertas en un dispositivo:</p>
+    <pre><code>Dispositivo 10.0.0.5
+  :22  SSH      :80  HTTP
+  :443 HTTPS    :53  DNS
+  (puerto abierto = punto de entrada potencial)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Casi todos los ataques pasan por la red, por lo que comprender la pila de red es una base obligatoria. Los datos se transmiten por capas; cada una añade su propia cabecera.</p>
+    <p><strong>La pila TCP/IP (simplificada)</strong></p>
+    <ul>
+      <li><strong>Enlace de datos</strong> — transmisión dentro del segmento local (direcciones MAC).</li>
+      <li><strong>Red (IP)</strong> — enrutamiento entre redes según direcciones IP.</li>
+      <li><strong>Transporte (TCP/UDP)</strong> — entrega hasta el servicio. TCP es confiable y orientado a conexión, UDP es rápido y sin garantías.</li>
+      <li><strong>Aplicación</strong> — HTTP, DNS, SMTP.</li>
+    </ul>
+    <p><strong>Puertos y el handshake de TCP.</strong> La IP señala el host, el puerto señala el servicio. TCP se abre mediante un three-way handshake: SYN → SYN-ACK → ACK.</p>
+    <p><strong>DNS y HTTP frente a HTTPS.</strong> DNS convierte un nombre en una IP; a su alrededor se construyen el phishing y el envenenamiento de caché. HTTP transmite datos en texto plano (incluidos los inicios de sesión), HTTPS añade cifrado TLS.</p>
+    <p><strong>Puertos de memoria:</strong> HTTP 80, HTTPS 443, SSH 22, FTP 21, SMTP 25, DNS 53, RDP 3389.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Interceptación de tráfico y por qué HTTPS es importante para la seguridad de la información</h3>
+    <p>En una red compartida (Wi-Fi abierto), un atacante puede «escuchar» el tráfico ajeno. Si el sitio usa HTTP, los inicios de sesión y los datos se ven en texto plano. <strong>HTTPS</strong> los cifra, y lo interceptado se vuelve inútil. Para un profesional de seguridad, esto es básico: los protocolos sin cifrar son un objetivo prioritario tanto para el ataque como para la defensa.</p>
+    <h3>Banderas TCP y qué es el «escaneo de puertos»</h3>
+    <p>Una conexión TCP se abre con un handshake (SYN → SYN-ACK → ACK). Las herramientas de escaneo (Nmap) juegan con estos pasos para averiguar qué puertos están abiertos sin completar la conexión completa. Comprender el handshake ayuda a leer logs y a reconocer el escaneo — un primer indicio típico de preparación de un ataque.</p>
+    <h3>El modelo OSI a través de los ojos de un defensor</h3>
+    <p>Cada capa tiene su propia clase de amenazas: en la de enlace de datos, la suplantación de MAC/ARP; en la de red, la suplantación de IP; en la de transporte, el escaneo; en la de aplicación, los ataques web. Conociendo la capa, comprendes tanto el vector de ataque como dónde colocar la defensa. El modelo OSI no es solo teoría, sino también un mapa de amenazas.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: el peligro del Wi-Fi abierto</h2>
+    <p>Estás en un café, entras a un sitio por HTTP e introduces tu contraseña. Cualquiera en la misma red con un sniffer sencillo la ve en texto plano. Si el sitio estuviera en HTTPS, el interceptor solo vería basura cifrada. Conclusión para la defensa: usa HTTPS y VPN en redes públicas; para el ataque, este escenario muestra por qué los protocolos abiertos son una presa fácil.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: qué se ve al entrar a un sitio</h2>
+    <ol>
+      <li>El dispositivo averigua la IP del sitio mediante DNS.</li>
+      <li>Abre una conexión TCP (handshake) en el puerto 443.</li>
+      <li>Se negocia el cifrado TLS (para HTTPS).</li>
+      <li>Se produce el intercambio de datos cifrado.</li>
+      <li>En Wi-Fi abierto, un tercero ve a qué IP te conectaste, pero no el contenido (en el caso de HTTPS).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: mapa de puertos y riesgos</h2>
+    <p>Para una máquina de práctica (o tu propia PC), elabora una tabla:</p>
+    <ul>
+      <li>qué puertos están abiertos (lo sabrás en el módulo 4 con Nmap, por ahora — los conocidos);</li>
+      <li>qué servicio hay detrás de cada uno;</li>
+      <li>por qué es peligroso un puerto abierto;</li>
+      <li>si realmente se necesita (lo innecesario — cerrarlo).</li>
+    </ul>
+    <p>Es el primer paso para reducir la superficie de ataque.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>TCP/UDP</strong> — transporte confiable / rápido.</li>
+      <li><strong>Puerto</strong> — «puerta» hacia un servicio (22 SSH, 80 HTTP, 443 HTTPS, 53 DNS).</li>
+      <li><strong>DNS</strong> — nombre → IP.</li>
+      <li><strong>HTTP vs HTTPS</strong> — abierto / cifrado.</li>
+      <li><strong>Handshake de TCP</strong> — SYN → SYN-ACK → ACK.</li>
+      <li><strong>Sniffer</strong> — herramienta de interceptación de tráfico (por ej. Wireshark).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: en una red privada no hace falta cifrar.</strong> Un atacante interno también es una amenaza.</li>
+      <li><strong>Error: ignorar los puertos abiertos.</strong> Cada puerto de más es una entrada potencial.</li>
+      <li><strong>Mito: HTTPS = el sitio es totalmente seguro.</strong> HTTPS protege el canal, pero no al sitio mismo frente a sus vulnerabilidades.</li>
+      <li><strong>Error: confundir IP y puerto.</strong> IP — el dispositivo, puerto — el servicio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Wireshark es una herramienta «de hackers»?</strong> No, es un analizador estándar para diagnóstico y defensa.</li>
+      <li><strong>¿Por qué es tan importante HTTPS?</strong> Cifra los datos, anulando la utilidad de la interceptación.</li>
+      <li><strong>¿Qué es el escaneo de puertos?</strong> Comprobar qué servicios están disponibles en un dispositivo.</li>
+      <li><strong>¿La VPN protege en Wi-Fi abierto?</strong> Sí, cifra tu tráfico por encima de la red.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Puertos: 22/80/443/53/21/25/3389 — hay que saberlos de memoria.</li>
+      <li><strong>HTTP está abierto, HTTPS está cifrado.</strong> En redes públicas — HTTPS/VPN.</li>
+      <li>Handshake: SYN → SYN-ACK → ACK.</li>
+      <li>Cada capa OSI = su propia clase de amenazas.</li>
+      <li>Puerto abierto = punto de entrada potencial.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Despliegue del laboratorio</h3>
+    <ol>
+      <li>Instala VirtualBox y crea una VM de Kali Linux.</li>
+      <li>Configura dos adaptadores: NAT (internet) y Host-Only/Internal (red aislada).</li>
+      <li>Verifica la conectividad con ping dentro de la red de laboratorio.</li>
+    </ol>
+    <h3>Parte B. Captura de tráfico HTTP</h3>
+    <ol>
+      <li>Ejecuta Wireshark en la interfaz de la red de laboratorio.</li>
+      <li>Abre un recurso HTTP con un formulario de entrada.</li>
+      <li>Encuentra el three-way handshake (SYN, SYN-ACK, ACK).</li>
+      <li>Filtra por HTTP y encuentra los datos del formulario en texto plano.</li>
+    </ol>
+    <h3>Parte C. Comparación con HTTPS</h3>
+    <ol>
+      <li>Repite la captura al abrir un recurso HTTPS.</li>
+      <li>Verifica que el contenido esté cifrado.</li>
+      <li>Anota la conclusión: qué se ve en HTTP y qué queda oculto en HTTPS.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Compara HTTP y HTTPS en Wireshark</h3>
+    <ol>
+      <li>Captura tráfico al entrar a una página HTTP con un formulario — encuentra datos en texto plano.</li>
+      <li>Repite con HTTPS — verifica que el contenido esté cifrado.</li>
+      <li>Saca una conclusión de por qué esto es crítico para la seguridad.</li>
+    </ol>
+    <h3>Parte E. Inventario de puertos</h3>
+    <ol>
+      <li>Elabora una lista de puertos y servicios estándar.</li>
+      <li>Para tres de ellos, describe por qué es peligrosa su disponibilidad desde internet.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Dibuja un esquema del recorrido de un paquete con la etiqueta de cada capa y cabecera.</li>
+      <li>Explica por qué iniciar sesión por HTTP en Wi-Fi público es peligroso y qué cambia HTTPS.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica por qué el Wi-Fi abierto sin HTTPS es peligroso.</li>
+      <li>Dibuja el recorrido de un paquete y marca dónde puede interceptarlo un atacante.</li>
+      <li>Relaciona 3 capas de OSI con los ataques típicos de cada una.</li>
+      <li>Explica la diferencia entre TCP y UDP desde el punto de vista de un profesional de seguridad.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Qué puerto usa HTTPS y en qué se diferencia de HTTP en cuanto a seguridad?</li>
+      <li>¿Qué es el handshake de TCP?</li>
+      <li>¿Por qué es peligroso el Wi-Fi abierto?</li>
+      <li>¿Qué hace Wireshark?</li>
+      <li>¿Por qué es peligroso un puerto abierto de más?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Network Fundamentals</a></li>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark (gratuito)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Conexión con la espiral del curso</h2>
+    <blockquote><p><strong>Conexión con la espiral del curso.</strong> El laboratorio configurado (Kali + red aislada) será el lugar de trabajo para todas las prácticas.</p></blockquote>
+  </section>
+</div>

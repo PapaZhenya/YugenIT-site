@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">The third week of the "Foundations" block teaches you to work confidently in the Linux command line, understand the permissions model, and find traces of events in Linux and Windows system logs.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Navigate Linux confidently from the command line</li>
+      <li>Understand the permissions model and the principle of least privilege</li>
+      <li>Find and read Linux and Windows system logs</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Linux permissions (rwx):</p>
+    <pre><code>-rwxr-x---   owner: rwx   group: r-x   others: ---
+ ^ file       (read/write/execute)
+777 = rwx for EVERYONE = dangerous</code></pre>
+    <p>Where to look for traces (logs):</p>
+    <pre><code>Linux:   /var/log/auth.log  (logins, sudo)
+         /var/log/syslog    (system)
+Windows: Event Viewer -> Security (4624 logon, 4625 failure)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Infosec tools live in the command line, and investigation begins with logs.</p>
+    <p><strong>The filesystem and Linux permissions.</strong> A tree rooted at <code>/</code>, where everything is a file. Permissions come in three sets (owner/group/others) expressed as <code>rwx</code>. <code>chmod</code> changes permissions, <code>chown</code> changes the owner, <code>sudo</code> grants temporary root privileges. Excessive permissions (777) are a common cause of compromise.</p>
+    <p><strong>Logs as a source of truth.</strong> On Linux — <code>/var/log</code> (<code>auth.log</code> for logins, <code>syslog</code> for the system). On Windows — Event Viewer: Security (logon <strong>4624</strong> success, <strong>4625</strong> failure), System, Application.</p>
+    <p><strong>Active Directory in a nutshell.</strong> In a corporate environment, Windows machines belong to a domain managed by Active Directory — a directory of users, groups, and policies. Understanding AD is critical for Blue Team, because it's exactly what attackers target to take over an entire network.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+    <h3>Users, groups, and root</h3>
+    <p>In Linux, every process has an owner. <strong>root</strong> is the superuser and can do anything. Regular users are restricted; <code>sudo</code> grants a temporary elevation to root. Attackers are aiming specifically for root ("privilege escalation"), while defense means keeping users at minimal privilege. Understanding this model underlies both attack and defense.</p>
+    <h3>Privilege escalation (in brief)</h3>
+    <p>Attackers often first gain regular-user access, then look for a way to become root: incorrect file permissions, vulnerable programs with elevated flags, weak sudo settings. The defender's job is not to leave these loopholes open. In this course, we look at this conceptually and only in the lab.</p>
+    <h3>Processes, services, and startup</h3>
+    <p>A system is a collection of running <strong>processes</strong> and <strong>services</strong>. Malware often disguises itself as a system process and adds itself to <strong>startup</strong> to survive a reboot. That's why knowing how to view the process list and startup items is a basic investigative skill (useful in weeks 9–10).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: the danger of 777 permissions</h2>
+    <p>A developer set a config file's permissions to <code>777</code> "to make it work." Now any user on the system can read and modify it — including the secrets inside it. An attacker who gains even low-level access can tamper with the file and escalate privileges. Takeaway: permissions aren't a formality — they're an attack surface. The correct approach is minimally necessary permissions.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: finding failed logins in a log</h2>
+    <ol>
+      <li>Open <code>/var/log/auth.log</code>.</li>
+      <li>Filter for lines containing <code>Failed password</code>: <code>grep "Failed password" auth.log</code>.</li>
+      <li>Count them: add <code>| wc -l</code>.</li>
+      <li>Find which IPs the attempts came from: <code>grep "Failed password" auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn</code>.</li>
+      <li>Many attempts from one IP → a likely password brute-force.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: command cheat sheet + permissions audit</h2>
+    <p>Build your own working toolkit:</p>
+    <ul>
+      <li>a cheat sheet of 20 Linux commands with descriptions;</li>
+      <li>on a lab VM, find files with excessive permissions (e.g. writable by everyone);</li>
+      <li>propose how to fix them;</li>
+      <li>put together a short "permissions audit" report.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>root</strong> — the Linux superuser.</li>
+      <li><strong>sudo</strong> — temporary privilege elevation.</li>
+      <li><strong>rwx / chmod</strong> — access permissions and how to change them.</li>
+      <li><strong>auth.log / syslog</strong> — Linux logs.</li>
+      <li><strong>Event ID 4624/4625</strong> — logon/failure on Windows.</li>
+      <li><strong>Privilege escalation</strong> — obtaining higher-level access.</li>
+      <li><strong>Startup (autorun)</strong> — a mechanism that launches at boot (a common persistence spot).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: no one reads the logs, so they're pointless.</strong> Logs are the primary source of truth during an investigation.</li>
+      <li><strong>Mistake: setting 777 "to make it work."</strong> That's an open door.</li>
+      <li><strong>Myth: you need root for everything.</strong> Quite the opposite — work with the minimum necessary permissions.</li>
+      <li><strong>Mistake: trusting <code>history -c</code>.</strong> Traces often remain in other logs.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Do I really need to know Linux?</strong> Yes, it's the core tool of a security specialist.</li>
+      <li><strong>Why read logs by hand if there's a SIEM?</strong> Understanding logs is foundational; a SIEM only automates it.</li>
+      <li><strong>Which matters more — Linux or Windows?</strong> Both: servers are often Linux, corporate environments run Windows/AD.</li>
+      <li><strong>What is privilege escalation?</strong> Gaining higher access than was originally granted.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Navigation: <code>pwd ls -la cd cat less grep head tail</code>.</li>
+      <li>Permissions: <code>chmod</code>, the <code>rwx</code> model (owner/group/others), 777 — dangerous.</li>
+      <li>Escalation: <code>sudo</code>; an attacker's goal is root.</li>
+      <li>Logs: <code>/var/log/auth.log</code>, <code>syslog</code>; Windows — Event Viewer (4624/4625).</li>
+      <li>Counting failed logins: <code>grep "Failed password" auth.log | wc -l</code>.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <h3>Part A. Navigation and files</h3>
+    <ol>
+      <li>Learn: <code>pwd</code>, <code>ls -la</code>, <code>cd</code>, <code>cat</code>, <code>less</code>, <code>head</code>, <code>tail</code>, <code>grep</code>.</li>
+      <li>Create a directory and files, practice moving around and viewing them.</li>
+    </ol>
+    <h3>Part B. Access permissions</h3>
+    <ol>
+      <li>Create a user and a file; change permissions with <code>chmod</code>.</li>
+      <li>Check what another user can and can't do.</li>
+      <li>Show why 777 permissions on a file with a secret are dangerous.</li>
+    </ol>
+    <h3>Part C. Reading logs</h3>
+    <ol>
+      <li>Find successful and failed logins in <code>/var/log/auth.log</code> using <code>grep</code>.</li>
+      <li>Write a one-liner that counts failed logins.</li>
+      <li>On a Windows VM, find events 4624 and 4625 in Event Viewer.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Analyzing Windows logs</h3>
+    <ol>
+      <li>On a Windows VM, open Event Viewer → Security.</li>
+      <li>Find events 4624 (successful logon) and 4625 (failure).</li>
+      <li>Determine what a password brute-force would look like in these events.</li>
+    </ol>
+    <h3>Part E. Processes and startup</h3>
+    <ol>
+      <li>Display the process list (<code>ps aux</code> on Linux).</li>
+      <li>Check what starts automatically.</li>
+      <li>Explain why malware tries to get into startup.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Compile a cheat sheet of 20 Linux commands with descriptions.</li>
+      <li>Describe how the principle of least privilege reduces damage in the event of a compromise.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Compile a cheat sheet of 20 Linux commands with descriptions.</li>
+      <li>Explain the rwx permissions model using a specific file as an example.</li>
+      <li>Describe, with a scenario, why excessive permissions are dangerous.</li>
+      <li>Write a command that counts failed logins in auth.log.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>What does the <code>chmod</code> command do, and what does 777 mean?</li>
+      <li>Where do login logs live on Linux?</li>
+      <li>What do Event IDs 4624 and 4625 mean?</li>
+      <li>What is privilege escalation?</li>
+      <li>Why does startup matter during an investigation?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://overthewire.org/wargames/bandit/" target="_blank" rel="noopener">OverTheWire — Bandit (Linux as a game)</a></li>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Linux Fundamentals</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Connection to the course spiral</h2>
+    <blockquote><p><strong>Connection to the course spiral.</strong> Reading logs and the command line will be directly needed in the incident-response block (weeks 9–10).</p></blockquote>
+  </section>
+</div>

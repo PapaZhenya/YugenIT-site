@@ -1,0 +1,210 @@
+<div class="lesson-content">
+  <p class="lesson-intro">El módulo del bloque «Respuesta» presenta el ciclo de vida de la respuesta a incidentes y los fundamentos del análisis forense — la preservación de evidencias y la reconstrucción de la línea de tiempo de un ataque a partir de los logs.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Conocer el ciclo de vida de la respuesta a incidentes</li>
+      <li>Comprender los principios de preservación de evidencias</li>
+      <li>Investigar un ataque simulado a partir de los logs y construir una línea de tiempo</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Ciclo de vida de la respuesta (IR):</p>
+    <pre><code>Preparación -> Detección -> Contención -> Erradicación -> Recuperación -> Lecciones aprendidas
+     ^                                                                          |
+     +------------------------- las lecciones alimentan la preparación --------+</code></pre>
+    <p>Investigación a partir de varias fuentes:</p>
+    <pre><code>auth.log (accesos) + access.log (web) + syslog + historial de comandos
+        \_______ cruzamos hora e IP _______/
+   -> reconstruimos la línea de tiempo del ataque (incluso si hay history -c)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Tarde o temprano la defensa falla — entonces todo lo decide la capacidad de responder correctamente.</p>
+    <p><strong>Ciclo de vida de IR.</strong> Seis etapas: preparación → detección → contención → erradicación → recuperación → lecciones aprendidas. El objetivo es minimizar el daño y no repetir los mismos errores.</p>
+    <p><strong>Análisis forense y preservación de evidencias.</strong> Regla principal: primero fijar el estado, después actuar. Las imágenes de disco y los logs se hashean, y se lleva una cadena de custodia (chain of custody).</p>
+    <p><strong>Los logs como evidencia.</strong> El material principal son los logs (auth.log, syslog, logs web), el historial de comandos, los volcados de memoria. La habilidad más importante es no creer en el supuesto «fin de la historia» tras <code>history -c</code>, sino reconstruir el panorama a partir de varias fuentes.</p>
+    <blockquote>
+      <p><strong>Material:</strong> conjunto de datos «Incidente n.º 1» (web01) — <code>auth.log</code>, <code>access.log</code>, <code>syslog</code>, historial de comandos con rastros de la cadena completa del ataque. Ver <code>datasets/scenario1_web01_breach/</code>.</p>
+    </blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Materiales para descargar — Incidente n.º 1 (web01_breach)</h2>
+    <p>Resumen del escenario y logs en bruto para investigar de forma autónoma.</p>
+    <ul>
+      <li><a href="courses/datasets/scenario1_web01_breach/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a> — descripción del incidente y la tarea</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/auth.log" download>auth.log</a> — registro de autenticación</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/access.log" download>access.log</a> — log web de acceso</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/syslog" download>syslog</a> — registro del sistema</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/bash_history_admin.txt" download>bash_history_admin.txt</a> — historial de comandos del administrador</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Las seis etapas de IR con más detalle</h3>
+    <p><strong>Preparación</strong> — planes, accesos, herramientas de antemano. <strong>Detección</strong> — notar el incidente. <strong>Contención</strong> — evitar que se propague (aislar el host). <strong>Erradicación</strong> — eliminar la causa (cerrar la brecha, eliminar el malware). <strong>Recuperación</strong> — restablecer el funcionamiento. <strong>Lecciones aprendidas</strong> — qué mejorar. Saltarse cualquier etapa sale caro.</p>
+    <h3>Preservación de evidencias (chain of custody)</h3>
+    <p>Regla principal: <strong>primero fijar, después actuar</strong>. Las imágenes de disco y los logs se hashean para demostrar que no fueron alterados, y se lleva una <strong>cadena de custodia</strong> — quién, cuándo y cómo manipuló la evidencia. De lo contrario, las pruebas pierden valor. No «limpies» de inmediato una máquina infectada — primero recopila los datos.</p>
+    <h3>Indicadores de compromiso (IoC)</h3>
+    <p><strong>IoC</strong> — rastros que delatan un ataque: IP extrañas, archivos ocultos (<code>/tmp/.x</code>), cuentas nuevas, tareas en cron, procesos inusuales. Al recopilar IoC, tanto investigas el incidente actual como aprendes a detectar otros similares en el futuro.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué <code>history -c</code> no salva al atacante</h2>
+    <p>El atacante borró el historial de comandos, pensando que había cubierto sus huellas. Pero sus acciones quedaron reflejadas en el <code>syslog</code> (creación de usuario, cron), en los logs web (escaneo) y en el auth.log (inicio de sesión). Al cruzar las fuentes, el analista reconstruyó toda la cadena. Lección: no confíes en una sola fuente — la verdad se arma con varias. Esto es justamente lo que distingue a una buena investigación.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: investigación a partir de los logs (escenario web01)</h2>
+    <ol>
+      <li>Lee el resumen del incidente (conjunto de datos <code>scenario1_web01_breach</code>).</li>
+      <li>Encuentra la IP del atacante cruzando <code>auth.log</code> y <code>access.log</code>.</li>
+      <li>Encuentra la primera etapa (escaneo web) por el User-Agent en el log web.</li>
+      <li>Cuenta los inicios de sesión fallidos hasta el exitoso; encuentra el momento del compromiso.</li>
+      <li>Reconstruye las acciones por el historial de comandos: reconocimiento → robo → persistencia.</li>
+      <li>Construye la línea de tiempo (hora → evento) citando las líneas de los logs.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: informe de incidente</h2>
+    <p>Con el conjunto de datos «Incidente n.º 1», elabora un informe completo (plantilla en la sección de evaluación):</p>
+    <ul>
+      <li>objetivo y entorno;</li>
+      <li>línea de tiempo del ataque con evidencias (líneas de log);</li>
+      <li>qué datos se vieron afectados;</li>
+      <li>cómo se afianzó el atacante;</li>
+      <li>recomendaciones para que no se repita;</li>
+      <li>conclusión.</li>
+    </ul>
+    <p>Este es el núcleo del trabajo de SOC/IR y un excelente elemento de portafolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>IR</strong> — respuesta a incidentes (6 etapas).</li>
+      <li><strong>Análisis forense</strong> — recopilación y análisis de evidencias digitales.</li>
+      <li><strong>Chain of custody</strong> — cadena de custodia de las pruebas.</li>
+      <li><strong>IoC</strong> — indicador de compromiso.</li>
+      <li><strong>Línea de tiempo</strong> — secuencia de eventos reconstruida.</li>
+      <li><strong>Persistencia</strong> — mecanismo de afianzamiento del atacante.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: <code>history -c</code> destruye todos los rastros.</strong> Quedan huellas en otros logs.</li>
+      <li><strong>Error: «limpiar» la máquina de inmediato.</strong> Primero recopila las evidencias.</li>
+      <li><strong>Mito: basta con un solo log.</strong> La verdad se arma a partir de varias fuentes.</li>
+      <li><strong>Error: no hashear las evidencias.</strong> Sin esto no se puede demostrar que no fueron alteradas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por dónde empezar la investigación?</strong> Por el resumen y el cruce de fuentes según la hora y la IP.</li>
+      <li><strong>¿Qué es más importante — la rapidez o la preservación de las pruebas?</strong> Contener la propagación, pero sin destruir las evidencias.</li>
+      <li><strong>¿De dónde sacar datos para practicar?</strong> Los conjuntos de datos de logs ya preparados del curso (semanas 9–10).</li>
+      <li><strong>¿Esto es el trabajo del SOC?</strong> En gran medida sí — detección y análisis de incidentes.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>IR: Preparación → Detección → Contención → Erradicación → Recuperación → Lecciones aprendidas.</li>
+      <li>Primero <strong>fija</strong> las evidencias (hash, chain of custody), después actúa.</li>
+      <li>No confíes en un solo log — <strong>cruza</strong> las fuentes.</li>
+      <li>Busca <strong>IoC</strong>: IP extrañas, archivos ocultos, cuentas nuevas, cron.</li>
+      <li>Resultado — <strong>línea de tiempo</strong> e informe.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Análisis inicial</h3>
+    <ol>
+      <li>Obtén los logs del Incidente n.º 1 y lee el resumen del escenario.</li>
+      <li>Determina la IP del atacante cruzando auth.log y access.log.</li>
+      <li>Encuentra la primera etapa (escaneo web) por el User-Agent en el log web.</li>
+    </ol>
+    <h3>Parte B. Reconstrucción de la cadena</h3>
+    <ol>
+      <li>Cuenta los inicios de sesión fallidos hasta el exitoso, encuentra el momento del compromiso.</li>
+      <li>Determina las acciones posteriores al acceso mediante el historial de comandos.</li>
+      <li>Encuentra al menos dos mecanismos de persistencia (usuario nuevo, cron).</li>
+    </ol>
+    <h3>Parte C. Línea de tiempo e informe</h3>
+    <ol>
+      <li>Construye la línea de tiempo: hora → evento, citando líneas de log.</li>
+      <li>Evalúa qué datos fueron robados.</li>
+      <li>Elabora el informe de incidente según la plantilla.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Análisis rápido del conjunto de datos</h3>
+    <ol>
+      <li>Abre <code>scenario1_web01_breach</code>, cuenta los inicios de sesión fallidos (<code>grep "Failed password" | wc -l</code>).</li>
+      <li>Encuentra la línea del inicio de sesión exitoso y la hora del compromiso.</li>
+    </ol>
+    <h3>Parte E. Búsqueda de persistencia</h3>
+    <ol>
+      <li>Con el historial de comandos y el <code>syslog</code>, encuentra los mecanismos de afianzamiento (usuario nuevo, cron).</li>
+      <li>Explica cómo detectar cada uno de ellos en un sistema real.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Enumera las 6 etapas del ciclo de vida de IR con tus propias palabras.</li>
+      <li>Explica para qué sirven la cadena de custodia y el hasheo de evidencias.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Enumera las 6 etapas de IR y la tarea de cada una.</li>
+      <li>Explica para qué sirven la chain of custody y el hasheo de evidencias.</li>
+      <li>Describe 5 indicadores de compromiso.</li>
+      <li>Construye una línea de tiempo con el conjunto de datos del incidente.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>Nombra la primera etapa del ciclo de vida de IR.</li>
+      <li>¿Qué es la chain of custody?</li>
+      <li>¿Por qué no se puede «limpiar» de inmediato una máquina infectada?</li>
+      <li>¿Garantiza <code>history -c</code> la destrucción de todos los rastros?</li>
+      <li>¿Qué es un IoC?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://cyberdefenders.org/" target="_blank" rel="noopener">CyberDefenders (casos gratuitos de blue team)</a></li>
+      <li><a href="https://letsdefend.io/" target="_blank" rel="noopener">LetsDefend (plan gratuito — simulador de SOC)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Conexión con la espiral del curso.</strong> Aquí convergen todas las habilidades: lectura de logs (semana 3), fuerza bruta (semana 6), redes (semana 2) — en una investigación integral.</p>
+    </blockquote>
+  </section>
+</div>

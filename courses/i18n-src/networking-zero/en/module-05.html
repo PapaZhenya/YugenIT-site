@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module explains how a router connects different networks, what a default gateway is, what a routing table and hops are, and what NAT does — plus how to trace a packet's path to an external host.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand the role of a router and how it differs from a switch</li>
+      <li>Understand how a packet moves between networks</li>
+      <li>Understand what a default gateway is</li>
+      <li>Get familiar with the routing table and the concept of a "hop"</li>
+      <li>Understand at a basic level what NAT does</li>
+      <li>Learn to trace a packet's path to an external host</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>A switch works great inside a single network. But how do you get beyond it — into a neighboring network or onto the internet? How does your packet find a server on another continent? That's the router's job — a device that connects different networks and charts a path between them. This is the core of the whole course: once you understand routing, you'll understand how the internet actually works.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Two networks connected by a router:</p>
+    <pre><code>  Network A 192.168.1.0/24          Network B 192.168.2.0/24
+  [PC-A1]---\                         /---[PC-B1]
+  [PC-A2]---[SW-A]---[ Router ]---[SW-B]---[PC-B2]
+                     .1 |  | .1
+              gateway A |  | gateway B
+</code></pre>
+    <p>The packet's outbound path through hops:</p>
+    <pre><code>[ You ] -&gt; [ Your router ] -&gt; [ ISP router ] -&gt; ... -&gt; [ Server ]
+  hop0          hop1                 hop2            hopN
+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>The router: border guard and navigator</h3>
+    <p><strong>The router</strong> sits at the junction of different networks and decides where to send a packet next so it gets closer to its destination. The key difference from a switch: a switch moves frames <strong>within</strong> a single network by MAC addresses, while a router moves packets <strong>between</strong> networks by IP addresses.</p>
+    <p>A home router is actually several devices in one box: a router, a switch (the LAN ports), and often a Wi-Fi access point. But its main function is routing — linking your home network to your provider's network, and through it, to the entire internet.</p>
+
+    <h3>The default gateway: the door outward</h3>
+    <p>When a device wants to send data to a destination <strong>outside its own</strong> network, it doesn't know the way itself — so it hands the packet to the <strong>default gateway</strong>. The gateway is the router's address, the "door outward" from the local network. This is the same gateway you've seen in your network settings (usually <code>.1</code> in your subnet).</p>
+    <p>The rule is simple: if the destination is in my network, send it directly; if not, hand it to the gateway and let it figure out the rest. Without a configured gateway, a device is "locked" inside its own LAN and can't reach the internet — this, by the way, is a very common cause of "the internet isn't working."</p>
+
+    <h3>The routing table: the packet's navigator</h3>
+    <p>A router has a <strong>routing table</strong> — a list of entries like "to reach this network, go through this next step." When it receives a packet, the router looks at the destination address, finds the best-matching entry in the table, and forwards the packet on — to the next router (next hop).</p>
+    <p>That's how a packet travels: from one router to another, each one bringing it a little closer to its destination, until it reaches the destination network. No single router knows the whole path — it only knows the "next step." It's like a relay race: each runner hands the baton to the next one.</p>
+
+    <h3>Hops and the packet's path</h3>
+    <p>Each time a packet crosses a router, that's called a <strong>hop</strong>. Between you and a website there are usually several hops — often 10 to 20. The <code>traceroute</code> command (<code>tracert</code> on Windows) shows this path: it lists the routers the packet passed through and the time to reach each one.</p>
+    <p>This is an extremely useful diagnostic tool: if a packet "gets stuck" at some hop, you can see exactly where the connection breaks — on your end, at the provider, or further along. We'll come back to this in the module on diagnostics.</p>
+
+    <h3>NAT: how the whole house goes out under one address</h3>
+    <p>Inside your network there's a bunch of devices with private addresses, but the public address from your provider is usually just <strong>one</strong>. How do they all reach the internet? Through <strong>NAT (Network Address Translation)</strong>: the router, on the way out, swaps a device's private address for its own public one and remembers who to return the response to. From the outside, your entire house looks like a single address.</p>
+    <p>This solves the address shortage and also hides the internal structure of the network a bit (from outside, no one can see how many devices you have). More on NAT in the next module, together with DHCP.</p>
+
+    <h3>Static and dynamic routing (briefly)</h3>
+    <p>Where do the entries in a router's table come from? Two ways. <strong>Statically</strong> — an administrator enters routes by hand (fine for small networks). <strong>Dynamically</strong> — routers exchange information about networks among themselves using special protocols and build tables automatically (needed for large networks and the internet). For now it's enough to know both approaches exist; the details of routing protocols are a topic for more advanced courses.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>How a router picks a route</h3>
+    <p>A routing table can have several matching entries. The router picks the <strong>most specific</strong> one (with the longest matching prefix) — the "longest prefix match" principle. If no entry matches, it uses the <strong>default route</strong> (<code>0.0.0.0/0</code>) — "send everything else there." On a home router, the default route leads to the provider.</p>
+
+    <h3>What a "default route" is</h3>
+    <p>It's the entry for "all the addresses I don't know." For your PC, the <strong>default gateway</strong> plays that role; for a home router, it's the link to the provider. Thanks to it, a device doesn't need to know the whole internet — it's enough to know "where to send anything unfamiliar."</p>
+
+    <h3>Symmetric and asymmetric paths</h3>
+    <p>Usually the response travels roughly the same path as the request, but not necessarily the exact same one — in large networks the "there" and "back" paths can differ. You won't notice this yourself, but it explains why <code>traceroute</code> only shows the path in one direction.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: a packet's path from you to a website</h2>
+    <p>You open a website hosted on a server in another country. Your laptop sees: the destination isn't in my network, so I'll hand the packet to the gateway (your home router, <code>192.168.1.1</code>).</p>
+    <p>The router applies NAT (swaps your private address for its own public one) and, using its table, sends the packet on — to the provider's router. That one looks at the destination address and passes it to the next one, which passes it to the next, and so on. The packet hops from node to node (those very hops), crossing countries, until it reaches the network where the server lives. The response comes back the same way, and your router uses its NAT entry to know the returned packet needs to go to your laptop specifically, not the phone next to it.</p>
+    <p>Run <code>tracert</code> to any website and you'll literally see this list of hops with your own eyes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: why without a gateway "local works but there's no internet"</h2>
+    <p>A classic situation: devices in the apartment can ping each other, files move over the local network, but websites won't load. The cause is often one thing — <strong>the default gateway is missing or wrong</strong>. Local exchange works directly (no gateway needed), but going outward is impossible without the "door." Check the gateway first — and the mystery is solved.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: a packet from network A to network B</h2>
+    <ol>
+      <li>PC-A1 (network A) wants to reach PC-B1 (network B).</li>
+      <li>A1 sees: the destination isn't in my network → send to the gateway (the router's interface on network A).</li>
+      <li>The router checks its table: network B is connected to my second interface.</li>
+      <li>The router repackages the frame and sends the packet into network B.</li>
+      <li>PC-B1 receives the packet; the response goes back following the same principle.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a little "internet" made of three networks</h2>
+    <p>In Packet Tracer, build a topology of three subnets and two routers:</p>
+    <ul>
+      <li>three LANs, connected through routers;</li>
+      <li>configure addressing and gateways;</li>
+      <li>achieve connectivity between devices in all three networks;</li>
+      <li>run <code>tracert</code> between distant devices and show the hops;</li>
+      <li>in your report, explain how a packet finds its path.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Router</strong> — a device that connects different networks and forwards packets by IP</li>
+      <li><strong>Default gateway</strong> — the router's address, the "exit" from the local network to the outside</li>
+      <li><strong>Routing table</strong> — a list of routes: which network is reached through which next step</li>
+      <li><strong>Hop</strong> — a single crossing of a packet through a router</li>
+      <li><strong>NAT</strong> — replacing private addresses with a single public one when going out to the internet</li>
+      <li><strong>traceroute / tracert</strong> — a command that shows a packet's path via its hops</li>
+      <li><strong>Next hop</strong> — the next node the router forwards the packet to</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: confusing a switch with a router.</strong> The former works by MAC within a LAN, the latter by IP between networks.</li>
+      <li><strong>Myth: a router knows the whole path to the destination.</strong> It only knows the next step.</li>
+      <li><strong>Mistake: forgetting about the gateway.</strong> Without a default gateway, a device can't leave its own network.</li>
+      <li><strong>Myth: NAT is protection/a firewall.</strong> NAT solves the address shortage; protection is a separate task.</li>
+      <li><strong>Mistake: assuming more hops is always worse.</strong> Latency and packet loss matter more than the number of hops.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Does a router know the whole path?</strong> No, only the next step.</li>
+      <li><strong>What if there's no route for an address?</strong> It follows the default route (to the provider).</li>
+      <li><strong>Why does traceroute show the path in only one direction?</strong> The response may take a different path.</li>
+      <li><strong>Does NAT protect you?</strong> It hides the network a little, but it's not a firewall.</li>
+      <li><strong>Is a home router a router or a switch?</strong> Both (plus Wi-Fi) in one box.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>Router</strong> = between networks, by IP. <strong>Switch</strong> = within a network, by MAC.</li>
+      <li><strong>Default gateway</strong> = the door outward from your network.</li>
+      <li><strong>Routing table</strong> = "which network is reached through which next step."</li>
+      <li><strong>Longest prefix match</strong> — the most specific route is chosen.</li>
+      <li><strong>Default route</strong> <code>0.0.0.0/0</code> = "send everything unfamiliar here."</li>
+      <li><strong>NAT</strong> = many private addresses behind one public one.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Trace the path outward</h3>
+    <ol>
+      <li>Run <code>tracert google.com</code> (Windows) or <code>traceroute google.com</code> (Linux/Mac).</li>
+      <li>Count the number of hops to the destination.</li>
+      <li>Find the first hop — that's your home router (compare it to the gateway address from module 2).</li>
+    </ol>
+
+    <h3>Part B. Connect two networks in a simulator</h3>
+    <ol>
+      <li>In Packet Tracer, create two subnets (two LANs with switches and computers).</li>
+      <li>Add a router and connect both subnets to it; configure IPs on its interfaces.</li>
+      <li>Set the correct default gateway on the computers.</li>
+      <li>Achieve a successful <code>ping</code> between devices on different subnets.</li>
+    </ol>
+
+    <h3>Part C. Break and fix the gateway</h3>
+    <ol>
+      <li>On one computer, remove or set an incorrect default gateway.</li>
+      <li>Try to ping a device on another subnet — confirm it doesn't work.</li>
+      <li>Restore the correct gateway and confirm connectivity is back.</li>
+      <li>Draw a conclusion about what the gateway is responsible for.</li>
+    </ol>
+
+    <h3>Part D. Look at the routing table</h3>
+    <ol>
+      <li>On the router, display its routing table.</li>
+      <li>Find the entries for the connected subnets.</li>
+      <li>Explain how the router uses this table to decide where to send a packet.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra labs</h2>
+
+    <h3>Part E. Default route</h3>
+    <ol>
+      <li>On the router in the simulator, set a default route to the "provider."</li>
+      <li>Verify that packets to unknown networks go exactly there.</li>
+    </ol>
+
+    <h3>Part F. Analyze your own traceroute</h3>
+    <ol>
+      <li>Run <code>tracert</code> to two different websites.</li>
+      <li>Compare where the paths coincide (your router, the provider) and where they diverge.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Self-study assignments</h2>
+    <ul>
+      <li>Explain the difference between a switch and a router in two or three sentences.</li>
+      <li>Describe the role of the default gateway using an everyday analogy.</li>
+      <li>Explain in your own words what NAT does and why it's needed.</li>
+      <li>Explain why it's enough for a router to know only the "next step."</li>
+      <li>Analyze the output of <code>tracert</code> to any website: how many hops, where's your router, where's the provider.</li>
+      <li>Find the difference between static and dynamic routing and describe it in two sentences.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain the "most specific route" principle with a simple example.</li>
+      <li>What is a default route and why is it needed?</li>
+      <li>Describe the "local works, no internet" situation and its cause.</li>
+      <li>Find the difference between routing and switching in a single comparison table.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>How does a router differ from a switch?</li>
+      <li>What is a default gateway and why is it needed?</li>
+      <li>What does traceroute show?</li>
+      <li>What does NAT do?</li>
+      <li>What is a "hop"?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer — routing</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — routing</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>How this connects to the course.</strong> You already know how to connect networks — that's the core of the course. Next we'll add services (DHCP, NAT) that make networks convenient and "self-configuring."</p>
+    </blockquote>
+  </section>
+</div>

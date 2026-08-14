@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module of the "Defense" block covers network monitoring tools — IDS/IPS and SIEM — along with the principles of network segmentation and DMZs for containing attacks.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand the role of IDS/IPS and SIEM</li>
+      <li>Get comfortable with network segmentation and DMZs</li>
+      <li>Set up event collection and an alert rule</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>SIEM collects and correlates events:</p>
+    <pre><code>[Server]---logs--\
+[Firewall]--logs--> [ SIEM ] --rules--> ALERT! (brute-force)
+[Workstations]-/            correlates events from different sources</code></pre>
+    <p>Segmentation limits the attacker:</p>
+    <pre><code>[Internet]--[ DMZ (public services) ]--[ Internal network ]
+breached DMZ != access to the whole network</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Walls don't protect you if nobody's watching them. This module is about detection.</p>
+    <p><strong>IDS, IPS, and SIEM.</strong> An IDS notices suspicious activity and raises a signal; an IPS also blocks it. SIEM collects logs from every system, correlates events, and raises alerts — it's the SOC analyst's workbench. Logs are useless until someone reads them; SIEM turns the stream into signals.</p>
+    <p><strong>Segmentation and DMZ.</strong> A network is divided into zones with controlled transitions. Public services are placed in a DMZ — a buffer between the internet and the internal network. A breached DMZ doesn't grant access to the whole infrastructure.</p>
+    <p><strong>From event to alert.</strong> Dozens of "Failed password" entries from a single IP within a minute is almost certainly a brute-force attempt; an alert rule is configured to catch exactly this pattern.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper dive</h2>
+    <h3>IDS vs. IPS</h3>
+    <p>An <strong>IDS</strong> (intrusion detection system) notices suspicious activity and raises a signal. An <strong>IPS</strong> additionally <strong>blocks</strong> it. An IDS is a "camera with an alarm"; an IPS is a "camera + automatic lock." The choice depends on whether you're ready for automatic blocking (with its risk of false positives).</p>
+    <h3>What SIEM is and why a SOC analyst needs it</h3>
+    <p><strong>SIEM</strong> collects logs from every system into one place, <strong>correlates</strong> events across sources, and raises <strong>alerts</strong>. It's the SOC analyst's workbench: raw logs are useless until someone pulls them together. Knowing how to write an alert rule (for example, for password brute-forcing) is a key skill.</p>
+    <h3>Segmentation and DMZ</h3>
+    <p>Dividing a network into zones with controlled transitions. Public services are placed in the <strong>DMZ</strong> — a buffer between the internet and the internal network. If an attacker breaches the DMZ, they don't get the whole network at once. This is the principle of containment and defense-in-depth applied at the network level.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One more example: why "we have logs, but they don't help"</h2>
+    <p>A company had been writing logs for years, but nobody looked at them. When a breach happened, it turned out the traces were there — nobody had pulled them together or noticed. After deploying SIEM with rules, the same events became alerts, and the next attack was caught within minutes. The moral: the value isn't in the logs themselves, but in collecting, correlating, and responding to them.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: from event to alert</h2>
+    <ol>
+      <li>The source (a server) writes login logs.</li>
+      <li>SIEM collects them in real time.</li>
+      <li>A rule counts failed logins from a single IP over an interval.</li>
+      <li>Threshold exceeded → SIEM raises a "brute-force" alert.</li>
+      <li>The analyst sees the alert and checks the context (IP, user, time).</li>
+      <li>Decision: block the IP, escalate, or close it as a false positive.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a brute-force detection rule</h2>
+    <p>In a training SIEM (Wazuh/ELK) or on paper:</p>
+    <ul>
+      <li>describe which log fields you need (IP, user, result, time);</li>
+      <li>write the rule: "&gt; N failed logins from one IP within M minutes → alert";</li>
+      <li>think through how to tell an attack apart from an employee's forgotten password (thresholds, whitelist);</li>
+      <li>describe the analyst's response to the alert.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>IDS / IPS</strong> — detection / detection+blocking.</li>
+      <li><strong>SIEM</strong> — log collection and correlation, alerts.</li>
+      <li><strong>SOC</strong> — security operations center.</li>
+      <li><strong>Alert</strong> — a signal about a suspicious event.</li>
+      <li><strong>DMZ</strong> — a buffer zone for public services.</li>
+      <li><strong>Segmentation</strong> — dividing a network into zones.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: collecting logs = ensuring security.</strong> Logs need to be correlated and acted on.</li>
+      <li><strong>Mistake: overly "noisy" rules.</strong> A flood of false alerts dulls vigilance.</li>
+      <li><strong>Myth: IPS is always better than IDS.</strong> Automatic blocking can cut off legitimate traffic.</li>
+      <li><strong>Mistake: a flat network with no segmentation.</strong> Compromising one node opens up everything.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>What does a SOC analyst do?</strong> Watches SIEM alerts, investigates, responds — the goal of this course.</li>
+      <li><strong>IDS or IPS?</strong> IDS is safer to start with; IPS is for when you're ready for automatic blocking.</li>
+      <li><strong>Why would I need a DMZ at home?</strong> At home it's simpler — a guest network; a DMZ matters for organizational servers.</li>
+      <li><strong>Where do I start with SIEM?</strong> With one log source and one simple rule.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>IDS</strong> detects, <strong>IPS</strong> blocks. <strong>SIEM</strong> aggregates logs and raises <strong>alerts</strong>.</li>
+      <li>Logs are useless without correlation and response.</li>
+      <li><strong>DMZ</strong> + <strong>segmentation</strong> = limiting the spread.</li>
+      <li>A classic alert: password brute-forcing (many Failed entries from one IP).</li>
+      <li>Less "noise" means a sharper response.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <h3>Part A. Deploying SIEM</h3>
+    <ol>
+      <li>Deploy a lightweight SIEM (Wazuh or ELK).</li>
+      <li>Connect a log source — a Linux VM.</li>
+      <li>Confirm events are coming in.</li>
+    </ol>
+    <h3>Part B. Generating and detecting an attack</h3>
+    <ol>
+      <li>Generate a series of failed SSH logins.</li>
+      <li>Find the events in SIEM and identify the important fields (IP, user, time).</li>
+    </ol>
+    <h3>Part C. Alert rule</h3>
+    <ol>
+      <li>Configure a rule: N failed logins from one IP within a short time → alert.</li>
+      <li>Verify it fires.</li>
+      <li>Describe how the alert would help an analyst in a real SOC.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Deploy a mini-SIEM</h3>
+    <ol>
+      <li>Spin up a training SIEM (Wazuh or ELK) in the lab.</li>
+      <li>Connect a log source (a Linux VM).</li>
+      <li>Confirm events are coming in.</li>
+    </ol>
+    <h3>Part E. Test your alert</h3>
+    <ol>
+      <li>Generate a series of failed logins.</li>
+      <li>Set up an alert rule and get it to fire.</li>
+      <li>Work out which fields matter for an analyst.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent assignments</h2>
+    <ul>
+      <li>Draw a diagram of a segmented network with a DMZ.</li>
+      <li>Explain the difference between IDS and IPS using a concrete scenario.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>Explain the difference between IDS and IPS using a concrete scenario.</li>
+      <li>Draw a network diagram with a DMZ and label the zones.</li>
+      <li>Describe why SIEM matters more than "just logs".</li>
+      <li>Write an alert rule for password brute-forcing.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>How does IPS differ from IDS?</li>
+      <li>What does SIEM do?</li>
+      <li>Why is network segmentation needed?</li>
+      <li>What is a DMZ?</li>
+      <li>What event pattern does password brute-forcing produce in the logs?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://blueteamlabs.online/" target="_blank" rel="noopener">Blue Team Labs Online (free tier)</a></li>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — SOC Level 1 (partially free)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Connection to the course spiral.</strong> The SIEM and detection rules you set up here become the environment where you'll run threat hunting in week 10.</p>
+    </blockquote>
+  </section>
+</div>

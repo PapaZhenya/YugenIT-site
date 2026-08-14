@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">En este módulo del bloque «Defensa» se analizan las herramientas de monitoreo de red — IDS/IPS y SIEM — así como los principios de la segmentación de red y la DMZ para contener los ataques.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Comprender el papel de IDS/IPS y SIEM</li>
+      <li>Manejar la segmentación de red y la DMZ</li>
+      <li>Configurar la recolección de eventos y una regla de alerta</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>SIEM recolecta y correlaciona eventos:</p>
+    <pre><code>[Servidor]---logs--\
+[Firewall]--logs--> [ SIEM ] --reglas--> ¡ALERTA! (brute-force)
+[Estaciones de trabajo]-/            correlaciona eventos de distintas fuentes</code></pre>
+    <p>La segmentación limita al atacante:</p>
+    <pre><code>[Internet]--[ DMZ (servicios públicos) ]--[ Red interna ]
+DMZ vulnerada != acceso a toda la red</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Los muros no protegen si nadie observa detrás de ellos. Este módulo trata sobre la detección.</p>
+    <p><strong>IDS, IPS y SIEM.</strong> IDS detecta lo sospechoso y avisa; IPS además bloquea. SIEM recolecta logs de todos los sistemas, correlaciona eventos y genera alertas — el puesto de trabajo del SOC-analista. Los logs son inútiles mientras nadie los lee; SIEM convierte el flujo en señales.</p>
+    <p><strong>Segmentación y DMZ.</strong> La red se divide en zonas con transiciones controladas. Los servicios públicos se colocan en la DMZ — un búfer entre internet y la red interna. Una DMZ vulnerada no otorga acceso a toda la infraestructura.</p>
+    <p><strong>De evento a alerta.</strong> Decenas de «Failed password» desde una misma IP en un minuto son casi con certeza un ataque de fuerza bruta; sobre ese patrón se configura una regla de alerta.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>IDS frente a IPS</h3>
+    <p><strong>IDS</strong> (detección de intrusiones) detecta lo sospechoso y avisa. <strong>IPS</strong> además <strong>bloquea</strong>. IDS es «una cámara con alarma», IPS es «una cámara + cerradura automática». La elección depende de si estás dispuesto al bloqueo automático (riesgo de falsos positivos).</p>
+    <h3>Qué es SIEM y por qué lo necesita el SOC-analista</h3>
+    <p><strong>SIEM</strong> recolecta logs de todos los sistemas en un solo lugar, <strong>correlaciona</strong> eventos entre fuentes y genera <strong>alertas</strong>. Es el puesto de trabajo del SOC-analista: los logs en bruto son inútiles mientras nadie los combina. Saber escribir una regla de alerta (por ejemplo, para fuerza bruta de contraseñas) es una habilidad clave.</p>
+    <h3>Segmentación y DMZ</h3>
+    <p>División de la red en zonas con transiciones controladas. Los servicios públicos se colocan en la <strong>DMZ</strong> — un búfer entre internet y la red interna. Si el atacante vulnera la DMZ, no obtiene toda la red de inmediato. Es la implementación del principio de contención y de la defensa en profundidad a nivel de red.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué «hay logs, pero no sirven de nada»</h2>
+    <p>Una empresa llevaba años generando logs, pero nadie los revisaba. Al ocurrir un ataque, resultó que había rastros, pero nadie los combinó ni los notó. Tras implementar un SIEM con reglas, esos mismos eventos se convirtieron en alertas, y el siguiente ataque se detectó en minutos. Moraleja: el valor no está en los logs en sí, sino en su recolección, correlación y respuesta.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: de evento a alerta</h2>
+    <ol>
+      <li>La fuente (servidor) escribe logs de inicios de sesión.</li>
+      <li>SIEM los recolecta en tiempo real.</li>
+      <li>Una regla cuenta los inicios de sesión fallidos desde una misma IP en un intervalo.</li>
+      <li>Se supera el umbral → SIEM genera una alerta de «brute-force».</li>
+      <li>El analista ve la alerta, revisa el contexto (IP, usuario, hora).</li>
+      <li>Decisión: bloquear la IP, escalar o cerrar como falso positivo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: regla de detección de brute-force</h2>
+    <p>En un SIEM de práctica (Wazuh/ELK) o en papel:</p>
+    <ul>
+      <li>describe qué campos de log se necesitan (IP, usuario, resultado, hora);</li>
+      <li>formula una regla: «&gt; N inicios de sesión fallidos desde una misma IP en M minutos → alerta»;</li>
+      <li>piensa cómo distinguir un ataque de una contraseña olvidada por un empleado (umbrales, lista blanca);</li>
+      <li>describe las acciones del analista ante la alerta.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>IDS / IPS</strong> — detección / detección+bloqueo.</li>
+      <li><strong>SIEM</strong> — recolección y correlación de logs, alertas.</li>
+      <li><strong>SOC</strong> — centro de monitoreo de seguridad.</li>
+      <li><strong>Alerta</strong> — señal de un evento sospechoso.</li>
+      <li><strong>DMZ</strong> — zona búfer para servicios públicos.</li>
+      <li><strong>Segmentación</strong> — división de la red en zonas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: recolectar logs = garantizar la seguridad.</strong> Los logs deben correlacionarse y requieren respuesta.</li>
+      <li><strong>Error: reglas demasiado «ruidosas».</strong> Un mar de falsas alertas adormece la vigilancia.</li>
+      <li><strong>Mito: IPS siempre es mejor que IDS.</strong> El bloqueo automático puede cortar tráfico legítimo.</li>
+      <li><strong>Error: red plana sin segmentación.</strong> El compromiso de un nodo lo abre todo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿A qué se dedica un SOC-analista?</strong> Observa las alertas del SIEM, investiga, responde — el objetivo del curso.</li>
+      <li><strong>¿IDS o IPS?</strong> IDS es más seguro para empezar; IPS cuando estás listo para el bloqueo automático.</li>
+      <li><strong>¿Para qué sirve una DMZ en casa?</strong> En casa es más sencillo — una red de invitados; la DMZ es relevante para servidores de organizaciones.</li>
+      <li><strong>¿Por dónde empezar con SIEM?</strong> Con una sola fuente de logs y una regla simple.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>IDS</strong> detecta, <strong>IPS</strong> bloquea. <strong>SIEM</strong> combina logs y genera <strong>alertas</strong>.</li>
+      <li>Los logs son inútiles sin correlación ni respuesta.</li>
+      <li><strong>DMZ</strong> + <strong>segmentación</strong> = limitación de la propagación.</li>
+      <li>Alerta clásica: fuerza bruta de contraseñas (muchos Failed desde una misma IP).</li>
+      <li>Menos «ruido» — reacción más precisa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Despliegue de SIEM</h3>
+    <ol>
+      <li>Despliega un SIEM ligero (Wazuh o ELK).</li>
+      <li>Conecta una fuente de logs — una VM Linux.</li>
+      <li>Verifica que los eventos estén llegando.</li>
+    </ol>
+    <h3>Parte B. Generación y detección de un ataque</h3>
+    <ol>
+      <li>Genera una serie de inicios de sesión fallidos por SSH.</li>
+      <li>Encuentra los eventos en el SIEM, identifica los campos importantes (IP, usuario, hora).</li>
+    </ol>
+    <h3>Parte C. Regla de alerta</h3>
+    <ol>
+      <li>Configura una regla: N inicios de sesión fallidos desde una misma IP en poco tiempo → alerta.</li>
+      <li>Verifica que se dispare.</li>
+      <li>Describe cómo ayudaría la alerta al analista en un SOC real.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Despliega un mini-SIEM</h3>
+    <ol>
+      <li>Levanta un SIEM de práctica (Wazuh o ELK) en el laboratorio.</li>
+      <li>Conecta una fuente de logs (VM Linux).</li>
+      <li>Verifica que los eventos estén llegando.</li>
+    </ol>
+    <h3>Parte E. Comprueba tu alerta</h3>
+    <ol>
+      <li>Genera una serie de inicios de sesión fallidos.</li>
+      <li>Configura la regla de alerta y logra que se dispare.</li>
+      <li>Analiza qué campos son importantes para el analista.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Dibuja un esquema de una red segmentada con DMZ.</li>
+      <li>Explica la diferencia entre IDS e IPS en un escenario concreto.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica la diferencia entre IDS e IPS en un escenario concreto.</li>
+      <li>Dibuja un esquema de red con DMZ y etiqueta las zonas.</li>
+      <li>Describe por qué SIEM es más importante que «simplemente tener logs».</li>
+      <li>Formula una regla de alerta para fuerza bruta de contraseñas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿En qué se diferencia IPS de IDS?</li>
+      <li>¿Qué hace SIEM?</li>
+      <li>¿Para qué se necesita la segmentación de red?</li>
+      <li>¿Qué es la DMZ?</li>
+      <li>¿Qué evento genera un ataque de fuerza bruta de contraseñas en los logs?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://blueteamlabs.online/" target="_blank" rel="noopener">Blue Team Labs Online (nivel gratuito)</a></li>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — SOC Level 1 (parcialmente gratuito)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Conexión con la espiral del curso.</strong> El SIEM configurado y las reglas de detección son el entorno en el que, en la semana 10, realizarás threat hunting.</p>
+    </blockquote>
+  </section>
+</div>

@@ -1,0 +1,214 @@
+<div class="lesson-content">
+  <p class="lesson-intro">El módulo del bloque «Respuesta» muestra cómo usar la Cyber Kill Chain y MITRE ATT&amp;CK para analizar ciberataques y llevar a cabo threat hunting proactivo en el trabajo del Blue Team.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Usar la Cyber Kill Chain para analizar un ataque</li>
+      <li>Relacionar acciones con MITRE ATT&amp;CK</li>
+      <li>Practicar threat hunting basado en hipótesis</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Cyber Kill Chain — interrumpe cualquier eslabón:</p>
+    <pre><code>Reconocimiento -> Entrega -> Explotación -> Persistencia -> C2 -> Acciones sobre el objetivo
+   |           |            |              |           |         |
+   interrumpe CUALQUIER etapa -> todo el ataque se frustra</code></pre>
+    <p>MITRE ATT&amp;CK — tácticas y técnicas:</p>
+    <pre><code>Táctica (para qué): Initial Access | Persistence | Exfiltration ...
+Técnica (cómo):     T1566 phishing | T1547 autoarranque | T1041 exfiltración</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>La investigación reactiva es la mitad del trabajo del Blue Team. La otra mitad es la búsqueda proactiva y la comprensión sistemática de las tácticas de los atacantes.</p>
+    <p><strong>Cyber Kill Chain.</strong> Etapas: reconocimiento → entrega → explotación → persistencia → control (C2) → acciones sobre el objetivo. Al interrumpir cualquier eslabón, el defensor frustra el ataque.</p>
+    <p><strong>MITRE ATT&amp;CK.</strong> Base de conocimiento sobre técnicas reales, agrupadas por tácticas (para qué) y técnicas (cómo, con ID como T1110). Es el lenguaje común del Blue Team: qué buscar en los logs y dónde colocar las detecciones.</p>
+    <p><strong>Threat hunting.</strong> Búsqueda proactiva de amenazas que las reglas no detectaron. El analista plantea una hipótesis («si el atacante se afianzó, habrá rastros en el autoarranque») y la verifica con los datos.</p>
+    <blockquote><strong>Material:</strong> conjunto de datos «Incidente n.º 2» (phishing/hunt) — CSV de eventos de SIEM. El estudiante etiqueta por su cuenta con ATT&amp;CK y luego contrasta con la versión ya etiquetada. Ver <code>datasets/scenario2_phish_hunt/</code>.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Materiales para descargar — Incidente n.º 2 (phish_hunt)</h2>
+    <p>Resumen del escenario y CSV con eventos de SIEM para mapear con MITRE ATT&amp;CK.</p>
+    <ul>
+      <li><a href="courses/datasets/scenario2_phish_hunt/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a> — descripción del incidente y la tarea</li>
+      <li><a href="courses/datasets/scenario2_phish_hunt/siem_events.csv" download>siem_events.csv</a> — eventos de SIEM para analizar</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional — dos escenarios más</h2>
+    <p>Opcionales, para practicar más las habilidades de investigación y threat hunting.</p>
+    <h3>Incidente n.º 3 — ransomware (double extortion)</h3>
+    <ul>
+      <li><a href="courses/datasets/scenario3_ransomware/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a></li>
+      <li><a href="courses/datasets/scenario3_ransomware/host_events.csv" download>host_events.csv</a></li>
+    </ul>
+    <h3>Incidente n.º 4 — insider malicioso</h3>
+    <p>No es una intrusión externa: enseña a detectar la anomalía en medio del acceso legítimo y aborda la ética de los falsos positivos.</p>
+    <ul>
+      <li><a href="courses/datasets/scenario4_insider/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a></li>
+      <li><a href="courses/datasets/scenario4_insider/user_activity.csv" download>user_activity.csv</a></li>
+      <li><a href="courses/datasets/scenario4_insider/HR_CONTEXT.md" download>HR_CONTEXT.md</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Cyber Kill Chain como herramienta de defensa</h3>
+    <p>El modelo describe el ataque por etapas: reconocimiento → entrega → explotación → persistencia → control (C2) → acciones sobre el objetivo. Su valor está en que, <strong>interrumpiendo cualquier eslabón</strong>, el defensor frustra todo el ataque. Ayuda a entender dónde se detectó exactamente la actividad y qué la habría detenido antes.</p>
+    <h3>MITRE ATT&amp;CK — el lenguaje común del Blue Team</h3>
+    <p><strong>ATT&amp;CK</strong> es una base de técnicas reales, agrupadas por tácticas (para qué) y técnicas (cómo, con ID como T1566). Es un lenguaje común: los analistas describen el comportamiento del atacante de la misma manera, saben qué buscar en los logs y dónde colocar las detecciones. Saber mapear un incidente con ATT&amp;CK es una habilidad clave.</p>
+    <h3>Threat hunting: buscar sin esperar la alerta</h3>
+    <p>El <strong>hunting</strong> es la búsqueda proactiva de amenazas que las reglas no detectaron. El analista plantea una hipótesis («si el atacante se afianzó, habrá rastros en el autoarranque») y la verifica con los datos. Esto distingue a un SOC maduro del reactivo «esperar la alerta».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: una cadena sospechosa de procesos</h2>
+    <p>En los logs, WINWORD.EXE ejecuta powershell, este se conecta a una IP desconocida, y luego alguien accede a lsass. Por separado — «ruido»; juntos — la cadena clásica: documento de phishing → ejecución de código → C2 → robo de credenciales. El Blue Team detecta precisamente este tipo de conexiones, y ATT&amp;CK les da nombre. Así, eventos dispersos se convierten en una historia de ataque comprensible.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: mapeamos un incidente con ATT&amp;CK</h2>
+    <ol>
+      <li>Toma los eventos del incidente (conjunto de datos <code>scenario2_phish_hunt</code>).</li>
+      <li>Para cada paso, determina la táctica (para qué) y la técnica (cómo, ID).</li>
+      <li>Empieza por lo evidente: phishing → T1566, autoarranque → T1547.</li>
+      <li>Marca los «padres inesperados» de procesos (WINWORD → powershell) y el acceso a lsass.</li>
+      <li>Arma el mapa: táctica → técnica → evidencia en los logs.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: mapa ATT&amp;CK de un incidente</h2>
+    <p>Con el conjunto de datos «Incidente n.º 2», elabora:</p>
+    <ul>
+      <li>una tabla «paso del ataque → táctica → técnica (ID) → evidencia»;</li>
+      <li>3 hipótesis de hunting proactivo que habrían detectado el ataque antes;</li>
+      <li>una regla de detección para cada uno de 3 pasos clave.</li>
+    </ul>
+    <p>Contrasta con la versión etiquetada del conjunto de datos (la tiene el instructor).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Cyber Kill Chain</strong> — etapas del ataque (7 pasos).</li>
+      <li><strong>MITRE ATT&amp;CK</strong> — base de tácticas y técnicas.</li>
+      <li><strong>Táctica / técnica</strong> — para qué / cómo (con ID).</li>
+      <li><strong>C2</strong> — canal de control del atacante.</li>
+      <li><strong>Threat hunting</strong> — búsqueda proactiva de amenazas.</li>
+      <li><strong>Persistencia</strong> — afianzamiento en el sistema.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: monitoreo = hunting.</strong> El monitoreo espera la alerta; el hunting parte de una hipótesis.</li>
+      <li><strong>Error: mirar los eventos por separado.</strong> La fuerza está en las conexiones (cadenas).</li>
+      <li><strong>Mito: ATT&amp;CK es para la «élite».</strong> Es una herramienta de trabajo incluso para un analista junior.</li>
+      <li><strong>Error: ignorar los «padres inesperados» de procesos.</strong> Es un indicio claro de ataque.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿En qué se diferencia la kill chain de ATT&amp;CK?</strong> La kill chain son etapas amplias; ATT&amp;CK son técnicas detalladas.</li>
+      <li><strong>¿Hay que aprender todas las técnicas de ATT&amp;CK?</strong> No, domina la lógica y las técnicas frecuentes.</li>
+      <li><strong>¿Qué es C2?</strong> El canal por el cual el atacante controla la máquina infectada.</li>
+      <li><strong>¿El hunting es para un junior?</strong> Las hipótesis básicas sí, es un excelente entrenamiento del pensamiento.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>Kill Chain</strong>: reconocimiento→entrega→explotación→persistencia→C2→acciones. Interrumpe cualquier eslabón.</li>
+      <li><strong>ATT&amp;CK</strong>: táctica (para qué) + técnica (cómo, Txxxx).</li>
+      <li><strong>Hunting</strong> = hipótesis → verificación con datos.</li>
+      <li>Banderas rojas: WINWORD→powershell, acceso a lsass, autoarranque en el registro.</li>
+      <li>Resultado — mapa ATT&amp;CK + reglas de detección.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Correspondencia con la kill chain</h3>
+    <ol>
+      <li>Distribuye el Incidente n.º 1 de la semana 9 en las etapas de la Cyber Kill Chain.</li>
+      <li>Para cada etapa, indica una medida que habría interrumpido la cadena.</li>
+    </ol>
+    <h3>Parte B. Mapeo con ATT&amp;CK</h3>
+    <ol>
+      <li>Abre el conjunto de datos del Incidente n.º 2 (siem_events.csv).</li>
+      <li>Para cada paso sospechoso, determina la táctica y la técnica (ID).</li>
+      <li>Presta atención a los «padres inesperados» de procesos y al acceso a lsass.</li>
+    </ol>
+    <h3>Parte C. Threat hunting</h3>
+    <ol>
+      <li>Formula 3 hipótesis de búsqueda que habrían detectado el ataque antes.</li>
+      <li>Verifica las hipótesis con los datos del CSV.</li>
+      <li>Propón una regla de detección para tres pasos clave.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Distribúyelo según la kill chain</h3>
+    <ol>
+      <li>Toma el Incidente n.º 1 (semana 9) y distribúyelo en las etapas de la Cyber Kill Chain.</li>
+      <li>Para cada etapa, indica una medida que habría interrumpido la cadena.</li>
+    </ol>
+    <h3>Parte E. Hipótesis de hunting</h3>
+    <ol>
+      <li>Con el conjunto de datos n.º 2, formula 3 hipótesis de búsqueda.</li>
+      <li>Verifícalas con los datos y propón una regla de detección.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Elabora una tabla «táctica → técnica → cómo detectar» para 5 técnicas de ATT&amp;CK.</li>
+      <li>Explica con un ejemplo la diferencia entre monitoreo y threat hunting.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica la diferencia entre monitoreo y threat hunting.</li>
+      <li>Elabora una tabla «táctica → técnica → detección» para 5 técnicas.</li>
+      <li>Distribuye cualquier incidente según la Cyber Kill Chain.</li>
+      <li>Explica por qué la conexión WINWORD→powershell es sospechosa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Qué es la Cyber Kill Chain y cuál es su valor?</li>
+      <li>¿En qué se diferencia una táctica de una técnica en ATT&amp;CK?</li>
+      <li>¿Qué es C2?</li>
+      <li>¿En qué se diferencia el hunting del monitoreo?</li>
+      <li>Nombra una bandera roja en una cadena de procesos.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener">MITRE ATT&amp;CK (base oficial)</a></li>
+      <li><a href="https://www.rangeforce.com/" target="_blank" rel="noopener">RangeForce Community Edition (gratuito)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Conexión con la espiral del curso.</strong> El módulo une los bloques 3 y 4: el SIEM de la semana 8 se convierte en herramienta de hunting, la investigación de la semana 9 se convierte en material para el mapeo.</blockquote>
+  </section>
+</div>

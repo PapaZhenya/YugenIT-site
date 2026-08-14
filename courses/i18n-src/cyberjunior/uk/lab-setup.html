@@ -1,0 +1,111 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Єдиний ізольований лабораторний стенд для всіх практик курсу: атакувальна машина та мішені бачать лише одна одну, але не домашню мережу та інтернет.</p>
+
+  <section class="lesson-section">
+    <h2>Склад</h2>
+    <p>Єдиний ізольований стенд для всіх практик курсу: атакувальна машина та мішені «бачать»
+    лише одна одну, але не домашню/робочу мережу і (для мішеней) не інтернет.</p>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Роль</th><th>Машина</th><th>Призначення</th></tr>
+        <tr><td>Атакувальник</td><td>Kali Linux</td><td>Nmap, Wireshark, Burp/ZAP, Hydra, John — блоки 2–4</td></tr>
+        <tr><td>Мішень (мережа)</td><td>Metasploitable 2</td><td>Вразливі мережеві служби — тижні 4, 6</td></tr>
+        <tr><td>Мішень (веб)</td><td>DVWA + OWASP Juice Shop (Docker)</td><td>Веб-вразливості — тиждень 5</td></tr>
+        <tr><td>Захист (опц.)</td><td>Ubuntu + Wazuh/ELK</td><td>SIEM і моніторинг — тижні 7–8, 10</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Вимоги</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Параметр</th><th>Мінімум</th><th>Рекомендовано</th></tr>
+        <tr><td>ОЗП</td><td>8 ГБ</td><td>16 ГБ+</td></tr>
+        <tr><td>Місце</td><td>60 ГБ</td><td>120 ГБ SSD</td></tr>
+        <tr><td>CPU</td><td>2 ядра + VT-x/AMD-V</td><td>4+ ядра</td></tr>
+      </table>
+    </div>
+    <blockquote>Якщо ВМ не стартують або гальмують — майже завжди вимкнено VT-x/AMD-V у BIOS/UEFI.
+    У Windows у разі конфлікту вимкніть компонент Hyper-V.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Кроки</h2>
+
+    <h3>1. Ізольована мережа (у першу чергу!)</h3>
+    <blockquote>⚠️ Мішені навмисно вразливі — їх не можна випускати в інтернет.</blockquote>
+    <ol>
+      <li>У VirtualBox створіть Host-Only або Internal Network (напр. <code>lab-net</code>), підмережа 10.10.10.0/24.</li>
+      <li>Схема адаптерів:
+        <ul>
+          <li><strong>Kali:</strong> Внутрішня мережа <code>lab-net</code> + NAT (інтернет за потреби).</li>
+          <li><strong>Мішені:</strong> лише Внутрішня мережа <code>lab-net</code> (без NAT!).</li>
+        </ul>
+      </li>
+      <li>Перевірка ізоляції: з мішені <code>ping 8.8.8.8</code> — відповіді бути НЕ повинно; з Kali <code>ping &lt;IP мішені&gt;</code> — має проходити.</li>
+    </ol>
+
+    <h3>2. Kali Linux</h3>
+    <ol>
+      <li>Завантажте готовий образ Kali для VirtualBox з kali.org.</li>
+      <li>Імпортуйте, налаштуйте адаптери за схемою вище.</li>
+      <li>Увійдіть (kali/kali), змініть пароль.</li>
+      <li>Оновіть: <code>sudo apt update &amp;&amp; sudo apt -y full-upgrade</code>.</li>
+    </ol>
+
+    <h3>3. Metasploitable 2</h3>
+    <ol>
+      <li>Завантажте образ Metasploitable 2.</li>
+      <li>Створіть ВМ (512–1024 МБ), підключіть диск.</li>
+      <li>Єдиний адаптер — Внутрішня мережа <code>lab-net</code>.</li>
+      <li>Увійдіть (msfadmin/msfadmin), дізнайтеся IP: <code>ip addr</code>.</li>
+    </ol>
+
+    <h3>4. Веб-мішені (Docker)</h3>
+    <pre><code>sudo apt update && sudo apt -y install docker.io
+sudo systemctl enable --now docker
+sudo docker run -d -p 80:80  --name dvwa  vulnerables/web-dvwa
+sudo docker run -d -p 3000:3000 --name juice bkimminich/juice-shop</code></pre>
+    <p>Перевірте з Kali: <code>http://&lt;IP&gt;/</code> (DVWA) і <code>http://&lt;IP&gt;:3000/</code> (Juice Shop).</p>
+    <blockquote>Docker тягне образи з інтернету ОДНОРАЗОВО. Завантажте з тимчасово увімкненим NAT, потім поверніть адаптер у Внутрішню мережу.</blockquote>
+
+    <h3>5. Знімки стану</h3>
+    <ul>
+      <li>Після чистого налаштування КОЖНОЇ машини — знімок <code>clean</code>.</li>
+      <li>Перед ризикованим заняттям — ще один знімок.</li>
+      <li>Після поломки — відкат до <code>clean</code> (ПКМ → Знімки → Відновити).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Чек-лист готовності</h2>
+    <ul>
+      <li>VirtualBox + Extension Pack встановлені</li>
+      <li>Віртуалізація увімкнена, ВМ стартують швидко</li>
+      <li>Створена внутрішня мережа <code>lab-net</code></li>
+      <li>Kali: адаптери lab-net + NAT, система оновлена</li>
+      <li>Metasploitable: лише lab-net, IP відомий</li>
+      <li>Веб-мішені відкриваються з Kali</li>
+      <li>З мішені НЕМАЄ інтернету (<code>ping 8.8.8.8</code> не проходить)</li>
+      <li>З Kali проходить ping до всіх мішеней</li>
+      <li>На кожній ВМ є знімок <code>clean</code></li>
+      <li>(опц.) SIEM приймає події</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Часті проблеми</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Симптом</th><th>Рішення</th></tr>
+        <tr><td>ВМ не стартує / повільно</td><td>Увімкнути VT-x/AMD-V; вимкнути Hyper-V на Windows</td></tr>
+        <tr><td>Kali не бачить мішень</td><td>Обидві машини в одному адаптері «Внутрішня мережа lab-net»</td></tr>
+        <tr><td>Мішень виходить в інтернет</td><td>Прибрати NAT/міст, залишити лише внутрішню мережу</td></tr>
+        <tr><td>Docker не тягне образи</td><td>Тимчасово увімкнути NAT, завантажити, повернути внутрішню мережу</td></tr>
+        <tr><td>Все висне</td><td>Запускати лише потрібні ВМ; SIEM — за потреби</td></tr>
+        <tr><td>Зламав мішень</td><td>Відкотитися до знімка <code>clean</code></td></tr>
+      </table>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,24 @@
+{
+  "title": "Ciberseguridad desde cero hasta junior",
+  "cardText": "Curso práctico desde cero: redes, ataques, defensa, respuesta a incidentes — 12 semanas hasta el nivel de junior SOC-analista.",
+  "modules": {
+    "overview": "Sobre el curso",
+    "program-map": "Mapa del programa",
+    "week-01": "Semana 1. Introducción y modelo de amenazas",
+    "week-02": "Semana 2. Redes",
+    "week-03": "Semana 3. Sistemas operativos y línea de comandos",
+    "week-04": "Semana 4. Reconocimiento y escaneo",
+    "week-05": "Semana 5. Vulnerabilidades y explotación de aplicaciones web (OWASP Top 10)",
+    "week-06": "Semana 6. Contraseñas e ingeniería social",
+    "week-07": "Semana 7. Hardening y criptografía",
+    "week-08": "Semana 8. Monitoreo y protección de red",
+    "week-09": "Semana 9. Fundamentos de respuesta a incidentes y forense",
+    "week-10": "Semana 10. Análisis de ataques y Blue Team",
+    "week-11": "Semana 11. Trayectorias profesionales y preparación",
+    "week-12": "Semana 12. Proyecto final",
+    "resources": "Recursos y plataformas gratuitas",
+    "assessment": "Sistema de evaluación",
+    "lab-setup": "Configuración del laboratorio",
+    "test-bank": "Banco de preguntas de examen"
+  }
+}

@@ -1,0 +1,193 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Week 4 of the "Attack" block introduces reconnaissance and scanning: it teaches you to distinguish passive from active information gathering and to build a map of a target using Nmap.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Distinguish passive from active reconnaissance</li>
+      <li>Scan networks and services with Nmap</li>
+      <li>Build a target map as the basis for vulnerability hunting</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Stages of reconnaissance:</p>
+    <pre><code>Passive (stealthy) -> whois, DNS, social media, leaks
+        |
+Active (leaves traces) -> port scanning (Nmap)
+        |
+Target map: host -> ports -> services -> versions -> risk</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Any attack begins with information gathering. A defender studies the same techniques to see the infrastructure through the adversary's eyes.</p>
+    <p><strong>Passive and active reconnaissance.</strong> Passive (OSINT) gathers data from open sources without contacting the target (whois, DNS, social media, leaked databases) — it's stealthy. Active reconnaissance is direct scanning, which leaves traces in logs.</p>
+    <p><strong>Nmap — the working tool.</strong></p>
+    <ul>
+      <li><code>-sn</code> — discover live hosts without port scanning.</li>
+      <li><code>-sV</code> — determine service versions (key for finding vulnerabilities).</li>
+      <li><code>-p-</code> — all 65535 ports.</li>
+      <li><code>-A</code> — aggressive: OS, versions, scripts.</li>
+    </ul>
+    <p>An outdated service version is dangerous because known vulnerabilities have already been published for it — an attacker just needs to apply an existing exploit.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+    <h3>Passive reconnaissance (OSINT) in more detail</h3>
+    <p>OSINT is gathering from open sources without contacting the target: domains (whois), DNS records, public documents, employees' social media, leaked databases. This matters for defenders too: it's useful to know what's visible about your organization from the outside, and to reduce unnecessary exposure.</p>
+    <h3>How to read scan results</h3>
+    <p>Nmap shows ports, services, and versions. The key factor for risk assessment is <strong>versions</strong>: an outdated service often has known vulnerabilities with ready-made exploits. A defender runs Nmap against their own network to find stray and outdated services before an attacker does.</p>
+    <h3>Service fingerprinting and banners</h3>
+    <p>Many services "introduce themselves" on connection — reporting a version (a banner). This is used to identify exactly what's running. For defense, it's useful to strip unnecessary information from banners so as not to make reconnaissance easier.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: why a defender scans themselves</h2>
+    <p>An admin runs Nmap against their own network once a month and finds a forgotten test server with an open port and an old service version. They close it before an attacker finds it. Scanning "yourself" isn't an attack — it's hygiene: you see your own attack surface through the adversary's eyes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: from IP to a target map (in the lab)</h2>
+    <ol>
+      <li>Discover live hosts on your lab network: <code>nmap -sn &lt;range&gt;</code>.</li>
+      <li>Scan the lab machine: <code>nmap -sV &lt;IP&gt;</code>.</li>
+      <li>Record the open ports and services.</li>
+      <li>Note the versions and flag the outdated ones.</li>
+      <li>Build a table: host → port → service → version → risk.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a scan report (in the lab)</h2>
+    <p>On a lab machine (Metasploitable), perform reconnaissance and produce a mini-report:</p>
+    <ul>
+      <li>target, method, date;</li>
+      <li>a table of discovered services and versions;</li>
+      <li>for 3 services — why the outdated version is dangerous;</li>
+      <li>recommendations (what to close/update).</li>
+    </ul>
+    <blockquote>⚠️ Only your own lab or explicitly authorized targets. Scanning someone else's network is illegal.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>OSINT</strong> — reconnaissance using open sources.</li>
+      <li><strong>Passive / active reconnaissance</strong> — without contact / with contact (leaves traces).</li>
+      <li><strong>Nmap</strong> — a network and service scanner.</li>
+      <li><strong>Banner</strong> — a service's self-announced version.</li>
+      <li><strong>Target map</strong> — a summary of host/port/service/version/risk.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: scanning = hacking.</strong> On its own it's reconnaissance, but scanning someone else's network is illegal.</li>
+      <li><strong>Mistake: ignoring versions.</strong> Old versions are exactly what carry known vulnerabilities.</li>
+      <li><strong>Myth: if a port is open, it's safe because "it was configured that way."</strong> Every port is a potential entry point.</li>
+      <li><strong>Mistake: scanning whatever you like.</strong> Only your own or explicitly authorized targets.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Is Nmap legal?</strong> The tool is; legality depends on WHAT you scan.</li>
+      <li><strong>Why does a defender need reconnaissance?</strong> To see their own attack surface before the adversary does.</li>
+      <li><strong>Is passive reconnaissance really stealthy?</strong> Yes, it doesn't touch the target directly.</li>
+      <li><strong>What should you do with a discovered old service?</strong> Update it or shut it down.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Reconnaissance: <strong>passive</strong> (OSINT) → <strong>active</strong> (scanning).</li>
+      <li>Nmap: <code>-sn</code> (hosts), <code>-sV</code> (versions), <code>-p-</code> (all ports), <code>-A</code> (aggressive).</li>
+      <li>Outdated version = known vulnerabilities.</li>
+      <li>The output is a <strong>target map</strong>.</li>
+      <li>Only your own lab / authorized targets.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <blockquote>⚠️ <strong>Legal framework.</strong> All actions are performed only in an isolated lab or on explicitly authorized targets. Attacking someone else's systems without permission is illegal.</blockquote>
+    <h3>Part A. Passive reconnaissance</h3>
+    <ol>
+      <li>Choose a training domain and collect open data (whois, DNS records).</li>
+      <li>Record what you learned without a single active request.</li>
+    </ol>
+    <h3>Part B. Discovering hosts and ports</h3>
+    <ol>
+      <li>Discover live hosts: <code>nmap -sn &lt;range&gt;</code>.</li>
+      <li>Scan Metasploitable: <code>nmap -sV &lt;IP&gt;</code>.</li>
+      <li>Record the open ports and services.</li>
+    </ol>
+    <h3>Part C. Target map</h3>
+    <ol>
+      <li>Determine the service versions and flag the outdated ones.</li>
+      <li>Build a table: host → port → service → version → risk.</li>
+      <li>Write up a scan report (target, method, findings).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Passive reconnaissance (safe)</h3>
+    <ol>
+      <li>For a training domain, collect open data (whois, public DNS records).</li>
+      <li>Note what you learned without contacting the target.</li>
+    </ol>
+    <h3>Part E. Version comparison</h3>
+    <ol>
+      <li>For 3 services from your scan, find the current version.</li>
+      <li>Rate the risk of being outdated on a low/medium/high scale.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>For three discovered services, describe the risk of the outdated version.</li>
+      <li>Explain why it's useful for a defender to regularly scan their own network.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain the difference between passive and active reconnaissance.</li>
+      <li>Describe why a defender should scan their own network.</li>
+      <li>What is a service banner, and how does it help reconnaissance?</li>
+      <li>Build a target map for the lab machine.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>How does passive reconnaissance differ from active?</li>
+      <li>Which Nmap flag determines service versions?</li>
+      <li>Why is an outdated service version dangerous?</li>
+      <li>What goes into a "target map"?</li>
+      <li>Is it legal to scan someone else's network?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Nmap / Network Security</a></li>
+      <li><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box — Starting Point</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Connection to the course spiral.</strong> The target map is a direct gateway into week 5: the web services you found become the object of vulnerability hunting.</blockquote>
+  </section>
+</div>

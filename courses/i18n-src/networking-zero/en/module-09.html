@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">The final module of the course covers basic network security — threats, encryption, password and update hygiene, firewalls, and segmentation — and ties everything you've learned together in a capstone project.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Know the basic network threats</li>
+      <li>Master the basic measures for protecting a network</li>
+      <li>Understand the principles of encryption, firewalls, and segmentation</li>
+      <li>Connect security to topics covered earlier</li>
+      <li>Bring together all the course's skills in a capstone project</li>
+      <li>Understand where to go next in your learning</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>A working network is only half the job. The other half is making sure it doesn't get hacked, eavesdropped on, or taken down. In this final module we'll cover basic security, connect it to everything you already know, and put together a capstone project that shows off your skills as a whole.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Segmentation limits the damage:</p>
+    <pre><code>Without segmentation:       With segmentation:
+[everyone on one network]   [Work]      [Guests]  [Smart home]
+breach of one = access        |            |          |
+to all                      each zone is isolated;
+                            breach of one doesn't open the others</code></pre>
+    <p>The "close off what's unneeded, protect what matters" principle:</p>
+    <pre><code>[ Firewall ] — lets through only the traffic that's needed
+[ Encryption ] — intercepted data is useless
+[ Updates ] — known holes are closed
+[ Passwords/2FA ] — outsiders can't get in</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>What we're defending against: the main threats</h3>
+    <p>For defense to make sense, let's start with the threats. The most common ones in home and small networks: <strong>interception</strong> of unencrypted traffic (reading someone else's data on an open network); a <strong>rogue access point</strong> (a clone of a familiar Wi-Fi network that steals traffic); <strong>malware</strong> (gets in and spreads across the network); <strong>unauthorized access</strong> (someone gets into the network or into device settings because of weak passwords); <strong>network overload / DoS</strong> (a device or link is flooded with requests until the service stops responding).</p>
+    <p>Understanding the threat is the first step toward closing it off. Next come the concrete measures.</p>
+
+    <h3>Encryption: making interception useless</h3>
+    <p>Since traffic can be intercepted, let's make sure that whatever's intercepted can't be read. That's what <strong>encryption</strong> is for. On the web this is <strong>HTTPS</strong> (the padlock in the address bar) — data between you and the site travels encrypted. On wireless networks this is <strong>WPA2/WPA3</strong> — encryption of the Wi-Fi itself.</p>
+    <p>Practical rule: enter passwords and personal data only on sites with HTTPS, and connect only to Wi-Fi with proper encryption. Then even if someone intercepts the traffic, all they get is a meaningless string of bytes.</p>
+
+    <h3>Passwords, updates, and default settings</h3>
+    <p>A huge share of breaches happen not through clever attacks but through <strong>obvious holes</strong>: default passwords, weak passwords, outdated firmware. The measures are simple but mandatory: change all factory passwords (especially on the router), use long, unique passwords (ideally with a password manager), enable two-factor authentication wherever you can, and <strong>update</strong> your devices — updates close known vulnerabilities.</p>
+    <p>It's boring, but it's exactly these basic things that prevent most problems. Security starts with hygiene, not with clever tools.</p>
+
+    <h3>Firewall and segmentation</h3>
+    <p>Two important network security tools. A <strong>firewall</strong> is a filter that decides which traffic to let through and which to block; it sits at the edge of the network or on a device and cuts off unwanted connections.</p>
+    <p><strong>Segmentation</strong> is dividing a network into isolated zones (recall VLANs from module 4). The idea: if an attacker breaks into one zone, they don't automatically get the entire network. Guest Wi-Fi kept separate from work devices, the "smart home" kept separate from computers holding important data — that's segmentation in practice. The general principle: <strong>limit how far a problem can spread</strong>.</p>
+
+    <h3>The security principle: close off what's unneeded, protect what matters</h3>
+    <p>All basic security can be boiled down to one idea: <strong>remove the extra doors and properly lock the ones you need</strong>. Turn off services and ports you don't use; close off access where it isn't needed; encrypt what matters; split the network into zones. There's no such thing as "absolute" protection, but a sensible minimum sharply reduces the risk.</p>
+    <p>And notice how it all connects back to the course: Wi-Fi encryption comes from module 7, segmentation relies on the VLANs from module 4, and finding weak points is helped by the diagnostics from module 8. Security isn't a separate topic — it's a way of looking at everything you've already studied and asking "how does this not get broken?"</p>
+
+    <h3>Where to go from here</h3>
+    <p>You've come a long way — from "what happens when you open a website" to building and securing your own network — and that's already a solid foundation. Where do you grow from here? The logical next steps: the <strong>CompTIA Network+</strong> certification (it consolidates and systematizes networking), then <strong>Cisco CCNA</strong> (deeper, and valued by employers). If you're drawn to security, there's a direct path into the cybersecurity course on this platform, where networking meets defense. Most importantly, keep practicing hands-on: build networks in a simulator, break and fix them, and analyze traffic.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>The principle of least privilege</h3>
+    <p>A basic security rule: every user, device, and program should have <strong>exactly as much access as it needs to do its job, and no more</strong>. A guest doesn't need access to work files; a smart lightbulb doesn't need access to your computer. Fewer unnecessary privileges means less that can be seized in a breach.</p>
+
+    <h3>Defense in depth (several lines of defense)</h3>
+    <p>Don't rely on a single measure. <strong>Defense in depth</strong> means several lines of defense at once: encryption + firewall + segmentation + passwords + updates. If one line fails, the others remain. Like a fortress: a moat, a wall, and a guard — not just one of them.</p>
+
+    <h3>Backups and the human factor</h3>
+    <p>Two things people often forget. <strong>Backups</strong> save you when defenses fail anyway (for example, during a ransomware attack): important data should be copied separately. And the <strong>human</strong> is the weakest link: phishing, simple passwords, "I clicked the link." That's why awareness matters just as much as technology.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: securing a home network in 6 steps</h2>
+    <p>Let's apply all of this at once to an ordinary apartment.</p>
+    <p>1) Changed the router's admin password from the factory default to a strong one. 2) Enabled WPA2/WPA3 Wi-Fi encryption with a long password. 3) Updated the router's firmware — closing known holes. 4) Moved guest Wi-Fi and the "smart home" onto a separate network (segmentation), so they can't see the work laptop. 5) Confirmed that important sites load over HTTPS. 6) Checked which devices were connected and removed the unfamiliar ones.</p>
+    <p>Not a single "hacker" tool — just basic hygiene. But a network like this is already resilient to most everyday threats. That's exactly what "close off what's unneeded, protect what matters" means.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: why "no one's going to bother with my network" is a dangerous myth</h2>
+    <p>Most attacks are <strong>automated</strong>: bots scan the internet indiscriminately, trying standard passwords and known holes. They don't care whether you're a big company or a home network — any vulnerable target will do. That's exactly why basic hygiene (changing passwords, updating, encryption) protects against 90% of problems: it takes you off the list of "easy targets."</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: responding to "I think I've been hacked"</h2>
+    <ol>
+      <li><strong>Don't panic and don't delete everything</strong> — first assess what's happening.</li>
+      <li>Disconnect the suspicious device from the network (limit how far it can spread).</li>
+      <li>Change the key passwords from a clean device (router, email, important accounts).</li>
+      <li>Check the list of connected devices and remove any unfamiliar ones.</li>
+      <li>Update firmware and antivirus, then run a scan.</li>
+      <li>Restore data from a backup if needed.</li>
+      <li>Draw conclusions: what caused it, and how to close it off for the future.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a security plan for your network</h2>
+    <p>Put together a "My Network's Security" document:</p>
+    <ul>
+      <li>a list of assets (what you're protecting: devices, data);</li>
+      <li>2–3 main threats relevant to your situation;</li>
+      <li>measures for each threat (encryption, passwords, segmentation, updates, backups);</li>
+      <li>a checklist of 7–10 items marked "done/not done";</li>
+      <li>a plan for the future: what to improve next month.</li>
+    </ul>
+    <p>This makes a great portfolio piece and a genuinely useful thing to have.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Traffic interception</strong> — reading someone else's data transmitted over the network in the clear</li>
+      <li><strong>Rogue access point</strong> — a malicious Wi-Fi network impersonating a familiar one</li>
+      <li><strong>DoS</strong> — flooding a service with requests until it stops responding</li>
+      <li><strong>Encryption</strong> — transforming data so that anything intercepted can't be read</li>
+      <li><strong>Firewall</strong> — a network filter that controls traffic according to rules</li>
+      <li><strong>Segmentation</strong> — dividing a network into isolated zones to limit damage</li>
+      <li><strong>Two-factor authentication</strong> — logging in with a password plus a second factor (a code/device)</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: leaving default passwords in place.</strong> Factory credentials are widely known — change them right away.</li>
+      <li><strong>Myth: NAT protects like a firewall.</strong> NAT is about addressing; filtering requires a firewall.</li>
+      <li><strong>Mistake: not updating firmware.</strong> Updates close known vulnerabilities.</li>
+      <li><strong>Myth: "no one's going to bother with my home network."</strong> Automated attacks don't discriminate — any target will do.</li>
+      <li><strong>Mistake: keeping everything on one network.</strong> Without segmentation, breaching one device opens up all of them.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Where do I start securing my home network?</strong> Change your passwords (the router first!), enable encryption, update your devices.</li>
+      <li><strong>Does NAT protect me?</strong> It hides the network a little, but it's not a firewall.</li>
+      <li><strong>Why segment a home network?</strong> So that a breached smart lightbulb doesn't open a path to your laptop.</li>
+      <li><strong>Do I need backups if I already have security measures?</strong> Yes — they save you when the security measures fail.</li>
+      <li><strong>Am I definitely not a target?</strong> Attacks are automated and don't discriminate; the target is any vulnerable network.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Threats: interception, rogue access point, malware, unauthorized access, DoS.</li>
+      <li>Measures: <strong>encryption</strong> (HTTPS/WPA3), <strong>passwords+2FA</strong>, <strong>updates</strong>, <strong>firewall</strong>, <strong>segmentation</strong>, <strong>backups</strong>.</li>
+      <li>Principles: <strong>least privilege</strong>, <strong>defense in depth</strong>, "close off what's unneeded."</li>
+      <li>NAT ≠ firewall. Default passwords = a hole.</li>
+      <li>The human is the weak link (phishing, simple passwords).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Assess your network's security</h3>
+    <ol>
+      <li>Draw up a list of 5–7 basic home network security measures and explain each in one sentence.</li>
+      <li>Check your own network against this list and note what's already done and what's worth improving.</li>
+      <li>Identify your network's weakest point and suggest how to close it off.</li>
+    </ol>
+
+    <h3>Part B. Break down threats and measures</h3>
+    <ol>
+      <li>For each threat (interception, rogue access point, weak password, missing updates), pick a suitable security measure.</li>
+      <li>Explain why encryption makes intercepting traffic worthless.</li>
+    </ol>
+
+    <h3>Part C. Capstone project — building it</h3>
+    <ol>
+      <li>In Packet Tracer, build a network made of two subnets connected by a router, with workstations and a notional connection out to the internet.</li>
+      <li>Configure addressing (DHCP is fine) and achieve <code>ping</code> connectivity between the subnets.</li>
+      <li>Where possible, move one group of devices into a separate zone (segmentation/VLAN).</li>
+    </ol>
+
+    <h3>Part D. Capstone project — diagnostics and report</h3>
+    <ol>
+      <li>Introduce one fault into your network and find it using the method from module 8.</li>
+      <li>Fix the fault and confirm connectivity is restored.</li>
+      <li>Write up a report: network diagram, configuration, what you used to check it, what you fixed and why, and which security measures you applied.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+
+    <h3>Part E. Hygiene check</h3>
+    <ol>
+      <li>Go through your devices: where default passwords are still set, where firmware hasn't been updated.</li>
+      <li>Draw up a list of 3 specific fixes and carry out at least one of them.</li>
+    </ol>
+
+    <h3>Part F. Segmentation in the simulator</h3>
+    <ol>
+      <li>In Packet Tracer, split the network into "work" and "guest" zones (VLANs/subnets).</li>
+      <li>Confirm that the guest zone has no access to the work zone.</li>
+      <li>Explain in your report how this limits the damage from a breach.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Explain why unencrypted traffic is dangerous and how encryption solves this.</li>
+      <li>Describe how network segmentation limits damage in a breach.</li>
+      <li>Put together a 7-item home network security checklist.</li>
+      <li>Explain the difference between a firewall and NAT.</li>
+      <li>For three threats from the module, pick one specific security measure for each.</li>
+      <li>Draw up a personal plan: the 3 steps you'll take after the course (certification, practice, next course).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Bonus assignments</h2>
+    <ul>
+      <li>Explain the principle of least privilege using an everyday example.</li>
+      <li>What is defense in depth, and why isn't one measure enough?</li>
+      <li>Describe, step by step, what to do if you suspect you've been hacked.</li>
+      <li>Turn the home network security plan from the mini-project into a checklist.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>Name three basic network threats.</li>
+      <li>How does encryption help against traffic interception?</li>
+      <li>What does a firewall do?</li>
+      <li>What is segmentation, and why is it needed?</li>
+      <li>What are the two simplest but most important steps for securing a home network?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Network+ (free)</a></li>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer — capstone project</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connecting it to the course.</strong> This is the finale: from "what happens when you open a website," you've made it all the way to building, diagnosing, and securing your own network. Next up: the Network+/CCNA certifications, or the cybersecurity course on the platform.</p>
+    </blockquote>
+  </section>
+</div>

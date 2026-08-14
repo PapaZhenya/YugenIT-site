@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La semana 6 del bloque «Ataque» muestra cómo se almacenan y se descifran las contraseñas, enseña a realizar ataques de diccionario en el laboratorio y a reconocer el phishing, explicando el papel de la autenticación multifactor.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Comprender cómo se almacenan y se «rompen» las contraseñas</li>
+      <li>Realizar ataques de diccionario en el laboratorio</li>
+      <li>Reconocer el phishing y explicar el papel de la MFA</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Cómo se «rompe» un hash (fuerza bruta, no descifrado):</p>
+    <pre><code>Hash robado: 5f4dcc3b...
+Atacante: toma palabras -&gt; las hashea -&gt; compara
+  "123456" -&gt; ¿hash? no
+  "password" -&gt; ¿hash? SÍ -&gt; contraseña encontrada
+Defensa: contraseña larga y única -&gt; la fuerza bruta es inviable</code></pre>
+    <p>Phishing — la cadena del engaño:</p>
+    <pre><code>Correo "¡urgente!" -&gt; enlace a página falsa -&gt; introduces tu contraseña -&gt; queda en manos del atacante
+Defensa: verificar al remitente + MFA (una contraseña robada no basta)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Las credenciales son el producto más codiciado por el atacante. La mayoría de los ataques comienza con una contraseña débil o un correo de phishing exitoso.</p>
+    <p><strong>Hashes y su fuerza bruta.</strong> Las contraseñas se almacenan como hashes (función unidireccional). El atacante no «descifra» el hash, sino que prueba candidatos y compara. John the Ripper y Hashcat trabajan offline con hashes robados; Hydra prueba contraseñas contra servicios activos en línea.</p>
+    <p><strong>La reutilización mata.</strong> La fuga de un servicio abre todas las cuentas con la misma contraseña (credential stuffing). La solución es un gestor de contraseñas y contraseñas únicas.</p>
+    <p><strong>Ingeniería social y phishing.</strong> Elude la técnica a través de la persona. Señales de phishing: discrepancia en la dirección del remitente, presión de tiempo, enlaces sospechosos, adjuntos inesperados. La MFA anula el valor de una contraseña robada.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Hashes, sal y por qué no se puede «descifrar»</h3>
+    <p>Las contraseñas se almacenan como <strong>hashes</strong> — el resultado de una función unidireccional. El hash no se revierte; el atacante solo prueba variantes y compara. La <strong>sal</strong> es un valor aleatorio añadido a la contraseña antes de hashear, gracias a la cual contraseñas iguales generan hashes distintos y las tablas precalculadas resultan inútiles. Para protegerse: algoritmos de hash fuertes + sal.</p>
+    <h3>Por qué la reutilización de contraseñas es letal</h3>
+    <p>Una sola fuga y el atacante prueba la misma contraseña en todas partes (<strong>credential stuffing</strong>). Por eso las contraseñas deben ser <strong>únicas</strong>. El gestor de contraseñas resuelve esto: genera y almacena contraseñas complejas y únicas, sin que tengas que recordarlas.</p>
+    <h3>Autenticación multifactor (MFA)</h3>
+    <p>La MFA añade un segundo factor (código, aplicación, llave). Aunque robe la contraseña, el atacante no podrá entrar sin el segundo factor. Es una de las medidas más eficaces y económicas — anula la mayoría de los ataques a contraseñas.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: ataque de fuerza bruta por SSH (en los logs)</h2>
+    <p>En <code>auth.log</code> aparecen decenas de líneas <code>Failed password</code> desde una misma IP en un minuto, seguidas de <code>Accepted password</code> — un ataque de fuerza bruta clásico que tuvo éxito por una contraseña débil. Defensa: contraseñas largas, límite de intentos (fail2ban), acceso por llaves, MFA. Este mismo rastro lo buscarás durante la investigación en la semana 9.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: cómo reconocer el phishing</h2>
+    <ol>
+      <li><strong>Remitente</strong> — ¿la dirección coincide con la real? (pequeñas sustituciones de letras).</li>
+      <li><strong>Tono</strong> — ¿presionan con urgencia y amenazas? Bandera roja.</li>
+      <li><strong>Enlace</strong> — ¿adónde lleva realmente (pasa el cursor sin hacer clic)?</li>
+      <li><strong>Adjunto</strong> — ¿es inesperado? No lo abras.</li>
+      <li><strong>Solicitud</strong> — ¿piden contraseña/código/pago? Los servicios legítimos no lo hacen así.</li>
+      <li>Si tienes dudas, entra al sitio directamente, no por el enlace del correo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: política de contraseñas + guía de phishing</h2>
+    <p>Elabora dos documentos prácticos:</p>
+    <ul>
+      <li><strong>Política de contraseñas</strong> para una empresa ficticia: longitud, unicidad, gestor, MFA, cambio ante una fuga.</li>
+      <li><strong>Guía «Cómo reconocer el phishing»</strong> de 8 puntos con ejemplos.</li>
+    </ul>
+    <p>Ambos son útiles en el trabajo real y lucen bien en un portafolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Hash</strong> — función unidireccional para almacenar contraseñas.</li>
+      <li><strong>Sal</strong> — valor aleatorio añadido contra tablas precalculadas.</li>
+      <li><strong>Credential stuffing</strong> — reutilización de contraseñas filtradas.</li>
+      <li><strong>MFA</strong> — autenticación multifactor.</li>
+      <li><strong>Phishing</strong> — engaño para robar datos.</li>
+      <li><strong>Gestor de contraseñas</strong> — almacén de contraseñas únicas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: el hash se puede «descifrar».</strong> No — solo se puede probar por fuerza bruta y comparar.</li>
+      <li><strong>Error: una sola contraseña para todo.</strong> La fuga de una = el compromiso de todas las cuentas.</li>
+      <li><strong>Mito: la MFA es una molestia innecesaria.</strong> Es una de las medidas de protección más eficaces.</li>
+      <li><strong>Error: confiar en un correo por el nombre del remitente.</strong> La dirección es fácil de falsificar.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por qué no se puede descifrar un hash?</strong> La función es unidireccional; solo ayuda la fuerza bruta.</li>
+      <li><strong>¿Es seguro un gestor de contraseñas?</strong> Sí, es más confiable que repetir contraseñas o guardarlas en notas.</li>
+      <li><strong>¿La MFA salva del phishing?</strong> Reduce mucho el riesgo: una contraseña robada no basta.</li>
+      <li><strong>¿Dónde practicar legalmente?</strong> En tus propias VM de práctica; probar contraseñas contra servicios ajenos es ilegal.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Las contraseñas se almacenan como <strong>hashes</strong> (+ <strong>sal</strong>). «Romperlas» = fuerza bruta, no descifrado.</li>
+      <li>Defensa: contraseñas <strong>únicas</strong> y largas, gestor, <strong>MFA</strong>, límite de intentos.</li>
+      <li>Phishing: urgencia + enlace falso. Verifica remitente y enlace.</li>
+      <li>Herramientas (en el laboratorio): John/Hashcat (offline), Hydra (en línea).</li>
+      <li>Solo tus propias máquinas de práctica.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <blockquote>⚠️ <strong>Marco legal.</strong> Todas las acciones — solo en un laboratorio aislado o en plataformas explícitamente autorizadas. Atacar sistemas ajenos sin permiso es ilegal.</blockquote>
+    <h3>Parte A. Trabajo con hashes</h3>
+    <ol>
+      <li>Genera varios hashes de contraseñas con distinta complejidad.</li>
+      <li>Rompe los hashes débiles con John the Ripper usando un diccionario (rockyou).</li>
+      <li>Compara el tiempo necesario para descifrar una contraseña simple y una compleja.</li>
+    </ol>
+    <h3>Parte B. Fuerza bruta en línea (solo tu propia VM)</h3>
+    <ol>
+      <li>Levanta un servicio SSH en una máquina de práctica.</li>
+      <li>Descubre una contraseña débil con Hydra.</li>
+      <li>Discute cómo una protección contra fuerza bruta (fail2ban) habría frustrado el ataque.</li>
+    </ol>
+    <h3>Parte C. Análisis de phishing</h3>
+    <ol>
+      <li>Estudia 3 ejemplos de correos de phishing (conjuntos educativos).</li>
+      <li>Para cada uno, anota las señales del engaño.</li>
+      <li>Elabora una guía «Cómo reconocer el phishing» de 8 puntos.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Análisis de correos de phishing</h3>
+    <ol>
+      <li>Estudia 3 ejemplos de phishing (conjuntos educativos).</li>
+      <li>Para cada uno, anota las señales concretas del engaño.</li>
+      <li>Elabora una guía de 8 puntos.</li>
+    </ol>
+    <h3>Parte E. Fortaleza de la contraseña</h3>
+    <ol>
+      <li>Compara el tiempo de fuerza bruta de una contraseña simple y una compleja (con los hashes educativos del laboratorio).</li>
+      <li>Explica cómo influye la longitud en la resistencia.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Justifica por qué la MFA neutraliza la mayoría de los ataques a contraseñas.</li>
+      <li>Elabora una política de contraseñas para una empresa ficticia.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica por qué es peligrosa la reutilización de contraseñas.</li>
+      <li>Justifica cómo la MFA neutraliza el robo de una contraseña.</li>
+      <li>Elabora una política de contraseñas de 6 puntos.</li>
+      <li>Describe 8 señales de un correo de phishing.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Por qué no se puede «descifrar» el hash de una contraseña?</li>
+      <li>¿Qué es la sal y para qué se necesita?</li>
+      <li>¿Cómo protege la MFA ante el robo de una contraseña?</li>
+      <li>Nombra tres señales de phishing.</li>
+      <li>¿Por qué es peligrosa la reutilización de contraseñas?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Phishing / Password Attacks</a></li>
+      <li><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Have I Been Pwned — comprobación de fugas</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Conexión con la espiral del curso.</strong> La habilidad de fuerza bruta explicará lo que verás en auth.log al investigar un ataque de fuerza bruta en la semana 9.</blockquote>
+  </section>
+</div>

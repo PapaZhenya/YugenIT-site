@@ -1000,20 +1000,69 @@ const mikrotikBasicsContent = `
 let activeLessonTopic = null;
 
 const COURSES = [
-  window.CYBER_COURSE && { ...window.CYBER_COURSE, quizzes: window.CYBER_COURSE_QUIZZES },
-  window.NETWORKING_COURSE && { ...window.NETWORKING_COURSE, quizzes: window.NETWORKING_COURSE_QUIZZES },
+  window.CYBER_COURSE && {
+    ...window.CYBER_COURSE,
+    quizzes: window.CYBER_COURSE_QUIZZES,
+    i18n: window.CYBER_COURSE_I18N,
+    quizzesI18n: window.CYBER_COURSE_QUIZZES_I18N,
+  },
+  window.NETWORKING_COURSE && {
+    ...window.NETWORKING_COURSE,
+    quizzes: window.NETWORKING_COURSE_QUIZZES,
+    i18n: window.NETWORKING_COURSE_I18N,
+    quizzesI18n: window.NETWORKING_COURSE_QUIZZES_I18N,
+  },
 ].filter(Boolean);
 let activeCourseId = null;
+let activeModuleId = null;
 
 function findCourse(courseId) {
   return COURSES.find(course => course.id === courseId);
 }
 
+function getCourseLang() {
+  return languageSelect?.value || "en";
+}
+
+function getCourseTitle(course) {
+  const lang = getCourseLang();
+  if (lang === "ru") return course.title;
+  return course.i18n?.title?.[lang] || course.title;
+}
+
+function getCourseCardText(course) {
+  const lang = getCourseLang();
+  if (lang === "ru") return course.cardText;
+  return course.i18n?.cardText?.[lang] || course.cardText;
+}
+
+function getCourseModuleTitle(course, mod) {
+  const lang = getCourseLang();
+  if (lang === "ru") return mod.title;
+  return course.i18n?.modules?.[mod.id]?.[lang]?.title || mod.title;
+}
+
+function getCourseModuleHtml(course, mod) {
+  const lang = getCourseLang();
+  if (lang === "ru") return mod.html;
+  return course.i18n?.modules?.[mod.id]?.[lang]?.html || mod.html;
+}
+
+function getCourseQuiz(course, moduleId) {
+  const lang = getCourseLang();
+  if (lang !== "ru") {
+    const translated = course.quizzesI18n?.[lang]?.[moduleId];
+    if (translated) return translated;
+  }
+  return course.quizzes?.[moduleId];
+}
+
 function renderCourseHome(course) {
+  const t = translations[getCourseLang()] || translations.en;
   const items = course.modules.map(mod => `
     <li>
       <button type="button" class="course-module-link" data-course="${course.id}" data-module="${mod.id}">
-        <span class="course-module-title">${mod.title}</span>
+        <span class="course-module-title">${getCourseModuleTitle(course, mod)}</span>
         <span class="course-module-arrow" aria-hidden="true">→</span>
       </button>
     </li>
@@ -1021,9 +1070,9 @@ function renderCourseHome(course) {
 
   return `
     <div class="lesson-content">
-      <p class="lesson-intro">${course.cardText}</p>
+      <p class="lesson-intro">${getCourseCardText(course)}</p>
       <section class="lesson-section">
-        <h2>Программа курса</h2>
+        <h2>${t.courseProgramTitle}</h2>
         <ul class="course-module-list">${items}</ul>
       </section>
     </div>
@@ -1031,7 +1080,8 @@ function renderCourseHome(course) {
 }
 
 function renderModuleQuiz(course, moduleId) {
-  const questions = course.quizzes?.[moduleId];
+  const t = translations[getCourseLang()] || translations.en;
+  const questions = getCourseQuiz(course, moduleId);
   if (!questions || !questions.length) return "";
 
   const questionsMarkup = questions.map((q, index) => {
@@ -1049,11 +1099,11 @@ function renderModuleQuiz(course, moduleId) {
       return `
         <div class="quiz-question" data-type="open">
           <p class="quiz-question-text">${q.id}. ${q.text}</p>
-          <textarea class="quiz-open-input" placeholder="Ваш ответ..."></textarea>
-          <button type="button" class="chatgpt-check-btn">Проверить в ChatGPT →</button>
+          <textarea class="quiz-open-input" placeholder="${t.quizAnswerPlaceholder}"></textarea>
+          <button type="button" class="chatgpt-check-btn">${t.quizChatgptBtn}</button>
           <p class="chatgpt-check-status" hidden></p>
           <div class="quiz-self-score">
-            <span>Моя оценка (после ответа ChatGPT):</span>
+            <span>${t.quizSelfScoreLabel}</span>
             ${selfScoreOptions}
           </div>
         </div>
@@ -1061,7 +1111,7 @@ function renderModuleQuiz(course, moduleId) {
     }
 
     const options = q.type === "tf"
-      ? { "Верно": "Верно", "Неверно": "Неверно" }
+      ? { "Верно": t.quizTfTrue, "Неверно": t.quizTfFalse }
       : q.options;
 
     const optionsMarkup = Object.entries(options).map(([value, label]) => `
@@ -1082,11 +1132,11 @@ function renderModuleQuiz(course, moduleId) {
 
   return `
     <section class="lesson-section module-quiz">
-      <h2>Мини-тест</h2>
-      <p>Тестовые вопросы — 1 балл за верный ответ. Письменные — до 3 баллов: нажмите «Проверить в ChatGPT», прочитайте разбор и честно выставите себе оценку от 0 до 3. Нажмите «Проверить ответы», чтобы увидеть общий результат.</p>
+      <h2>${t.quizHeading}</h2>
+      <p>${t.quizIntro}</p>
       <form class="module-quiz-form" data-module="${moduleId}">
         ${questionsMarkup}
-        <button type="submit" class="submit-test-btn">Проверить ответы</button>
+        <button type="submit" class="submit-test-btn">${t.quizSubmitBtn}</button>
       </form>
       <p class="quiz-score" hidden></p>
     </section>
@@ -1094,6 +1144,7 @@ function renderModuleQuiz(course, moduleId) {
 }
 
 function gradeModuleQuiz(form) {
+  const t = translations[getCourseLang()] || translations.en;
   const closedQuestions = form.querySelectorAll(".quiz-question[data-input-name]");
   const openQuestions = form.querySelectorAll('.quiz-question[data-type="open"]');
   let earnedPoints = 0;
@@ -1105,6 +1156,9 @@ function gradeModuleQuiz(form) {
     const selected = form.querySelector(`input[name="${inputName}"]:checked`);
     const feedback = questionEl.querySelector(".quiz-answer-feedback");
     const isCorrect = selected?.value === correctValue;
+    const correctLabel = correctValue === "Верно" ? t.quizTfTrue
+      : correctValue === "Неверно" ? t.quizTfFalse
+      : correctValue;
 
     questionEl.classList.remove("is-correct", "is-wrong");
     questionEl.classList.add(isCorrect ? "is-correct" : "is-wrong");
@@ -1112,11 +1166,11 @@ function gradeModuleQuiz(form) {
     maxPoints += 1;
     if (isCorrect) {
       earnedPoints += 1;
-      feedback.textContent = "Верно! (+1 балл)";
+      feedback.textContent = t.quizFeedbackCorrect;
     } else {
       feedback.textContent = selected
-        ? `Неверно. Правильный ответ: ${correctValue}`
-        : `Вопрос пропущен. Правильный ответ: ${correctValue}`;
+        ? `${t.quizFeedbackWrongPrefix}${correctLabel}`
+        : `${t.quizFeedbackSkippedPrefix}${correctLabel}`;
     }
     feedback.hidden = false;
   });
@@ -1131,7 +1185,9 @@ function gradeModuleQuiz(form) {
 
   const scoreEl = form.parentElement.querySelector(".quiz-score");
   if (scoreEl) {
-    scoreEl.textContent = `Результат: ${earnedPoints} из ${maxPoints} баллов.`;
+    scoreEl.textContent = t.quizScoreTemplate
+      .replace("{earned}", earnedPoints)
+      .replace("{max}", maxPoints);
     scoreEl.hidden = false;
   }
 }
@@ -1148,6 +1204,7 @@ document.addEventListener("click", event => {
   const chatGptBtn = event.target.closest(".chatgpt-check-btn");
   if (!chatGptBtn) return;
 
+  const t = translations[getCourseLang()] || translations.en;
   const questionEl = chatGptBtn.closest(".quiz-question");
   const statusEl = questionEl?.querySelector(".chatgpt-check-status");
   const questionText = questionEl?.querySelector(".quiz-question-text")?.textContent.trim() || "";
@@ -1160,31 +1217,35 @@ document.addEventListener("click", event => {
   };
 
   if (!answerText) {
-    setStatus("Сначала напишите ответ.");
+    setStatus(t.quizAnswerFirst);
     return;
   }
 
-  const courseTitle = findCourse(activeCourseId)?.title || "выбранному курсу";
+  const courseTitle = (() => {
+    const course = findCourse(activeCourseId);
+    return course ? getCourseTitle(course) : t.quizGptFallbackCourse;
+  })();
   const prompt = [
-    `Проверь мой ответ на вопрос по курсу «${courseTitle}».`,
-    `Вопрос: ${questionText}`,
-    `Мой ответ: ${answerText}`,
-    "Скажи, что верно, чего не хватает, и оцени по шкале от 0 до 5."
+    t.quizGptPromptIntro.replace("{course}", courseTitle),
+    `${t.quizGptPromptQuestion}${questionText}`,
+    `${t.quizGptPromptAnswer}${answerText}`,
+    t.quizGptPromptInstruction
   ].join("\n\n");
 
   navigator.clipboard?.writeText(prompt).catch(() => {});
   window.open("https://chatgpt.com", "_blank", "noopener,noreferrer");
 
-  setStatus("Вопрос и ответ скопированы в буфер обмена — вставьте их в открывшийся чат ChatGPT (Ctrl+V).");
+  setStatus(t.quizClipboardCopied);
 });
 
 function renderCourseModule(course, moduleId) {
+  const t = translations[getCourseLang()] || translations.en;
   const mod = course.modules.find(item => item.id === moduleId);
-  if (!mod) return course.cardText;
+  if (!mod) return getCourseCardText(course);
 
   return `
-    <button type="button" class="back course-home-link" data-course="${course.id}">← К программе курса</button>
-    ${mod.html}
+    <button type="button" class="back course-home-link" data-course="${course.id}">${t.courseBackToProgram}</button>
+    ${getCourseModuleHtml(course, mod)}
     ${renderModuleQuiz(course, moduleId)}
   `;
 }
@@ -1194,8 +1255,9 @@ function openCourseHome(courseId) {
   if (!course) return;
 
   activeCourseId = courseId;
+  activeModuleId = null;
   activeLessonTopic = null;
-  document.getElementById("lessonTitle").textContent = course.title;
+  document.getElementById("lessonTitle").textContent = getCourseTitle(course);
   document.getElementById("lessonText").innerHTML = renderCourseHome(course);
   document.getElementById("lesson").classList.add("active");
   applySearchFilter();
@@ -1206,7 +1268,9 @@ function openCourseModule(courseId, moduleId) {
   const mod = course?.modules.find(item => item.id === moduleId);
   if (!course || !mod) return;
 
-  document.getElementById("lessonTitle").textContent = mod.title;
+  activeCourseId = courseId;
+  activeModuleId = moduleId;
+  document.getElementById("lessonTitle").textContent = getCourseModuleTitle(course, mod);
   document.getElementById("lessonText").innerHTML = renderCourseModule(course, moduleId);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -2213,7 +2277,33 @@ const translations = {
     securityCardText: "Network security basics and user protection.",
 
     techMoments: "Tech Moments",
-    techSubtitle: "Discuss technical topics, ask questions and leave comments."
+    techSubtitle: "Discuss technical topics, ask questions and leave comments.",
+
+    cyberCourseCardTitle: "Cybersecurity from zero to junior",
+    cyberCourseCardText: "Hands-on course: networks, attacks, defense, incident response — 12 weeks to junior SOC analyst level.",
+    networkingCourseCardTitle: "Networking from zero: how communication works",
+    networkingCourseCardText: "Hands-on course: from \"what happens when you press Enter\" to building and troubleshooting your own network. 9 modules, 3 parts.",
+    courseProgramTitle: "Course program",
+    courseBackToProgram: "← Back to course program",
+    quizHeading: "Mini-test",
+    quizIntro: "Test questions — 1 point for a correct answer. Written questions — up to 3 points: click \"Check with ChatGPT\", read the review, and honestly score yourself from 0 to 3. Click \"Check answers\" to see your total result.",
+    quizAnswerPlaceholder: "Your answer...",
+    quizChatgptBtn: "Check with ChatGPT →",
+    quizSelfScoreLabel: "My score (after ChatGPT's answer):",
+    quizSubmitBtn: "Check answers",
+    quizFeedbackCorrect: "Correct! (+1 point)",
+    quizFeedbackWrongPrefix: "Incorrect. Correct answer: ",
+    quizFeedbackSkippedPrefix: "Question skipped. Correct answer: ",
+    quizScoreTemplate: "Result: {earned} out of {max} points.",
+    quizAnswerFirst: "Write an answer first.",
+    quizClipboardCopied: "The question and answer were copied to your clipboard — paste them into the ChatGPT chat that just opened (Ctrl+V).",
+    quizGptPromptIntro: "Check my answer to a question from the course \"{course}\".",
+    quizGptPromptQuestion: "Question: ",
+    quizGptPromptAnswer: "My answer: ",
+    quizGptPromptInstruction: "Tell me what's correct, what's missing, and rate it on a scale from 0 to 5.",
+    quizGptFallbackCourse: "the selected course",
+    quizTfTrue: "True",
+    quizTfFalse: "False"
   },
 
   ru: {
@@ -2258,7 +2348,33 @@ const translations = {
     securityCardText: "Основы безопасности сети и защиты пользователей.",
 
     techMoments: "Тех. моменты",
-    techSubtitle: "Обсуждайте технические темы, задавайте вопросы и оставляйте комментарии."
+    techSubtitle: "Обсуждайте технические темы, задавайте вопросы и оставляйте комментарии.",
+
+    cyberCourseCardTitle: "Кибербезопасность с нуля до junior",
+    cyberCourseCardText: "Практический курс: сети, атаки, защита, реагирование на инциденты — 12 недель до уровня junior SOC-аналитика.",
+    networkingCourseCardTitle: "Сети с нуля: как устроена связь",
+    networkingCourseCardText: "Практический курс: от «что происходит, когда жмёшь Enter» до сборки и диагностики своей сети. 9 модулей, 3 части.",
+    courseProgramTitle: "Программа курса",
+    courseBackToProgram: "← К программе курса",
+    quizHeading: "Мини-тест",
+    quizIntro: "Тестовые вопросы — 1 балл за верный ответ. Письменные — до 3 баллов: нажмите «Проверить в ChatGPT», прочитайте разбор и честно выставите себе оценку от 0 до 3. Нажмите «Проверить ответы», чтобы увидеть общий результат.",
+    quizAnswerPlaceholder: "Ваш ответ...",
+    quizChatgptBtn: "Проверить в ChatGPT →",
+    quizSelfScoreLabel: "Моя оценка (после ответа ChatGPT):",
+    quizSubmitBtn: "Проверить ответы",
+    quizFeedbackCorrect: "Верно! (+1 балл)",
+    quizFeedbackWrongPrefix: "Неверно. Правильный ответ: ",
+    quizFeedbackSkippedPrefix: "Вопрос пропущен. Правильный ответ: ",
+    quizScoreTemplate: "Результат: {earned} из {max} баллов.",
+    quizAnswerFirst: "Сначала напишите ответ.",
+    quizClipboardCopied: "Вопрос и ответ скопированы в буфер обмена — вставьте их в открывшийся чат ChatGPT (Ctrl+V).",
+    quizGptPromptIntro: "Проверь мой ответ на вопрос по курсу «{course}».",
+    quizGptPromptQuestion: "Вопрос: ",
+    quizGptPromptAnswer: "Мой ответ: ",
+    quizGptPromptInstruction: "Скажи, что верно, чего не хватает, и оцени по шкале от 0 до 5.",
+    quizGptFallbackCourse: "выбранному курсу",
+    quizTfTrue: "Верно",
+    quizTfFalse: "Неверно"
   },
 
   uk: {
@@ -2303,7 +2419,33 @@ const translations = {
     securityCardText: "Основи безпеки мережі та захисту користувачів.",
 
     techMoments: "Тех. моменти",
-    techSubtitle: "Обговорюйте технічні теми, ставте питання та залишайте коментарі."
+    techSubtitle: "Обговорюйте технічні теми, ставте питання та залишайте коментарі.",
+
+    cyberCourseCardTitle: "Кібербезпека з нуля до junior",
+    cyberCourseCardText: "Практичний курс: мережі, атаки, захист, реагування на інциденти — 12 тижнів до рівня junior SOC-аналітика.",
+    networkingCourseCardTitle: "Мережі з нуля: як влаштований зв'язок",
+    networkingCourseCardText: "Практичний курс: від «що відбувається, коли тиснеш Enter» до збирання й діагностики власної мережі. 9 модулів, 3 частини.",
+    courseProgramTitle: "Програма курсу",
+    courseBackToProgram: "← До програми курсу",
+    quizHeading: "Міні-тест",
+    quizIntro: "Тестові питання — 1 бал за правильну відповідь. Письмові — до 3 балів: натисніть «Перевірити в ChatGPT», прочитайте розбір і чесно виставте собі оцінку від 0 до 3. Натисніть «Перевірити відповіді», щоб побачити загальний результат.",
+    quizAnswerPlaceholder: "Ваша відповідь...",
+    quizChatgptBtn: "Перевірити в ChatGPT →",
+    quizSelfScoreLabel: "Моя оцінка (після відповіді ChatGPT):",
+    quizSubmitBtn: "Перевірити відповіді",
+    quizFeedbackCorrect: "Правильно! (+1 бал)",
+    quizFeedbackWrongPrefix: "Неправильно. Правильна відповідь: ",
+    quizFeedbackSkippedPrefix: "Питання пропущено. Правильна відповідь: ",
+    quizScoreTemplate: "Результат: {earned} із {max} балів.",
+    quizAnswerFirst: "Спочатку напишіть відповідь.",
+    quizClipboardCopied: "Питання та відповідь скопійовано в буфер обміну — вставте їх у чат ChatGPT, що відкрився (Ctrl+V).",
+    quizGptPromptIntro: "Перевір мою відповідь на питання з курсу «{course}».",
+    quizGptPromptQuestion: "Питання: ",
+    quizGptPromptAnswer: "Моя відповідь: ",
+    quizGptPromptInstruction: "Скажи, що правильно, чого бракує, і оціни за шкалою від 0 до 5.",
+    quizGptFallbackCourse: "обраному курсу",
+    quizTfTrue: "Правильно",
+    quizTfFalse: "Неправильно"
   },
 
   es: {
@@ -2348,7 +2490,33 @@ const translations = {
     securityCardText: "Fundamentos de seguridad de red y protección de usuarios.",
 
     techMoments: "Momentos técnicos",
-    techSubtitle: "Discute temas técnicos, haz preguntas y deja comentarios."
+    techSubtitle: "Discute temas técnicos, haz preguntas y deja comentarios.",
+
+    cyberCourseCardTitle: "Ciberseguridad desde cero hasta junior",
+    cyberCourseCardText: "Curso práctico: redes, ataques, defensa, respuesta a incidentes — 12 semanas hasta el nivel de analista SOC junior.",
+    networkingCourseCardTitle: "Redes desde cero: cómo funciona la comunicación",
+    networkingCourseCardText: "Curso práctico: desde «qué pasa cuando pulsas Enter» hasta armar y diagnosticar tu propia red. 9 módulos, 3 partes.",
+    courseProgramTitle: "Programa del curso",
+    courseBackToProgram: "← Volver al programa del curso",
+    quizHeading: "Mini-test",
+    quizIntro: "Preguntas de test — 1 punto por respuesta correcta. Preguntas escritas — hasta 3 puntos: haz clic en «Comprobar con ChatGPT», lee el análisis y puntúate honestamente de 0 a 3. Haz clic en «Comprobar respuestas» para ver tu resultado total.",
+    quizAnswerPlaceholder: "Tu respuesta...",
+    quizChatgptBtn: "Comprobar con ChatGPT →",
+    quizSelfScoreLabel: "Mi puntuación (después de la respuesta de ChatGPT):",
+    quizSubmitBtn: "Comprobar respuestas",
+    quizFeedbackCorrect: "¡Correcto! (+1 punto)",
+    quizFeedbackWrongPrefix: "Incorrecto. Respuesta correcta: ",
+    quizFeedbackSkippedPrefix: "Pregunta omitida. Respuesta correcta: ",
+    quizScoreTemplate: "Resultado: {earned} de {max} puntos.",
+    quizAnswerFirst: "Primero escribe una respuesta.",
+    quizClipboardCopied: "La pregunta y la respuesta se copiaron al portapapeles — pégalas en el chat de ChatGPT que se abrió (Ctrl+V).",
+    quizGptPromptIntro: "Revisa mi respuesta a una pregunta del curso «{course}».",
+    quizGptPromptQuestion: "Pregunta: ",
+    quizGptPromptAnswer: "Mi respuesta: ",
+    quizGptPromptInstruction: "Dime qué está bien, qué falta, y califícalo en una escala de 0 a 5.",
+    quizGptFallbackCourse: "el curso seleccionado",
+    quizTfTrue: "Verdadero",
+    quizTfFalse: "Falso"
   }
 };
 
@@ -2766,7 +2934,9 @@ function htmlToSearchText(html) {
 function getTopicSearchText(topic) {
   const course = findCourse(topic);
   if (course) {
-    return course.modules.map(mod => `${mod.title} ${htmlToSearchText(mod.html)}`).join(" ");
+    return course.modules
+      .map(mod => `${getCourseModuleTitle(course, mod)} ${htmlToSearchText(getCourseModuleHtml(course, mod))}`)
+      .join(" ");
   }
 
   const lessonText = lessons[topic]?.text || "";
@@ -2858,9 +3028,23 @@ function applyLanguage(lang) {
 }
   });
 
-  if (activeLessonTopic && document.getElementById("lesson")?.classList.contains("active")) {
-    document.getElementById("lessonText").innerHTML =
-      getLessonContentHtml(activeLessonTopic) || lessons[activeLessonTopic]?.text || "";
+  if (document.getElementById("lesson")?.classList.contains("active")) {
+    if (activeCourseId) {
+      const course = findCourse(activeCourseId);
+      if (course) {
+        if (activeModuleId) {
+          document.getElementById("lessonTitle").textContent =
+            getCourseModuleTitle(course, course.modules.find(m => m.id === activeModuleId) || {});
+          document.getElementById("lessonText").innerHTML = renderCourseModule(course, activeModuleId);
+        } else {
+          document.getElementById("lessonTitle").textContent = getCourseTitle(course);
+          document.getElementById("lessonText").innerHTML = renderCourseHome(course);
+        }
+      }
+    } else if (activeLessonTopic) {
+      document.getElementById("lessonText").innerHTML =
+        getLessonContentHtml(activeLessonTopic) || lessons[activeLessonTopic]?.text || "";
+    }
   }
 
   applySearchFilter();

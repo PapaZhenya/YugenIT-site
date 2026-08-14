@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Este módulo explica cómo el enrutador conecta redes distintas, qué es la puerta de enlace predeterminada, la tabla de enrutamiento, los saltos (hops) y el NAT, y cómo rastrear la ruta de un paquete hasta un nodo externo.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender el papel del enrutador y su diferencia con el conmutador</li>
+      <li>Comprender cómo pasa un paquete de una red a otra</li>
+      <li>Entender qué es la puerta de enlace predeterminada</li>
+      <li>Familiarizarse con la tabla de enrutamiento y el concepto de «salto» (hop)</li>
+      <li>Entender a nivel básico qué hace el NAT</li>
+      <li>Aprender a rastrear la ruta de un paquete hasta un nodo externo</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>El conmutador funciona de maravilla dentro de una sola red. Pero, ¿cómo salir de sus límites, hacia una red vecina o hacia internet? ¿Cómo encuentra tu paquete un servidor en otro continente? De eso se encarga el enrutador: el dispositivo que conecta redes distintas y traza el camino entre ellas. Este es el núcleo de todo el curso: al entender el enrutamiento, entenderás cómo funciona internet en general.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Dos redes conectadas por un enrutador:</p>
+    <pre><code>  Red A 192.168.1.0/24              Red B 192.168.2.0/24
+  [PC-A1]---\                         /---[PC-B1]
+  [PC-A2]---[SW-A]---[ Router ]---[SW-B]---[PC-B2]
+                     .1 |  | .1
+              puerta A |  | puerta B
+</code></pre>
+    <p>La ruta del paquete hacia afuera a través de saltos:</p>
+    <pre><code>[ Tú ] -&gt; [ Tu router ] -&gt; [ Router del proveedor ] -&gt; ... -&gt; [ Servidor ]
+  hop0          hop1                 hop2            hopN
+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>El enrutador: guardia fronterizo y navegante</h3>
+    <p>El <strong>enrutador (router)</strong> se sitúa en el punto de unión entre redes distintas y decide adónde enviar el paquete a continuación para que se acerque a su destino. La diferencia clave con el conmutador: el conmutador mueve tramas <strong>dentro</strong> de una misma red según direcciones MAC, mientras que el enrutador lleva paquetes <strong>entre</strong> redes según direcciones IP.</p>
+    <p>El router doméstico en realidad es varios dispositivos en una sola caja: un enrutador, un conmutador (los puertos LAN) y, a menudo, un punto de acceso Wi-Fi. Pero su función principal es precisamente el enrutamiento: conectar tu red doméstica con la red del proveedor y, a través de ella, con todo internet.</p>
+
+    <h3>La puerta de enlace predeterminada: la puerta hacia afuera</h3>
+    <p>Cuando un dispositivo quiere enviar datos a un destinatario que <strong>no está en su</strong> red, no conoce el camino por sí mismo, así que entrega el paquete a la <strong>puerta de enlace predeterminada</strong> (default gateway). La puerta de enlace es la dirección del enrutador, la «puerta hacia afuera» de la red local. Es ese mismo gateway que has visto en tu configuración de red (normalmente <code>.1</code> en tu subred).</p>
+    <p>La regla es sencilla: si el destinatario está en mi red, lo envío directamente; si no, se lo entrego a la puerta de enlace para que ella se encargue de lo demás. Sin una puerta de enlace configurada, el dispositivo queda «encerrado» en su LAN y no podrá salir a internet; esta, por cierto, es una causa muy frecuente de «no hay internet».</p>
+
+    <h3>La tabla de enrutamiento: el navegador del paquete</h3>
+    <p>El enrutador tiene una <strong>tabla de enrutamiento</strong>: una lista del tipo «hacia tal red, a través de tal siguiente paso». Al recibir un paquete, el enrutador consulta la dirección de destino, busca en la tabla la entrada más adecuada y pasa el paquete al siguiente enrutador (next hop).</p>
+    <p>Así viaja el paquete: de un enrutador a otro, cada uno lo acerca un poco más a su destino, hasta que llega a la red de destino. Ningún enrutador conoce la ruta completa; solo conoce el «siguiente paso». Es como una carrera de relevos: cada corredor pasa el testigo al siguiente.</p>
+
+    <h3>Los saltos (hops) y la ruta del paquete</h3>
+    <p>Cada paso del paquete a través de un enrutador se llama <strong>salto (hop)</strong>. Entre tú y un sitio web suele haber varios saltos, a menudo entre 10 y 20. El comando <code>traceroute</code> (en Windows, <code>tracert</code>) muestra esta ruta: enumera los enrutadores por los que pasó el paquete y el tiempo hasta cada uno.</p>
+    <p>Es una herramienta de diagnóstico muy útil: si el paquete se «atasca» en algún salto, puedes ver exactamente dónde se corta la conexión: en tu lado, en el del proveedor o más adelante. Volveremos a esto en el módulo sobre diagnóstico.</p>
+
+    <h3>NAT: cómo sale toda la casa bajo una sola dirección</h3>
+    <p>Dentro de tu red hay un montón de dispositivos con direcciones privadas, mientras que la dirección pública del proveedor suele ser <strong>una sola</strong>. ¿Cómo salen todos a internet? A través de <strong>NAT (Network Address Translation)</strong>: al salir, el enrutador sustituye la dirección privada del dispositivo por su propia dirección pública y recuerda a quién debe devolver la respuesta. Desde afuera, toda tu casa parece tener una única dirección.</p>
+    <p>Esto resuelve la escasez de direcciones y, de paso, oculta un poco la estructura interna de la red (desde afuera no se ve cuántos dispositivos tienes). Veremos el NAT con más detalle en el siguiente módulo, junto con el DHCP.</p>
+
+    <h3>Enrutamiento estático y dinámico (en breve)</h3>
+    <p>¿De dónde salen las entradas de la tabla de un enrutador? De dos maneras. <strong>De forma estática</strong>: el administrador escribe las rutas a mano (sirve para redes pequeñas). <strong>De forma dinámica</strong>: los enrutadores intercambian información sobre las redes mediante protocolos especiales y construyen las tablas automáticamente (necesario para redes grandes e internet). Al principio te basta con saber que ambos enfoques existen; los detalles de los protocolos de enrutamiento son tema de cursos más avanzados.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Cómo elige el enrutador la ruta</h3>
+    <p>En la tabla de enrutamiento puede haber varias entradas adecuadas. El enrutador elige la <strong>más precisa</strong> (la del prefijo coincidente más largo): el principio de «longest prefix match» (coincidencia de prefijo más largo). Si ninguna entrada encaja, se usa la <strong>ruta predeterminada</strong> (<code>0.0.0.0/0</code>): «todo lo demás, envíalo por ahí». En el router doméstico, la ruta predeterminada lleva hacia el proveedor.</p>
+
+    <h3>Qué es la «ruta predeterminada»</h3>
+    <p>Es la entrada «para todas las direcciones que no conozco». Para tu ordenador, ese papel lo cumple la <strong>puerta de enlace predeterminada</strong>; para el router doméstico, el enlace hacia el proveedor. Gracias a ella, el dispositivo no necesita conocer todo internet: le basta con saber «adónde mandar lo desconocido».</p>
+
+    <h3>Ruta simétrica y asimétrica</h3>
+    <p>Normalmente la respuesta sigue más o menos la misma ruta que la solicitud, pero no necesariamente la misma exacta: en redes grandes, los caminos de ida y de vuelta pueden diferir. Para ti esto pasa inadvertido, pero explica por qué <code>traceroute</code> muestra la ruta solo en un sentido.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis con un ejemplo: la ruta del paquete desde ti hasta el sitio web</h2>
+    <p>Abres un sitio web cuyo servidor está en otro país. Tu portátil detecta: la dirección de destino no está en mi red, así que entrego el paquete a la puerta de enlace (el router doméstico, <code>192.168.1.1</code>).</p>
+    <p>El router aplica NAT (sustituye tu dirección privada por su dirección pública) y, según su tabla, envía el paquete al siguiente destino: el enrutador del proveedor. Este consulta la dirección de destino y lo pasa al siguiente, y ese al siguiente. El paquete salta de nodo en nodo (esos mismos hops), atraviesa países, hasta llegar a la red donde está el servidor. La respuesta regresa siguiendo el mismo principio, y tu router, gracias a la entrada de NAT, sabe que debe devolver el paquete precisamente a tu portátil y no al teléfono de al lado.</p>
+    <p>Ejecuta <code>tracert</code> hacia cualquier sitio web, y verás literalmente esta lista de saltos con tus propios ojos.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué sin puerta de enlace «funciona lo local, pero no hay internet»</h2>
+    <p>Situación clásica: los dispositivos del apartamento se hacen ping entre sí, los archivos circulan por la red local, pero los sitios web no cargan. La causa suele ser una sola: <strong>la puerta de enlace predeterminada no está configurada o es incorrecta</strong>. El intercambio local va directo (no hace falta puerta de enlace), pero la salida hacia afuera es imposible sin la «puerta». Revisa la puerta de enlace en primer lugar, y el misterio se resolverá.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: un paquete de la red A a la red B</h2>
+    <ol>
+      <li>PC-A1 (red A) quiere comunicarse con PC-B1 (red B).</li>
+      <li>A1 detecta: el destinatario no está en mi red → lo envío a la puerta de enlace (la interfaz del router en la red A).</li>
+      <li>El router consulta su tabla: la red B está conectada a mi segunda interfaz.</li>
+      <li>El router reempaqueta la trama y envía el paquete a la red B.</li>
+      <li>PC-B1 recibe el paquete; la respuesta regresa siguiendo el mismo principio.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: un pequeño «internet» de tres redes</h2>
+    <p>En Packet Tracer, construye una topología de tres subredes y dos enrutadores:</p>
+    <ul>
+      <li>tres LAN conectadas mediante enrutadores;</li>
+      <li>configura el direccionamiento y las puertas de enlace;</li>
+      <li>logra conectividad entre los dispositivos de las tres redes;</li>
+      <li>ejecuta <code>tracert</code> entre dispositivos lejanos y muestra los saltos;</li>
+      <li>explica en el informe cómo encuentra el paquete su camino.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Enrutador (router)</strong> — dispositivo que conecta redes distintas y dirige los paquetes según la IP</li>
+      <li><strong>Puerta de enlace predeterminada</strong> — la dirección del enrutador, la «salida» hacia afuera de la red local</li>
+      <li><strong>Tabla de enrutamiento</strong> — lista de rutas: hacia qué red a través de qué siguiente paso</li>
+      <li><strong>Salto (hop)</strong> — un paso del paquete a través de un enrutador</li>
+      <li><strong>NAT</strong> — sustitución de direcciones privadas por una sola dirección pública al salir a internet</li>
+      <li><strong>traceroute / tracert</strong> — comando que muestra la ruta del paquete salto a salto</li>
+      <li><strong>Next hop</strong> — el siguiente nodo al que el enrutador entrega el paquete</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores frecuentes y mitos</h2>
+    <ul>
+      <li><strong>Error: confundir el conmutador con el enrutador.</strong> El primero opera por MAC dentro de la LAN; el segundo, por IP entre redes.</li>
+      <li><strong>Mito: el enrutador conoce toda la ruta hasta el destino.</strong> Solo conoce el siguiente paso.</li>
+      <li><strong>Error: olvidarse de la puerta de enlace.</strong> Sin puerta de enlace predeterminada, el dispositivo no saldrá de su red.</li>
+      <li><strong>Mito: el NAT es protección/firewall.</strong> El NAT resuelve la escasez de direcciones; la protección es una tarea aparte.</li>
+      <li><strong>Error: creer que cuantos más saltos, siempre peor.</strong> Importan más la latencia y la pérdida de paquetes que el número de saltos.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿El enrutador conoce toda la ruta?</strong> No, solo el siguiente paso.</li>
+      <li><strong>¿Y si no hay ruta para una dirección?</strong> Se sigue la ruta predeterminada (hacia el proveedor).</li>
+      <li><strong>¿Por qué traceroute muestra la ruta en un solo sentido?</strong> Porque la respuesta puede seguir un camino distinto.</li>
+      <li><strong>¿El NAT protege?</strong> Oculta un poco la red, pero no es un firewall.</li>
+      <li><strong>¿El router doméstico es un router o un conmutador?</strong> Ambas cosas (más Wi-Fi) en una sola caja.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>Enrutador</strong> = entre redes por IP. <strong>Conmutador</strong> = dentro de una red por MAC.</li>
+      <li><strong>Puerta de enlace predeterminada</strong> = la puerta hacia afuera de tu red.</li>
+      <li><strong>Tabla de enrutamiento</strong> = «hacia qué red, a través de qué siguiente paso».</li>
+      <li><strong>Longest prefix match</strong> — se elige la ruta más precisa.</li>
+      <li><strong>Ruta predeterminada</strong> <code>0.0.0.0/0</code> = «todo lo desconocido, por aquí».</li>
+      <li><strong>NAT</strong> = muchas direcciones privadas detrás de una sola pública.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Rastrea la ruta hacia afuera</h3>
+    <ol>
+      <li>Ejecuta <code>tracert google.com</code> (Windows) o <code>traceroute google.com</code> (Linux/Mac).</li>
+      <li>Cuenta el número de saltos hasta el destino.</li>
+      <li>Identifica el primer salto: es tu router doméstico (compáralo con la dirección de la puerta de enlace del módulo 2).</li>
+    </ol>
+
+    <h3>Parte B. Conecta dos redes en el simulador</h3>
+    <ol>
+      <li>En Packet Tracer, crea dos subredes (dos LAN con conmutadores y ordenadores).</li>
+      <li>Añade un enrutador y conecta a él ambas subredes; configura las IP en sus interfaces.</li>
+      <li>Configura en los ordenadores la puerta de enlace predeterminada correcta.</li>
+      <li>Logra un <code>ping</code> exitoso entre dispositivos de subredes distintas.</li>
+    </ol>
+
+    <h3>Parte C. Rompe y repara la puerta de enlace</h3>
+    <ol>
+      <li>En un ordenador, elimina o indica una puerta de enlace predeterminada incorrecta.</li>
+      <li>Intenta hacer ping a un dispositivo de otra subred; comprueba que no funciona.</li>
+      <li>Restablece la puerta de enlace correcta y comprueba que la conectividad se restauró.</li>
+      <li>Saca una conclusión sobre de qué se encarga la puerta de enlace.</li>
+    </ol>
+
+    <h3>Parte D. Revisa la tabla de enrutamiento</h3>
+    <ol>
+      <li>En el enrutador, muestra su tabla de enrutamiento.</li>
+      <li>Encuentra las entradas de las subredes conectadas.</li>
+      <li>Explica cómo decide el enrutador, a partir de esta tabla, adónde enviar el paquete.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. La ruta predeterminada</h3>
+    <ol>
+      <li>En el enrutador del simulador, define una ruta predeterminada hacia el «proveedor».</li>
+      <li>Comprueba que los paquetes hacia redes desconocidas van precisamente allí.</li>
+    </ol>
+
+    <h3>Parte F. Analiza tu propio traceroute</h3>
+    <ol>
+      <li>Ejecuta <code>tracert</code> hacia dos sitios web distintos.</li>
+      <li>Compara dónde coinciden las rutas (tu router, el proveedor) y dónde se separan.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Explica la diferencia entre el conmutador y el enrutador en dos o tres frases.</li>
+      <li>Describe el papel de la puerta de enlace predeterminada con una analogía cotidiana.</li>
+      <li>Explica con tus propias palabras qué hace el NAT y para qué sirve.</li>
+      <li>Explica por qué al enrutador le basta con conocer solo el «siguiente paso».</li>
+      <li>Analiza la salida de <code>tracert</code> hacia cualquier sitio web: cuántos saltos hay, dónde está tu router, dónde está el proveedor.</li>
+      <li>Busca la diferencia entre el enrutamiento estático y el dinámico, y descríbela en dos frases.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica el principio de la «ruta más precisa» con un ejemplo sencillo.</li>
+      <li>¿Qué es la ruta predeterminada y para qué sirve?</li>
+      <li>Describe la situación «funciona lo local, no hay internet» y su causa.</li>
+      <li>Busca la diferencia entre enrutamiento y conmutación en una tabla comparativa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿En qué se diferencia el enrutador del conmutador?</li>
+      <li>¿Qué es la puerta de enlace predeterminada y para qué sirve?</li>
+      <li>¿Qué muestra traceroute?</li>
+      <li>¿Qué hace el NAT?</li>
+      <li>¿Qué es un «salto» (hop)?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer: enrutamiento</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics: enrutamiento</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Ya sabes conectar redes: eso es el núcleo del curso. A continuación añadiremos los servicios (DHCP, NAT) que hacen que las redes sean cómodas y «autoconfigurables».</p>
+    </blockquote>
+  </section>
+</div>

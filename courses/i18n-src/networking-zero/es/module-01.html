@@ -1,0 +1,307 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Este módulo muestra por completo el camino de un mensaje desde que pulsas Enter hasta que la página aparece en la pantalla: presenta los hosts, el medio de transmisión, los protocolos y los paquetes.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Ver toda la cadena de transmisión de datos completa: del emisor al receptor</li>
+      <li>Conocer a los participantes clave de la red: hosts, medio y dispositivos</li>
+      <li>Entender para qué sirven los protocolos y qué es un paquete</li>
+      <li>Comprender la diferencia entre los «datos» y la «envoltura de servicio»</li>
+      <li>Aprender a reconocer el intercambio de red en tráfico real</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Empecemos no con definiciones aburridas, sino con algo que haces cada día: abrir un sitio web.
+    Pulsas Enter y, una fracción de segundo después, aparece la página. Parece que ocurre solo,
+    de una vez. En realidad, en ese segundo tu solicitud pasa por manos de una decena de dispositivos,
+    se fragmenta en partes, viaja medio planeta y se vuelve a ensamblar. Si comprendes este
+    camino completo desde ahora, la mitad del curso te resultará familiar de antemano, porque a partir
+    de aquí simplemente iremos desmenuzando cada uno de sus pasos con calma.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>El camino de la solicitud desde ti hasta el servidor y de vuelta:</p>
+    <pre><code>[ Твой ПК ] --кадр--&gt; [ Роутер ] --пакеты--&gt; [ Сеть провайдера ] --...--&gt; [ Сервер сайта ]
+     ^                                                                          |
+     |                          ответ идёт тем же путём обратно                 |
+     +--------------------------------------------------------------------------+</code></pre>
+    <p>Estructura de un paquete (simplificada):</p>
+    <pre><code>+-----------------------+-------------------------------+
+|  ЗАГОЛОВОК (адреса)    |         ДАННЫЕ                 |
+|  куда / откуда         |  кусочек твоего сообщения      |
++-----------------------+-------------------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen</h2>
+
+    <h3>Quién participa en la transmisión de datos</h3>
+    <p>En todo intercambio de red hay al menos dos partes: quien
+    envía y quien recibe. A ambos se los llama <strong>hosts</strong>: puede ser tu teléfono,
+    un portátil, una tetera inteligente o un enorme servidor en un centro de datos. Desde el punto de vista de la red, todos
+    son participantes con los mismos derechos, y cada uno tiene su propia dirección.</p>
+    <p>Entre los hosts siempre hay un <strong>medio de transmisión</strong>: aquello por lo que físicamente circulan los datos. Puede ser
+    cable de cobre (par trenzado), fibra óptica (los datos viajan como luz) u ondas de radio (Wi-Fi,
+    comunicación móvil). Cada medio tiene sus ventajas: el cable es fiable, la fibra óptica es rápida y funciona bien en
+    grandes distancias, la radio es cómoda pero caprichosa.</p>
+    <p>Y, por último, el flujo siempre lo <strong>dirige</strong> alguien. Entre tu dispositivo y el servidor hay
+    aparatos especiales: conmutadores y enrutadores, que deciden hacia dónde enviar los datos
+    a continuación. Hablaremos de ellos aparte; por ahora basta con recordar que existen y que sin ellos el paquete
+    se perdería.</p>
+
+    <h3>Por qué nada funciona sin reglas</h3>
+    <p>Imagina que dos personas intentan entenderse, pero
+    una habla japonés, la otra español, y ambas se interrumpen todo el tiempo. No sirve de nada. Con los
+    dispositivos ocurre lo mismo: para que se entiendan entre sí, hace falta un conjunto de reglas común.</p>
+    <p>Estas reglas se llaman <strong>protocolos</strong>. El protocolo lo define todo: en qué formato empaquetar los datos,
+    cómo marcar el inicio y el final del mensaje, cómo confirmar que todo llegó, qué hacer ante un error
+    o una pérdida. Hay muchos protocolos, y cada uno se encarga de una parte del trabajo: uno de la entrega entre
+    redes, otro de la fiabilidad, un tercero de que puedas ver una página web.</p>
+    <p>Idea importante: la red no es tanto «cables» como <strong>acuerdos</strong>. Los cables solo
+    transportan la señal; el significado se lo dan los protocolos.</p>
+
+    <h3>Qué ocurre cuando pulsas Enter</h3>
+    <p>Repasemos a grandes rasgos qué sucede en esa fracción de
+    segundo:</p>
+    <p>Primero, tu solicitud («muéstrame la página example.com») se convierte en una forma comprensible para la red.
+    Luego <strong>se fragmenta en pequeñas porciones</strong>, llamadas paquetes. A cada porción se le asigna una
+    dirección de destino: adónde debe entregarse. Los paquetes vuelan a través de una cadena de dispositivos hacia el servidor, posiblemente
+    incluso por caminos distintos. El servidor los recibe, los reensambla en una solicitud completa, prepara la respuesta
+    (la propia página) y esa respuesta regresa a ti de la misma manera, en paquetes. Tu navegador
+    lo une todo y dibuja la página.</p>
+    <p>Todo este baile dura milisegundos y se repite decenas de veces mientras se carga una sola página
+    (el texto, las imágenes, los estilos: a menudo son solicitudes independientes).</p>
+
+    <h3>Qué es un paquete y por qué fragmentar los datos</h3>
+    <p>Un <strong>paquete</strong> es un pequeño bloque de datos con información
+    de servicio adherida (sobre todo, las direcciones del emisor y del receptor). Puedes
+    imaginarlo como una postal: hay un texto (los datos) y una dirección al reverso (la parte de servicio).</p>
+    <p>¿Por qué no se puede enviar todo el mensaje de una sola vez? Hay tres razones. Primero, la <strong>fiabilidad</strong>:
+    si un fragmento enorme se pierde por el camino, se pierde todo; en cambio, un paquete pequeño perdido es fácil de
+    reenviar. Segundo, la <strong>flexibilidad</strong>: distintos paquetes pueden tomar rutas distintas y
+    esquivar congestiones. Tercero, la <strong>equidad</strong>: cuando todos fragmentan sus datos en porciones, el canal
+    se reparte entre muchos, y un archivo pesado no bloquea la red para el resto.</p>
+    <p>Por eso la fragmentación en paquetes es una idea fundamental de todas las redes modernas.</p>
+
+    <h3>Datos y envoltura: primer contacto con las cabeceras</h3>
+    <p>Cada paquete consta de dos partes:
+    los propios <strong>datos</strong> (lo que realmente transmites) y la <strong>cabecera</strong>, una etiqueta de servicio con las direcciones
+    y marcas correspondientes. En su camino hacia el receptor, a los datos se les van añadiendo varias de estas etiquetas, cada una en su
+    etapa. En el lado receptor, las etiquetas se retiran en orden inverso, y el receptor llega
+    a los datos limpios.</p>
+    <p>Por ahora, quédate con esta imagen de «datos por dentro, etiquetas por fuera»: en el módulo 3 veremos que cada
+    etiqueta corresponde a un nivel de la red, y lo ordenaremos todo con detalle.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Ancho de banda, latencia y pérdidas</h3>
+    <p>La calidad de una red se describe con tres magnitudes. El <strong>ancho de banda (bandwidth)</strong> indica cuántos datos
+    pasan por segundo (Mbit/s): es «el ancho de la tubería». La <strong>latencia (latency)</strong> es cuánto tiempo tarda
+    una señal en ir y volver (ms): es «el largo de la tubería». Las <strong>pérdidas (loss)</strong> son qué proporción de paquetes no llega.
+    Un internet rápido no es solo una «tubería ancha»: para las llamadas y los juegos importan más la baja latencia y la
+    ausencia de pérdidas que una velocidad de descarga gigantesca.</p>
+
+    <h3>Cliente y servidor</h3>
+    <p>Casi todo en la red sigue el esquema «cliente-servidor». El <strong>cliente</strong> solicita (tu navegador),
+    el <strong>servidor</strong> responde (el equipo del sitio web). El mismo ordenador puede ser cliente y
+    servidor en distintas situaciones. Entender este papel te ayudará más adelante: cuando digamos que «el servidor
+    escucha en el puerto 443», nos referimos precisamente a la parte que espera solicitudes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejemplo práctico: cómo llega una carta a su destinatario</h2>
+    <p>Hagamos una analogía con el correo tradicional; resulta sorprendentemente
+    precisa.</p>
+    <p>Escribes una carta (<strong>los datos</strong>). La metes en un sobre y anotas la dirección del destinatario y la
+    dirección de remitente (<strong>la cabecera con las direcciones</strong>). La echas al buzón; la recoge el cartero
+    (<strong>tu dispositivo envía el paquete</strong>). La carta pasa por centros de clasificación; en cada uno se mira
+    la dirección y se envía hacia el lado correcto (<strong>los enrutadores llevan el paquete por la red</strong>). Si
+    hay muchas cartas, se transportan por partes y en distintos vehículos (<strong>fragmentación y rutas distintas</strong>). En el
+    punto de destino se abre el sobre y se saca la carta (<strong>el receptor retira las cabeceras y lee
+    los datos</strong>).</p>
+    <p>Guarda esta imagen en la cabeza durante todo el curso: casi todo en las redes puede explicarse a través de ella.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: una llamada telefónica como analogía de red</h2>
+    <p>Llamar a un amigo también es una «red». El número de teléfono es como la <strong>dirección</strong> (adónde llamar). Marcar y
+    el «¿hola, hola, me oyes?» es como <strong>establecer la conexión y comprobar el enlace</strong>. La conversación en sí son los <strong>datos</strong>.
+    Las reglas de cortesía (no interrumpir, despedirse) son el <strong>protocolo</strong>. Si se corta la llamada y
+    vuelves a marcar, es como <strong>reenviar un paquete perdido</strong>. Ten estas analogías a mano:
+    casi cualquier idea de red puede explicarse mediante una llamada o una carta.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: qué ocurre realmente en un segundo</h2>
+    <ol>
+      <li>Escribes la dirección y pulsas Enter.</li>
+      <li>El dispositivo averigua la IP del sitio (mediante DNS; lo veremos en el módulo 2).</li>
+      <li>Los datos de la solicitud se fragmentan en paquetes, y a cada uno se le asigna una dirección de destino.</li>
+      <li>Los paquetes salen hacia el router, que los envía en dirección al proveedor.</li>
+      <li>A través de una cadena de dispositivos, los paquetes llegan al servidor.</li>
+      <li>El servidor reensambla la solicitud, prepara la página y fragmenta la respuesta en paquetes.</li>
+      <li>Los paquetes de respuesta regresan a ti siguiendo el mismo principio.</li>
+      <li>El navegador lo une todo y dibuja la página.</li>
+    </ol>
+    <p>Normalmente, para una sola página este ciclo se repite decenas de veces (el texto, las imágenes, los estilos suelen ser
+    solicitudes independientes).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: mapa de tu red doméstica</h2>
+    <p>Elabora un «mapa» de una página de tu red doméstica:</p>
+    <ul>
+      <li>dibuja todos los dispositivos y cómo están conectados (cable/Wi-Fi);</li>
+      <li>marca el router como nodo central y salida a internet;</li>
+      <li>indica qué dispositivos son «clientes» y cuáles pueden ser «servidores» (por ejemplo, una impresora
+      de red o un NAS);</li>
+      <li>añade una breve descripción de qué sucede cuando uno de los dispositivos abre un sitio web.</li>
+    </ul>
+    <p>Este es tu primer documento de red; más adelante lo irás ampliando.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Host</strong>: cualquier dispositivo participante de la red (teléfono, PC, servidor) que tiene una dirección de red</li>
+      <li><strong>Medio de transmisión</strong>: el soporte físico de la señal: cable, fibra óptica u ondas de radio</li>
+      <li><strong>Protocolo</strong>: conjunto de reglas mediante las cuales los dispositivos intercambian datos</li>
+      <li><strong>Paquete</strong>: pequeño bloque de datos con una cabecera de servicio, unidad de transmisión en la red</li>
+      <li><strong>Cabecera</strong>: información de servicio del paquete (sobre todo direcciones) añadida a los datos</li>
+      <li><strong>Emisor / receptor</strong>: los hosts entre los que se produce el intercambio</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: los datos viajan en un solo bloque.</strong> No, casi siempre se fragmentan en muchos paquetes.</li>
+      <li><strong>Error: confundir los cables con la red.</strong> La red es, ante todo, protocolos (reglas), no cables.</li>
+      <li><strong>Error: pensar que el camino siempre es único.</strong> Distintos paquetes de un mismo mensaje pueden seguir rutas diferentes.</li>
+      <li><strong>Mito: internet es una sola máquina enorme.</strong> Son millones de dispositivos conectados por reglas comunes.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿«Paquete» y «trama» son lo mismo?</strong> Casi: son datos con distintas cabeceras en distintos
+      niveles. Veremos la diferencia exacta en el módulo 3.</li>
+      <li><strong>¿De verdad los datos siguen rutas distintas?</strong> Sí, los paquetes de un mismo mensaje pueden viajar por
+      rutas distintas y reunirse al final.</li>
+      <li><strong>¿Por qué a veces «el internet es rápido pero el juego va con lag»?</strong> Porque para los juegos importa la baja latencia
+      y la ausencia de pérdidas, no solo la velocidad de descarga.</li>
+      <li><strong>¿Quién inventó estas reglas?</strong> Organizaciones internacionales y la comunidad de ingeniería; los protocolos son
+      el resultado de acuerdos comunes, no de una sola empresa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen rápido del módulo</h2>
+    <ul>
+      <li><strong>Host</strong>: dispositivo en la red. <strong>Medio</strong>: cable/fibra/radio. <strong>Dispositivos</strong>: conmutadores y routers.</li>
+      <li><strong>Paquete</strong> = cabecera (direcciones) + datos.</li>
+      <li>Los datos se <strong>fragmentan</strong> en paquetes por fiabilidad, flexibilidad y acceso equitativo.</li>
+      <li><strong>Protocolo</strong> = reglas de intercambio. Sin ellas la comunicación no funciona.</li>
+      <li>Calidad de la red: <strong>ancho de banda</strong>, <strong>latencia</strong>, <strong>pérdidas</strong>.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Describe el camino tú mismo</h3>
+    <ol>
+      <li>Abre cualquier sitio web y describe con tus propias palabras una cadena de 5 a 6 pasos: desde pulsar Enter hasta que aparece la página.</li>
+      <li>Marca en tu cadena dónde está tu dispositivo, dónde el router doméstico y dónde el servidor del sitio.</li>
+      <li>Subraya el momento en que los datos se fragmentan en paquetes.</li>
+    </ol>
+
+    <h3>Parte B. Encuentra los participantes de tu red</h3>
+    <ol>
+      <li>Determina qué dispositivos de casa están conectados a la red (teléfonos, TV, portátiles, dispositivos inteligentes).</li>
+      <li>Localiza tu dispositivo de red principal (el router) y anota su modelo.</li>
+      <li>Indica para cada dispositivo cómo está conectado: por cable o por Wi-Fi.</li>
+    </ol>
+
+    <h3>Parte C. Observa un intercambio real</h3>
+    <ol>
+      <li>Instala Wireshark e inicia una captura de tráfico en tu interfaz activa.</li>
+      <li>Abre un sitio sencillo, espera un par de segundos y detén la captura.</li>
+      <li>Encuentra los paquetes que salieron DE ti y los que llegaron COMO RESPUESTA (presta atención a las columnas Source y Destination).</li>
+      <li>Calcula aproximadamente cuántos paquetes se usaron para cargar una sola página; comprueba que sean muchos.</li>
+    </ol>
+
+    <h3>Parte D. Arma tu propia «analogía postal»</h3>
+    <ol>
+      <li>Dibuja un esquema: tú → router → internet → servidor del sitio, e indica qué ocurre en cada tramo.</li>
+      <li>Marca en el esquema dónde está la «carta» (los datos) y dónde el «sobre con la dirección» (la cabecera).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Mide tu red</h3>
+    <ol>
+      <li>Busca un test de velocidad en línea y mide el ancho de banda (Mbit/s).</li>
+      <li>Ejecuta <code>ping</code> hacia un sitio popular y observa la latencia (ms) y las pérdidas.</li>
+      <li>Compara: ¿tienes una velocidad alta, pero qué latencia tienes?</li>
+    </ol>
+
+    <h3>Parte F. Cliente y servidor a tu alrededor</h3>
+    <ol>
+      <li>Haz una lista de los servicios que usas como cliente (sitios web, mensajería).</li>
+      <li>Localiza en tu casa dispositivos que actúan como servidores (impresora, TV, altavoces inteligentes).</li>
+      <li>Explica por qué un mismo dispositivo puede ser tanto cliente como servidor.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Explica con tus propias palabras por qué los datos se fragmentan en paquetes; da al menos dos razones.</li>
+      <li>Describe en tres frases qué es un protocolo y por qué la red no funciona sin él.</li>
+      <li>Inventa tu propia analogía para la transmisión de datos (que no sea el correo) y sepárala en «datos» y «cabecera».</li>
+      <li>Busca en internet qué es la «pérdida de paquetes» (packet loss) y describe en dos frases cómo se manifiesta.</li>
+      <li>Haz una lista de 5 dispositivos a tu alrededor que sean hosts en la red.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica la diferencia entre ancho de banda y latencia usando la analogía de la tubería/carretera.</li>
+      <li>Describe el esquema «cliente-servidor» con tres ejemplos propios.</li>
+      <li>Mide la latencia hacia tres sitios distintos y explica por qué es diferente.</li>
+      <li>Completa el mapa de la red doméstica del miniproyecto con las marcas «cliente/servidor».</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿Qué son los hosts y qué se encuentra entre ellos?</li>
+      <li>¿De qué dos partes consta un paquete?</li>
+      <li>Nombra tres razones por las que los datos se fragmentan en paquetes.</li>
+      <li>¿Qué es un protocolo en una frase?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark (gratuito)</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics (a modo de ejemplo, gratuito)</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Este panorama general es el armazón de todo el curso. Cada módulo siguiente analiza en detalle una parte de él: direcciones, dispositivos, niveles, servicios y protección.</p>
+    </blockquote>
+  </section>
+</div>

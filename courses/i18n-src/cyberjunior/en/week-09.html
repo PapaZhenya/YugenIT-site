@@ -1,0 +1,210 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module of the "Response" block introduces the incident response lifecycle and the basics of forensics — preserving evidence and reconstructing an attack timeline from logs.</p>
+
+  <section class="lesson-section">
+    <h2>Module Objectives</h2>
+    <ul>
+      <li>Know the incident response lifecycle</li>
+      <li>Understand the principles of evidence preservation</li>
+      <li>Investigate a simulated attack from logs and build a timeline</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What This Looks Like (diagram)</h2>
+    <p>The incident response (IR) lifecycle:</p>
+    <pre><code>Preparation -> Detection -> Containment -> Eradication -> Recovery -> Lessons Learned
+     ^                                                                          |
+     +------------------------- lessons feed back into preparation ------------+</code></pre>
+    <p>Investigation across multiple sources:</p>
+    <pre><code>auth.log (logins) + access.log (web) + syslog + command history
+        \_______ correlate time and IP _______/
+   -> reconstruct the attack timeline (even if history -c was run)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Sooner or later, defenses fail — and then everything comes down to how well you respond.</p>
+    <p><strong>The IR lifecycle.</strong> Six stages: preparation → detection → containment → eradication → recovery → lessons learned. The goal is to minimize damage and avoid repeating the same mistakes.</p>
+    <p><strong>Forensics and evidence preservation.</strong> The main rule: capture the state first, then act. Disk images and logs are hashed, and a chain of custody is maintained.</p>
+    <p><strong>Logs as evidence.</strong> The primary material is logs (auth.log, syslog, web logs), command history, and memory dumps. The key skill is not to believe the apparent "end of the story" after <code>history -c</code>, but to reconstruct the picture from multiple sources.</p>
+    <blockquote>
+      <p><strong>Material:</strong> the "Incident #1" dataset (web01) — <code>auth.log</code>, <code>access.log</code>, <code>syslog</code>, command history with traces of the full attack chain. See <code>datasets/scenario1_web01_breach/</code>.</p>
+    </blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Downloadable Materials — Incident #1 (web01_breach)</h2>
+    <p>Scenario brief and raw logs for a self-guided investigation.</p>
+    <ul>
+      <li><a href="courses/datasets/scenario1_web01_breach/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a> — incident description and task</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/auth.log" download>auth.log</a> — authentication log</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/access.log" download>access.log</a> — web access log</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/syslog" download>syslog</a> — system log</li>
+      <li><a href="courses/datasets/scenario1_web01_breach/bash_history_admin.txt" download>bash_history_admin.txt</a> — administrator command history</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper Dive</h2>
+    <h3>The Six IR Stages in Detail</h3>
+    <p><strong>Preparation</strong> — plans, access, and tools ready in advance. <strong>Detection</strong> — noticing the incident. <strong>Containment</strong> — preventing it from spreading (isolating the host). <strong>Eradication</strong> — removing the cause (closing the hole, deleting the malware). <strong>Recovery</strong> — restoring operations. <strong>Lessons learned</strong> — what to improve. Skipping any stage is costly.</p>
+    <h3>Evidence Preservation (chain of custody)</h3>
+    <p>The main rule: <strong>capture first, act second</strong>. Disk images and logs are hashed to prove they haven't been altered, and a <strong>chain of custody</strong> is maintained — who handled the evidence, when, and how. Otherwise the evidence loses its validity. Don't "clean up" an infected machine right away — collect data first.</p>
+    <h3>Indicators of Compromise (IoC)</h3>
+    <p><strong>IoC</strong> — traces that reveal an attack: suspicious IPs, hidden files (<code>/tmp/.x</code>), new accounts, cron jobs, unusual processes. Collecting IoCs helps you both investigate the current incident and learn to spot similar ones in the future.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One More Example: Why <code>history -c</code> Doesn't Save the Attacker</h2>
+    <p>The attacker cleared their command history, thinking they had covered their tracks. But their actions are reflected in <code>syslog</code> (user creation, cron), in the web logs (scanning), and in auth.log (login). By cross-referencing sources, the analyst reconstructed the entire chain. Lesson: don't trust a single source — the truth is assembled from several. This is exactly what distinguishes a competent investigation.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-Step Walkthrough: Log Investigation (web01 Scenario)</h2>
+    <ol>
+      <li>Read the incident brief (dataset <code>scenario1_web01_breach</code>).</li>
+      <li>Find the attacker's IP by cross-referencing <code>auth.log</code> and <code>access.log</code>.</li>
+      <li>Find the first stage (web scanning) by User-Agent in the web log.</li>
+      <li>Count the failed logins before the successful one; find the moment of compromise.</li>
+      <li>Reconstruct the actions from the command history: reconnaissance → theft → persistence.</li>
+      <li>Build a timeline (time → event) citing the relevant log lines.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-Project: Incident Report</h2>
+    <p>Using the "Incident #1" dataset, produce a full report (template from the assessment section):</p>
+    <ul>
+      <li>objective and environment;</li>
+      <li>attack timeline with evidence (log lines);</li>
+      <li>which data was affected;</li>
+      <li>how the attacker gained persistence;</li>
+      <li>recommendations to prevent recurrence;</li>
+      <li>conclusion.</li>
+    </ul>
+    <p>This is the core of SOC/IR work and a strong portfolio piece.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key Terms</h2>
+    <ul>
+      <li><strong>IR</strong> — incident response (6 stages).</li>
+      <li><strong>Forensics</strong> — collecting and analyzing digital evidence.</li>
+      <li><strong>Chain of custody</strong> — the chain of accountability for evidence.</li>
+      <li><strong>IoC</strong> — indicator of compromise.</li>
+      <li><strong>Timeline</strong> — the reconstructed sequence of events.</li>
+      <li><strong>Persistence</strong> — a mechanism an attacker uses to maintain access.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common Mistakes and Myths</h2>
+    <ul>
+      <li><strong>Myth: <code>history -c</code> destroys all traces.</strong> Traces remain in other logs.</li>
+      <li><strong>Mistake: cleaning up the machine immediately.</strong> Collect evidence first.</li>
+      <li><strong>Myth: one log is enough.</strong> The truth is assembled from multiple sources.</li>
+      <li><strong>Mistake: not hashing evidence.</strong> Without this, you can't prove it wasn't altered.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently Asked Questions (FAQ)</h2>
+    <ul>
+      <li><strong>Where should the investigation start?</strong> With the brief, then cross-referencing sources by time and IP.</li>
+      <li><strong>What matters more — speed or preserving evidence?</strong> Contain the spread, but don't destroy the evidence.</li>
+      <li><strong>Where can I get data for practice?</strong> The course's ready-made log datasets (weeks 9–10).</li>
+      <li><strong>Is this what SOC work actually is?</strong> Largely yes — detecting and analyzing incidents.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module Cheat Sheet</h2>
+    <ul>
+      <li>IR: Preparation → Detection → Containment → Eradication → Recovery → Lessons Learned.</li>
+      <li>First <strong>capture</strong> the evidence (hash, chain of custody), then act.</li>
+      <li>Don't trust a single log — <strong>cross-reference</strong> sources.</li>
+      <li>Look for <strong>IoCs</strong>: suspicious IPs, hidden files, new accounts, cron.</li>
+      <li>The end result is a <strong>timeline</strong> and a report.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab Work</h2>
+    <h3>Part A. Initial Analysis</h3>
+    <ol>
+      <li>Get the Incident #1 logs and read the scenario brief.</li>
+      <li>Identify the attacker's IP by cross-referencing auth.log and access.log.</li>
+      <li>Find the first stage (web scanning) by User-Agent in the web log.</li>
+    </ol>
+    <h3>Part B. Reconstructing the Chain</h3>
+    <ol>
+      <li>Count the failed logins before the successful one, find the moment of compromise.</li>
+      <li>Determine the post-login actions from the command history.</li>
+      <li>Find at least two persistence mechanisms (new user, cron).</li>
+    </ol>
+    <h3>Part C. Timeline and Report</h3>
+    <ol>
+      <li>Build a timeline: time → event, citing log lines.</li>
+      <li>Assess which data was stolen.</li>
+      <li>Write up an incident report using the template.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Labs</h2>
+    <h3>Part D. Quick Dataset Walkthrough</h3>
+    <ol>
+      <li>Open <code>scenario1_web01_breach</code>, count the failed logins (<code>grep "Failed password" | wc -l</code>).</li>
+      <li>Find the successful login line and the time of compromise.</li>
+    </ol>
+    <h3>Part E. Finding Persistence</h3>
+    <ol>
+      <li>Using the command history and <code>syslog</code>, find the persistence mechanisms (new user, cron).</li>
+      <li>Explain how each one could be detected in a real system.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Self-Study Assignments</h2>
+    <ul>
+      <li>List the 6 stages of the IR lifecycle in your own words.</li>
+      <li>Explain why the chain of custody and evidence hashing are necessary.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Assignments</h2>
+    <ul>
+      <li>List the 6 IR stages and the purpose of each.</li>
+      <li>Explain why chain of custody and evidence hashing are needed.</li>
+      <li>Describe 5 indicators of compromise.</li>
+      <li>Build a timeline from the incident dataset.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check Yourself</h2>
+    <ol>
+      <li>Name the first stage of the IR lifecycle.</li>
+      <li>What is chain of custody?</li>
+      <li>Why shouldn't you "clean up" an infected machine right away?</li>
+      <li>Does <code>history -c</code> guarantee that traces are destroyed?</li>
+      <li>What is an IoC?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://cyberdefenders.org/" target="_blank" rel="noopener">CyberDefenders (free blue-team cases)</a></li>
+      <li><a href="https://letsdefend.io/" target="_blank" rel="noopener">LetsDefend (free tier — SOC simulator)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Connection to the course spiral.</strong> Here all the skills converge: reading logs (week 3), brute-forcing (week 6), networking (week 2) — into a single, integrated investigation.</p>
+    </blockquote>
+  </section>
+</div>

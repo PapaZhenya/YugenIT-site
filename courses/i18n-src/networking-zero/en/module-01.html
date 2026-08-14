@@ -1,0 +1,310 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module walks through the entire journey of a single message, from pressing Enter to the page appearing on your screen — introducing hosts, transmission media, protocols, and packets.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>See the whole data transmission chain — from sender to receiver</li>
+      <li>Get acquainted with the key players in a network: hosts, media, devices</li>
+      <li>Understand why protocols are needed and what a packet is</li>
+      <li>Grasp the difference between "data" and "service wrapper"</li>
+      <li>Learn to spot network exchange in real traffic</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>Let's not start with dry definitions, but with something you do every day: open a website.
+    You press Enter — and a fraction of a second later, the page appears. It seems to happen by
+    itself, in one smooth motion. In reality, during that second your request passes through the
+    hands of a dozen devices, gets split into pieces, travels across half the planet, and gets
+    reassembled. If you understand this whole path right now, half the course will already sit in
+    your head in advance — because from here on we'll simply be slowly unpacking each of its steps.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>The path of a request from you to the server and back:</p>
+    <pre><code>[ Your PC ] --frame--&gt; [ Router ] --packets--&gt; [ ISP network ] --...--&gt; [ Website server ]
+     ^                                                                          |
+     |                          the response takes the same path back          |
+     +--------------------------------------------------------------------------+</code></pre>
+    <p>The structure of one packet (simplified):</p>
+    <pre><code>+-----------------------+-------------------------------+
+|  HEADER (addresses)    |         DATA                   |
+|  to / from              |  a piece of your message       |
++-----------------------+-------------------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Notes</h2>
+
+    <h3>Who takes part in data transmission</h3>
+    <p>Any network exchange has at least two participants: the one who
+    sends, and the one who receives. Both are called <strong>hosts</strong> — this could be your phone,
+    a laptop, a smart kettle, or a huge server in a data center. From the network's point of view
+    they're all equal participants, and each has its own address.</p>
+    <p>Between hosts there is always a <strong>transmission medium</strong> — the physical thing the data actually
+    runs through. It's either a copper cable (twisted pair), fiber optics (data travels as light),
+    or radio waves (Wi-Fi, mobile connections). Each medium has its strengths: cable is reliable,
+    fiber is fast and works over long distances, radio is convenient but temperamental.</p>
+    <p>And finally, the flow is <strong>directed</strong> by someone. Between your device and the server sit
+    special devices — switches and routers — that decide where to forward the data next. We'll cover
+    them separately; for now just remember that they exist, and that without them a packet would
+    get lost.</p>
+
+    <h3>Why nothing works without rules</h3>
+    <p>Imagine two people trying to negotiate, but
+    one speaks Japanese, the other Spanish, and both keep interrupting each other. Zero use. It's
+    the same with devices: for them to understand each other, they need a shared set of rules.</p>
+    <p>These rules are called <strong>protocols</strong>. A protocol defines everything: what format to pack the
+    data in, how to mark the start and end of a message, how to confirm that everything arrived,
+    what to do in case of an error or loss. There are many protocols, and each is responsible for
+    its own piece of the job — one for delivery between networks, another for reliability, a third
+    for making sure you see a web page.</p>
+    <p>An important idea: a network is not so much "wires" as it is <strong>agreements</strong>. Wires merely
+    carry the signal — it's the protocols that give it meaning.</p>
+
+    <h3>What happens when you press Enter</h3>
+    <p>Let's break down, in broad strokes, what happens during
+    that fraction of a second:</p>
+    <p>First, your request ("show me the page example.com") turns into a form the network
+    understands. Then it's <strong>split into small chunks</strong> — called packets. Each chunk is tagged
+    with a destination address — where it should be delivered. The packets fly through a chain of
+    devices toward the server, possibly even by different paths. The server receives them, reassembles
+    them into a whole request, prepares a response (the page itself) — and that response comes back
+    to you the same way, in packets. Your browser assembles everything together and renders the page.</p>
+    <p>This whole dance takes milliseconds and repeats dozens of times while a single page loads
+    (text, images, styles — these are often separate requests).</p>
+
+    <h3>What a packet is, and why data gets split</h3>
+    <p>A <strong>packet</strong> is a small block of data with service
+    information attached (first and foremost, the sender's and recipient's addresses). You can
+    picture it as a postcard: there's text (data) and there's an address on the back (the service part).</p>
+    <p>Why can't the whole message be sent in one piece? Three reasons. First, <strong>reliability</strong>:
+    if one huge chunk is lost along the way, everything is gone; but a small lost packet is easy
+    to resend. Second, <strong>flexibility</strong>: different packets can be routed different ways and dodge
+    congestion. Third, <strong>fairness</strong>: when everyone splits their data into chunks, the channel is
+    shared among many, and one heavy file doesn't block the network for everyone else.</p>
+    <p>That's exactly why splitting data into packets is a foundational idea of all modern networks.</p>
+
+    <h3>Data and wrapper: a first look at headers</h3>
+    <p>Every packet consists of two parts:
+    the <strong>data</strong> itself (what you're actually transmitting) and a <strong>header</strong> — a service label with
+    addresses and markings. On the way to the recipient, several such labels get attached to the
+    data — different ones at different stages. On the receiving end, the labels are peeled off in
+    reverse order, and the recipient gets down to the plain data.</p>
+    <p>For now, just remember this image — "data inside, labels outside" — in module 3 we'll see that
+    each label corresponds to its own network layer, and we'll lay everything out in detail.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>Bandwidth, latency, and loss</h3>
+    <p>Network quality is described by three values. <strong>Bandwidth</strong> — how much data
+    passes per second (Mbps): this is the "width of the pipe." <strong>Latency</strong> — how long it takes for
+    a signal to travel there and back (ms): this is the "length of the pipe." <strong>Loss</strong> — what share
+    of packets didn't arrive. Fast internet isn't only about a "wide pipe": for calls and games,
+    low latency and no loss matter more than a huge download speed.</p>
+
+    <h3>Client and server</h3>
+    <p>Almost everything on a network follows a "client-server" pattern. The <strong>client</strong> requests
+    (your browser), the <strong>server</strong> responds (the website's computer). The same computer can be
+    both a client and a server in different situations. Understanding this role will help later:
+    when we say "the server listens on port 443," we mean exactly the side that waits for requests.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: how a letter reaches its recipient</h2>
+    <p>Let's draw an analogy with regular mail — it turns
+    out to be remarkably accurate.</p>
+    <p>You write a letter (<strong>data</strong>). You put it in an envelope and write down the recipient's
+    address and your return address (<strong>the header with addresses</strong>). You drop it in the mailbox,
+    and the mail carrier picks it up (<strong>your device sends the packet</strong>). The letter travels
+    through sorting centers, each one checks the address and passes it on in the right direction
+    (<strong>routers steer the packet through the network</strong>). If there are many letters, they're carried
+    in batches and by different vehicles (<strong>splitting and different routes</strong>). At the destination,
+    the envelope is opened and the letter is taken out (<strong>the recipient strips the headers and
+    reads the data</strong>).</p>
+    <p>Keep this picture in mind for the whole course — almost anything in networking can be explained through it.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One more example: a phone call as a network analogy</h2>
+    <p>Calling a friend is also a "network." A phone number is like an <strong>address</strong> (where to call).
+    Dialing and "hello, hello, can you hear me?" is like <strong>establishing a connection and checking
+    the link</strong>. The conversation itself is <strong>data</strong>.
+    Rules of politeness (don't interrupt, say goodbye) are the <strong>protocol</strong>. If the connection drops
+    and you call back — that's like <strong>resending a lost packet</strong>. Keep such analogies handy:
+    almost any networking idea can be explained through a call or a letter.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step breakdown: what actually happens in one second</h2>
+    <ol>
+      <li>You type in an address and press Enter.</li>
+      <li>Your device figures out the site's IP (via DNS — we'll cover this in module 2).</li>
+      <li>The request data is split into packets, each tagged with a destination address.</li>
+      <li>The packets go to the router, which sends them onward to the provider.</li>
+      <li>Through a chain of devices, the packets reach the server.</li>
+      <li>The server assembles the request, prepares the page, and splits the response into packets.</li>
+      <li>The response packets return to you following the same principle.</li>
+      <li>The browser assembles everything together and renders the page.</li>
+    </ol>
+    <p>Usually this cycle repeats dozens of times for a single page (text, images, styles — often
+    separate requests).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a map of your home network</h2>
+    <p>Put together a one-page "map" of your home network:</p>
+    <ul>
+      <li>draw all the devices and how they're connected (cable/Wi-Fi);</li>
+      <li>mark the router as the central hub and the gateway to the internet;</li>
+      <li>label which devices are "clients," and which might be "servers" (for example, a network
+      printer or a NAS);</li>
+      <li>add a short description: what happens when one of the devices opens a website.</li>
+    </ul>
+    <p>This is your first network document — you'll keep adding to it later.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Host</strong> — any device participating in a network (phone, PC, server) that has a network address</li>
+      <li><strong>Transmission medium</strong> — the physical carrier of the signal: cable, fiber optics, or radio waves</li>
+      <li><strong>Protocol</strong> — a set of rules by which devices exchange data</li>
+      <li><strong>Packet</strong> — a small block of data with a service header, the unit of transmission on a network</li>
+      <li><strong>Header</strong> — the packet's service information (primarily addresses) attached to the data</li>
+      <li><strong>Sender / recipient</strong> — the hosts between which the exchange takes place</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: data travels as one chunk.</strong> No — it's almost always split into many packets.</li>
+      <li><strong>Mistake: confusing wires with the network.</strong> A network is, first and foremost, protocols (rules), not cables.</li>
+      <li><strong>Mistake: thinking there's always a single path.</strong> Different packets of the same message can take different routes.</li>
+      <li><strong>Myth: the internet is one big machine.</strong> It's millions of devices, linked by shared rules.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Are "packet" and "frame" the same thing?</strong> Almost: they're data with different headers at
+      different layers. We'll sort out the exact difference in module 3.</li>
+      <li><strong>Does data really travel different paths?</strong> Yes, packets of the same message can travel by
+      different routes and come together at the end.</li>
+      <li><strong>Why does it sometimes happen that "the internet is fast, but the game lags"?</strong> Because for
+      games, low latency and no loss matter more than just download speed.</li>
+      <li><strong>Who came up with these rules?</strong> International organizations and the engineering community;
+      protocols are the result of shared agreements, not one company.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>Host</strong> — a device on the network. <strong>Medium</strong> — cable/fiber/radio. <strong>Devices</strong> — switches and routers.</li>
+      <li><strong>Packet</strong> = header (addresses) + data.</li>
+      <li>Data is <strong>split</strong> into packets for reliability, flexibility, and fair access.</li>
+      <li><strong>Protocol</strong> = rules of exchange. Without them, communication doesn't work.</li>
+      <li>Network quality: <strong>bandwidth</strong>, <strong>latency</strong>, <strong>loss</strong>.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Describe the path yourself</h3>
+    <ol>
+      <li>Open any website and write out, in your own words, a chain of 5-6 steps: from pressing Enter to the page appearing.</li>
+      <li>Mark in your chain where your device is, where the home router is, where the site's server is.</li>
+      <li>Underline the moment where the data gets split into packets.</li>
+    </ol>
+
+    <h3>Part B. Find the participants in your network</h3>
+    <ol>
+      <li>Determine which devices at home are connected to the network (phones, TVs, laptops, smart devices).</li>
+      <li>Find your main network device (the router) and write down its model.</li>
+      <li>Note for each device how it's connected: by cable or over Wi-Fi.</li>
+    </ol>
+
+    <h3>Part C. Peek at a real exchange</h3>
+    <ol>
+      <li>Install Wireshark and start a traffic capture on your active interface.</li>
+      <li>Open a simple website, wait a couple of seconds, and stop the capture.</li>
+      <li>Find the packets that went FROM you, and the packets that came back IN RESPONSE (pay attention to the Source and Destination columns).</li>
+      <li>Roughly count how many packets it took to load one page — make sure it's a lot.</li>
+    </ol>
+
+    <h3>Part D. Build your own "mail analogy"</h3>
+    <ol>
+      <li>Draw a diagram: you → router → internet → website server, and label what happens at each stage.</li>
+      <li>Label on the diagram where the "letter" (data) is, and where the "envelope with the address" (header) is.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. Measure your network</h3>
+    <ol>
+      <li>Find an online speed test and measure the bandwidth (Mbps).</li>
+      <li>Run <code>ping</code> to a popular website and check the latency (ms) and loss.</li>
+      <li>Compare: is your speed high, but what's the latency like?</li>
+    </ol>
+
+    <h3>Part F. Client and server around you</h3>
+    <ol>
+      <li>Make a list of services you use as a client (websites, messengers).</li>
+      <li>Find devices of your own that act as servers themselves (printer, TV, smart speakers).</li>
+      <li>Explain why one device can be both a client and a server.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Explain in your own words why data is split into packets — give at least two reasons.</li>
+      <li>Describe in three sentences what a protocol is and why a network doesn't work without one.</li>
+      <li>Come up with your own analogy for data transmission (not mail) and break it down into "data" and "header."</li>
+      <li>Look up online what "packet loss" is, and describe in two sentences how it shows up.</li>
+      <li>Make a list of 5 devices around you that are hosts on a network.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain the difference between bandwidth and latency using a pipe/road analogy.</li>
+      <li>Describe the "client-server" pattern using three of your own examples.</li>
+      <li>Measure the latency to three different websites and explain why it differs.</li>
+      <li>Add "client/server" labels to the home network map from the mini-project.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>What are hosts, and what sits between them?</li>
+      <li>What two parts does a packet consist of?</li>
+      <li>Name three reasons why data is split into packets.</li>
+      <li>What is a protocol, in one sentence?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark (free)</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics (as an example, free)</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connection to the course.</strong> This big picture is the framework for the whole course. Each following module examines one piece of it in detail: addresses, devices, layers, services, and security.</p>
+    </blockquote>
+  </section>
+</div>

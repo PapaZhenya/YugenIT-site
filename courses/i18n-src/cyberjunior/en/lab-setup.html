@@ -1,0 +1,111 @@
+<div class="lesson-content">
+  <p class="lesson-intro">A single isolated lab bench for all of the course's practicals: the attacking machine and the targets can see only each other, not your home network or the internet.</p>
+
+  <section class="lesson-section">
+    <h2>Composition</h2>
+    <p>A single isolated bench for all of the course's practicals: the attacking machine and the
+    targets "see" only each other, not your home/work network, and (for the targets) not the internet.</p>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Role</th><th>Machine</th><th>Purpose</th></tr>
+        <tr><td>Attacker</td><td>Kali Linux</td><td>Nmap, Wireshark, Burp/ZAP, Hydra, John — blocks 2–4</td></tr>
+        <tr><td>Target (network)</td><td>Metasploitable 2</td><td>Vulnerable network services — weeks 4, 6</td></tr>
+        <tr><td>Target (web)</td><td>DVWA + OWASP Juice Shop (Docker)</td><td>Web vulnerabilities — week 5</td></tr>
+        <tr><td>Defense (opt.)</td><td>Ubuntu + Wazuh/ELK</td><td>SIEM and monitoring — weeks 7–8, 10</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Requirements</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Parameter</th><th>Minimum</th><th>Recommended</th></tr>
+        <tr><td>RAM</td><td>8 GB</td><td>16 GB+</td></tr>
+        <tr><td>Storage</td><td>60 GB</td><td>120 GB SSD</td></tr>
+        <tr><td>CPU</td><td>2 cores + VT-x/AMD-V</td><td>4+ cores</td></tr>
+      </table>
+    </div>
+    <blockquote>If VMs won't start or run slowly, it's almost always because VT-x/AMD-V is disabled in the BIOS/UEFI.
+    On Windows, disable the Hyper-V component if there's a conflict.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Steps</h2>
+
+    <h3>1. Isolated network (do this first!)</h3>
+    <blockquote>⚠️ The targets are intentionally vulnerable — they must never be exposed to the internet.</blockquote>
+    <ol>
+      <li>In VirtualBox, create a Host-Only or Internal Network (e.g. <code>lab-net</code>), subnet 10.10.10.0/24.</li>
+      <li>Adapter layout:
+        <ul>
+          <li><strong>Kali:</strong> Internal Network <code>lab-net</code> plus NAT (internet as needed).</li>
+          <li><strong>Targets:</strong> Internal Network <code>lab-net</code> only (no NAT!).</li>
+        </ul>
+      </li>
+      <li>Verify isolation: from the target, <code>ping 8.8.8.8</code> should get NO response; from Kali, <code>ping &lt;target IP&gt;</code> should succeed.</li>
+    </ol>
+
+    <h3>2. Kali Linux</h3>
+    <ol>
+      <li>Download the ready-made Kali image for VirtualBox from kali.org.</li>
+      <li>Import it and configure the adapters as described above.</li>
+      <li>Log in (kali/kali), change the password.</li>
+      <li>Update: <code>sudo apt update &amp;&amp; sudo apt -y full-upgrade</code>.</li>
+    </ol>
+
+    <h3>3. Metasploitable 2</h3>
+    <ol>
+      <li>Download the Metasploitable 2 image.</li>
+      <li>Create a VM (512–1024 MB), attach the disk.</li>
+      <li>The only adapter — Internal Network <code>lab-net</code>.</li>
+      <li>Log in (msfadmin/msfadmin), find its IP: <code>ip addr</code>.</li>
+    </ol>
+
+    <h3>4. Web targets (Docker)</h3>
+    <pre><code>sudo apt update && sudo apt -y install docker.io
+sudo systemctl enable --now docker
+sudo docker run -d -p 80:80  --name dvwa  vulnerables/web-dvwa
+sudo docker run -d -p 3000:3000 --name juice bkimminich/juice-shop</code></pre>
+    <p>Check from Kali: <code>http://&lt;IP&gt;/</code> (DVWA) and <code>http://&lt;IP&gt;:3000/</code> (Juice Shop).</p>
+    <blockquote>Docker pulls images from the internet once. Download them with NAT temporarily enabled, then switch the adapter back to Internal Network.</blockquote>
+
+    <h3>5. Snapshots</h3>
+    <ul>
+      <li>After the clean setup of EACH machine — take a <code>clean</code> snapshot.</li>
+      <li>Before a risky exercise — take one more snapshot.</li>
+      <li>After breaking something — roll back to <code>clean</code> (right-click → Snapshots → Restore).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Readiness checklist</h2>
+    <ul>
+      <li>VirtualBox + Extension Pack installed</li>
+      <li>Virtualization enabled, VMs start quickly</li>
+      <li>Internal network <code>lab-net</code> created</li>
+      <li>Kali: lab-net + NAT adapters, system updated</li>
+      <li>Metasploitable: lab-net only, IP known</li>
+      <li>Web targets open from Kali</li>
+      <li>NO internet from the target (<code>ping 8.8.8.8</code> fails)</li>
+      <li>Ping succeeds from Kali to all targets</li>
+      <li>Every VM has a <code>clean</code> snapshot</li>
+      <li>(opt.) SIEM is receiving events</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common issues</h2>
+    <div class="lesson-table-scroll">
+      <table>
+        <tr><th>Symptom</th><th>Solution</th></tr>
+        <tr><td>VM won't start / runs slowly</td><td>Enable VT-x/AMD-V; disable Hyper-V on Windows</td></tr>
+        <tr><td>Kali can't see the target</td><td>Both machines on the same "Internal Network lab-net" adapter</td></tr>
+        <tr><td>Target reaches the internet</td><td>Remove NAT/bridged mode, keep only the internal network</td></tr>
+        <tr><td>Docker won't pull images</td><td>Temporarily enable NAT, download, then switch back to the internal network</td></tr>
+        <tr><td>Everything freezes</td><td>Run only the VMs you need; SIEM on demand only</td></tr>
+        <tr><td>Broke the target</td><td>Roll back to the <code>clean</code> snapshot</td></tr>
+      </table>
+    </div>
+  </section>
+</div>

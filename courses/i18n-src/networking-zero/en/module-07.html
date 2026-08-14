@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">How Wi-Fi works: frequencies, standards, what ruins the signal, and how to set up a wireless network safely.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand how wireless data transmission works</li>
+      <li>Get familiar with Wi-Fi frequencies (2.4, 5, 6 GHz)</li>
+      <li>Learn about Wi-Fi standards and their evolution</li>
+      <li>Understand what affects signal quality</li>
+      <li>Master the basics of secure Wi-Fi configuration</li>
+      <li>Tell a router apart from an access point</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>Cables are reliable, but inconvenient: you can't run a wire to every phone. Wi-Fi replaces them with radio waves — that's freedom of movement, but also a whole set of new nuances: speed depends on distance and walls, and security requires special attention. Let's figure out how it all works and how to set up a home network the right way.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>A router as "three in one" and Wi-Fi coverage:</p>
+    <pre><code>        [ Home router ]
+        +---------------------+
+        | Router (WAN)        |---> ISP / Internet
+        | Switch (LAN)        |---> wired devices
+        | Access point (Wi-Fi)|~~~ radio signal ~~~
+        +---------------------+
+   signal weakens: [strong]===wall===[medium]===wall===[weak]</code></pre>
+    <p>Bands:</p>
+    <pre><code>2.4 GHz:  farther, through walls, but slower and "noisier"
+5 GHz:    faster and cleaner, but shorter range
+6 GHz:    even faster (needs newer devices)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>How Wi-Fi actually works</h3>
+    <p><strong>Wi-Fi</strong> is data transmission over radio waves instead of a cable. The signal is broadcast by an <strong>access point</strong>; devices connect to it by the network's name — the <strong>SSID</strong>. In a home router the access point is built in, so in everyday use "router" and "Wi-Fi" are often treated as the same thing, even though they're different functions: routing and wireless broadcasting.</p>
+    <p>Data over the air is transmitted on the same principles as over a wire (frames, MAC addresses), only the medium is radio. That adds its own complications: the signal weakens with distance, reflects off surfaces, gets jammed by interference, and in principle can be heard by anyone nearby — hence the special attention to encryption.</p>
+
+    <h3>Frequencies: 2.4, 5, and 6 GHz</h3>
+    <p>Wi-Fi operates on several frequency bands, and each has its own character:</p>
+    <ul>
+      <li><strong>2.4 GHz</strong> — reaches farther and passes through walls better, but is slower and more "noisy" (Bluetooth, microwave ovens, and neighboring networks all operate on this frequency).</li>
+      <li><strong>5 GHz</strong> — noticeably faster and cleaner, but with a shorter range, and walls "eat" it more.</li>
+      <li><strong>6 GHz</strong> — the newest band (Wi-Fi 6E/7): even faster and less crowded, but requires up-to-date devices.</li>
+    </ul>
+    <p>The rule of thumb is simple: need long-range coverage — use 2.4 GHz; need speed near the router — use 5 or 6 GHz. Many routers broadcast on several bands at once.</p>
+
+    <h3>Wi-Fi standards and their evolution</h3>
+    <p>Standards are labeled <strong>Wi-Fi 4/5/6/6E/7</strong> (behind these are technical names like 802.11n/ac/ax). The newer the standard, the higher the speed, the better it handles many connected devices, and the more efficiently it uses the airwaves.</p>
+    <p>The practical takeaway for you: network speed is limited by the weakest link. If the router is modern but the device is old (or vice versa), they'll agree on the capabilities of the older one. That's why upgrading makes sense on both sides.</p>
+
+    <h3>What affects signal quality</h3>
+    <p>A radio signal is a finicky thing. It's weakened by <strong>walls and floors</strong> (especially concrete and metal), <strong>distance</strong>, and <strong>interference</strong> from other networks and household appliances. Practical takeaways follow from this: it's better to place the access point centrally and up high, away from metal and microwave ovens; in large homes, use several access points (mesh); and if there are many neighboring networks, switching to a less crowded channel helps.</p>
+    <p>Understanding these factors immediately explains why "Wi-Fi barely reaches the far room" — and what to do about it.</p>
+
+    <h3>Wi-Fi security: the mandatory minimum</h3>
+    <p>Since the signal can be heard by everyone around, <strong>encryption is mandatory</strong>. An open network without a password is like a conversation shouted across the yard: anyone willing can intercept the traffic. Use modern encryption — <strong>WPA2</strong> or, even better, <strong>WPA3</strong> — with a strong, long password.</p>
+    <p>A second critical point: change the <strong>router's admin password</strong>. Factory default pairs like "admin/admin" are known to everyone, and if you don't change them, someone else can get into your network's settings. It's also worth updating the router's firmware — updates close security holes.</p>
+
+    <h3>Common wireless network threats</h3>
+    <p>To make protection meaningful, it helps to know what you're protecting against. The main wireless threats are: <strong>interception</strong> of unencrypted traffic on an open network; a <strong>rogue access point</strong> — an attacker sets up a Wi-Fi network with the same name as a familiar one, and you connect to it, handing over your traffic; and <strong>guessing a weak password</strong>. All three are countered by the same measures: encryption, a strong password, caution with open networks, and attention to the name of the network you're connecting to.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper dive</h2>
+
+    <h3>Channels and interference</h3>
+    <p>Each band is split into <strong>channels</strong>. If neighboring networks sit on the same channel as you, they interfere with each other — speed drops. In the 2.4 GHz band there are few channels and they overlap (which is why it's more crowded there), while 5 GHz has more channels. Many routers choose the channel automatically, but sometimes manually picking a less crowded channel helps noticeably.</p>
+
+    <h3>Mesh and repeaters: extending coverage</h3>
+    <p>If a single access point doesn't cover the whole house, there are two approaches. A <strong>repeater</strong> relays the signal further (but usually loses some speed). A <strong>mesh system</strong> is several coordinated access points sharing one network name: you move around the house and your device seamlessly switches to the nearest access point. Mesh is more expensive, but more convenient and stable.</p>
+
+    <h3>Guest network</h3>
+    <p>A good practice is to enable a <strong>guest Wi-Fi network</strong>: a separate network for guests and "smart" devices, isolated from your computers. Even if a guest device is infected, it won't be able to reach your data. This is home segmentation, covered in detail in module 9.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: why Wi-Fi lags in the far room</h2>
+    <p>The router sits in the hallway, and you're in the far room behind two concrete walls, complaining about slow internet. Let's break it down.</p>
+    <p>You're most likely connected to the 5 GHz band (fast, but with a short range). Two concrete walls heavily jam 5 GHz specifically — the signal arrives weak, and the devices "agree" on a low speed. Solutions: switch to 2.4 GHz (longer range, though slower), move the router closer to the center of the apartment, add a second access point (mesh), or switch away from a crowded channel.</p>
+    <p>See? Knowing about frequencies and interference, you don't have to guess — you can act with understanding.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: a neighbor is "riding" your Wi-Fi</h2>
+    <p>Your speed keeps mysteriously disappearing. You check the router's list of connected devices — and see one you don't recognize. There are usually two causes: a weak password, or no password change from the default at all. What to do: change the Wi-Fi password to a long one, make sure WPA2/WPA3 is enabled, and change the router's admin password. After that, unfamiliar devices will get disconnected. The moral: password and encryption are not a formality.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step breakdown: how a device connects to Wi-Fi</h2>
+    <ol>
+      <li>The device "listens to the airwaves" and sees the available networks (SSID).</li>
+      <li>You select the network and enter the password.</li>
+      <li>The device and the access point verify the password and <strong>agree on encryption</strong> (WPA2/WPA3).</li>
+      <li>The access point admits the device into the network.</li>
+      <li>Next, DHCP kicks in — it hands out an address and settings.</li>
+      <li>The device is ready to work; traffic over the air is encrypted.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: home Wi-Fi audit</h2>
+    <p>Carry out a mini audit and put together a report:</p>
+    <ul>
+      <li>SSID, bands, encryption type, firmware version;</li>
+      <li>a list of connected devices (are they all familiar?);</li>
+      <li>signal level at 3–4 points around the home;</li>
+      <li>2–3 specific improvements (channel, placement, password, guest network);</li>
+      <li>a final Wi-Fi security checklist.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Wi-Fi</strong> — data transmission over radio waves instead of a cable</li>
+      <li><strong>Access point</strong> — a device that broadcasts a wireless signal</li>
+      <li><strong>SSID</strong> — the wireless network's name, as seen by devices</li>
+      <li><strong>Band (2.4/5/6 GHz)</strong> — the frequency Wi-Fi operates on; affects speed and range</li>
+      <li><strong>Wi-Fi standard</strong> — a generation of the technology (Wi-Fi 4/5/6/6E/7)</li>
+      <li><strong>WPA2 / WPA3</strong> — modern Wi-Fi encryption protocols</li>
+      <li><strong>Rogue access point</strong> — a malicious Wi-Fi network impersonating a familiar one</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: using open Wi-Fi without caution.</strong> Anyone can intercept traffic there.</li>
+      <li><strong>Myth: 5 GHz is always better than 2.4 GHz.</strong> 5 GHz is faster, but penetrates walls worse.</li>
+      <li><strong>Mistake: not changing the router's admin password.</strong> Factory default pairs are widely known.</li>
+      <li><strong>Myth: hiding the SSID makes the network secure.</strong> This barely hinders an attacker; encryption and a strong password matter more.</li>
+      <li><strong>Mistake: trusting a network based on its name alone.</strong> A name is easy to fake (rogue access point).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Why is it fast in one room but not in another?</strong> Walls and distance jam the signal (especially at 5 GHz).</li>
+      <li><strong>Does hiding the SSID protect me?</strong> Almost not at all; encryption and a strong password matter more.</li>
+      <li><strong>Repeater or mesh?</strong> Mesh is more convenient and stable; a repeater is cheaper but loses speed.</li>
+      <li><strong>Why have a guest network?</strong> To isolate guests and smart devices from your data.</li>
+      <li><strong>How is WPA3 better than WPA2?</strong> It's more modern and more resistant to password guessing.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>SSID</strong> — the network's name. <strong>Access point</strong> — broadcasts the signal.</li>
+      <li><strong>2.4 GHz</strong> — farther/slower; <strong>5/6 GHz</strong> — faster/shorter range.</li>
+      <li>Protection: <strong>WPA2/WPA3</strong> + a long password + changed admin password + updates.</li>
+      <li>The signal is jammed by <strong>walls, distance, interference, channels</strong>.</li>
+      <li><strong>Mesh</strong> — coverage for a large home; <strong>guest network</strong> — isolation.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Study your Wi-Fi network</h3>
+    <ol>
+      <li>Find your SSID, the band in use (2.4/5 GHz), and the encryption type in the router's settings.</li>
+      <li>Check whether WPA2 or WPA3 is used.</li>
+      <li>See how many devices are currently connected to the network.</li>
+    </ol>
+
+    <h3>Part B. Assess signal quality</h3>
+    <ol>
+      <li>Measure the Wi-Fi signal level in different rooms (using the indicator on your phone/laptop).</li>
+      <li>Note where the signal is weaker and why (walls, distance).</li>
+      <li>Suggest how to improve coverage at the weakest point.</li>
+    </ol>
+
+    <h3>Part C. Check security</h3>
+    <ol>
+      <li>Make sure the router isn't using the default admin password.</li>
+      <li>Assess the strength of your Wi-Fi password and suggest a better one if needed.</li>
+      <li>Check whether the router's firmware has been updated.</li>
+    </ol>
+
+    <h3>Part D. Build a checklist</h3>
+    <ol>
+      <li>Put together a 5–7 point checklist for secure home Wi-Fi configuration.</li>
+      <li>Note what you've already done and what's still worth improving.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. Survey the airwaves</h3>
+    <ol>
+      <li>Using a Wi-Fi analyzer app (on your phone), check how many networks are around you and on which channels.</li>
+      <li>Determine whether your channel is overcrowded and suggest a less busy one.</li>
+    </ol>
+
+    <h3>Part F. Guest network</h3>
+    <ol>
+      <li>If the router allows it, enable a guest network with a separate password.</li>
+      <li>Verify that a guest device cannot see devices on the main network.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent practice assignments</h2>
+    <ul>
+      <li>Explain the difference between the 2.4 and 5 GHz bands in simple terms.</li>
+      <li>Describe why an open Wi-Fi network at a café is dangerous.</li>
+      <li>Explain how an access point differs from a router.</li>
+      <li>Name three factors that degrade a Wi-Fi signal, and how to deal with them.</li>
+      <li>Explain what a rogue access point is and how to avoid falling for one.</li>
+      <li>Look up what Wi-Fi 6 means and describe its advantage in two sentences.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain what Wi-Fi channels are and why they cause speed to drop.</li>
+      <li>Compare a repeater and mesh: pros and cons.</li>
+      <li>Why is a guest network needed? Give an example.</li>
+      <li>Look up the difference between WPA2 and WPA3 and describe it in two sentences.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Test yourself</h2>
+    <ol>
+      <li>What is an SSID?</li>
+      <li>Which band is faster but has a shorter range?</li>
+      <li>Which Wi-Fi encryption is considered secure?</li>
+      <li>Why should you change the router's admin password?</li>
+      <li>What is a rogue access point?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — wireless networks</a></li>
+    </ul>
+    <blockquote><strong>Connection to the course.</strong> Wireless added convenience and new risks. The logical next step is learning to troubleshoot problems, then to secure the network as a whole.</blockquote>
+  </section>
+</div>

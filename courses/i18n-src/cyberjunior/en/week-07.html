@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This week of the "Defense" block covers server hardening and the basics of cryptography: how to reduce the attack surface and use encryption, hashing, and TLS correctly.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Apply the principles of attack surface reduction</li>
+      <li>Distinguish symmetric encryption, asymmetric encryption, and hashing</li>
+      <li>Set up basic server protection and understand TLS</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Symmetric vs. asymmetric encryption:</p>
+    <pre><code>Symmetric (AES):   one key  🔑  encrypts and decrypts (fast)
+Asymmetric (RSA):  a pair  🔑public / 🔒private  (solves key exchange)
+TLS: asymmetric crypto agrees on a key -> then goes symmetric (fast)</code></pre>
+    <p>Hardening = reducing the attack surface:</p>
+    <pre><code>Before: [many services][open ports][outdated software][777]
+After: [only what's needed][closed ports][updated][minimal privileges]</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Now that the student has seen how systems get broken into, they're ready to harden them. Defense rests on two pillars: hardening (remove what's unnecessary) and cryptography (protect what's left).</p>
+    <p><strong>Hardening.</strong> Reducing the attack surface: disable unnecessary services, close ports, update software, minimal privileges, a firewall. Rooted in the principle of least privilege.</p>
+    <p><strong>Symmetric vs. asymmetric.</strong> Symmetric (AES) uses one shared key — fast, but it raises the problem of key delivery. Asymmetric (RSA) uses a key pair (the public key encrypts, the private key decrypts), which solves the exchange problem but is slower.</p>
+    <p><strong>Hashing ≠ encryption.</strong> Hashing (SHA-256) is irreversible, used for integrity checks and password storage. Encryption is reversible with a key. Confusing the two is a common mistake.</p>
+    <p><strong>How TLS ties it all together.</strong> The parties use asymmetric crypto to verify the certificate and agree on a session key, then encrypt the exchange with a fast symmetric algorithm.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper dive</h2>
+    <h3>Symmetric, asymmetric, and hashing — when to use which</h3>
+    <p>Three tools, three jobs. <strong>Symmetric</strong> (AES) — fast encryption of large data (requires a shared key). <strong>Asymmetric</strong> (RSA) — securely exchange a key and sign data (a key pair). <strong>Hashing</strong> (SHA-256) — integrity checks and password storage (irreversible). Confusing them is a classic mistake; each has its own role.</p>
+    <h3>How TLS works (HTTPS under the hood)</h3>
+    <p>TLS combines both approaches: the parties use asymmetric crypto to verify the certificate and agree on a secret <strong>session key</strong>, then encrypt the exchange with a fast symmetric algorithm. This achieves both a secure key exchange and speed. The padlock icon in your browser is TLS working correctly.</p>
+    <h3>Digital signatures and certificates</h3>
+    <p>Asymmetric crypto provides not just encryption but also <strong>signing</strong>: you sign with the private key and verify with the public key. This underpins website certificates (proving authenticity) and update integrity checks. Understanding signatures is key to trust on the network.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One more example: why hash ≠ encryption</h2>
+    <p>A developer "encrypted" passwords, but actually used a hash — and now can't "decrypt" them for recovery. That's actually correct! Passwords should be stored irreversibly (hash + salt); they aren't recovered, they're reset. A file that needs to be read back later, on the other hand, should be encrypted (reversible, with a key). One example, and the "hash vs. encryption" distinction sticks for good.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: basic Linux server hardening</h2>
+    <ol>
+      <li>Update the system and software (close known holes).</li>
+      <li>Disable unnecessary services and close unused ports.</li>
+      <li>Configure the firewall (ufw): deny everything, allow only what's needed.</li>
+      <li>Disable SSH password login, keep only key-based login.</li>
+      <li>Set up minimal privileges and separate accounts.</li>
+      <li>Write a checklist and repeat it for every deployment.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: hardening checklist + crypto demo</h2>
+    <p>Put together two artifacts:</p>
+    <ul>
+      <li>A 10-point server <strong>hardening checklist</strong> (services, ports, updates, SSH keys, privileges).</li>
+      <li>A <strong>crypto demo</strong>: encrypt a file both symmetrically and asymmetrically, compute its SHA-256, change one byte, and show that the hash changed. Describe where each is appropriate.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Hardening</strong> — reducing the attack surface.</li>
+      <li><strong>AES / RSA</strong> — symmetric / asymmetric encryption.</li>
+      <li><strong>SHA-256</strong> — a hash (integrity, passwords).</li>
+      <li><strong>TLS</strong> — a secure channel (HTTPS).</li>
+      <li><strong>Digital signature / certificate</strong> — proof of authenticity.</li>
+      <li><strong>Least privilege</strong> — a core defense principle.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: hashing is encryption.</strong> A hash is irreversible; encryption is reversible with a key.</li>
+      <li><strong>Mistake: storing passwords with encryption.</strong> Passwords should be hashed (+ salt); they're not meant to be recovered.</li>
+      <li><strong>Myth: hardening breaks convenience.</strong> It only removes what's unnecessary; risk goes down, work isn't affected.</li>
+      <li><strong>Mistake: rolling your own "homemade" algorithms.</strong> Use proven ones (AES, RSA, SHA-2).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Which is faster — AES or RSA?</strong> AES (symmetric); RSA is slower, so it's only used to exchange a key.</li>
+      <li><strong>Why does a website need a certificate?</strong> To prove authenticity and enable encryption (HTTPS).</li>
+      <li><strong>When hash, when encryption?</strong> Hash — integrity/passwords; encryption — when the data needs to be recovered.</li>
+      <li><strong>Where do I start hardening a server?</strong> Updates, closing what's unnecessary, and SSH keys.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>AES</strong> — fast, one key. <strong>RSA</strong> — key pair, exchange/signing. <strong>SHA-256</strong> — a hash (irreversible).</li>
+      <li><strong>TLS</strong> = asymmetric crypto (key exchange) + symmetric crypto (data).</li>
+      <li>Hardening: update, close what's unnecessary, firewall, SSH keys, minimal privileges.</li>
+      <li>Passwords — hash with salt, don't encrypt.</li>
+      <li>Don't invent your own crypto — use proven algorithms.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <h3>Part A. Hardening a Linux server</h3>
+    <ol>
+      <li>Audit running services and disable the unnecessary ones.</li>
+      <li>Configure the firewall (ufw): close everything, open only what's needed.</li>
+      <li>Write a 10-point hardening checklist.</li>
+    </ol>
+    <h3>Part B. Keys instead of passwords</h3>
+    <ol>
+      <li>Generate an SSH key pair.</li>
+      <li>Set up key-based login and disable password authentication.</li>
+      <li>Verify that password login is no longer possible.</li>
+    </ol>
+    <h3>Part C. Crypto in practice</h3>
+    <ol>
+      <li>Encrypt a file both symmetrically (AES) and asymmetrically, and compare.</li>
+      <li>Compute the SHA-256 hash, change one byte, and confirm the hash changed.</li>
+      <li>State when encryption is appropriate and when a hash is enough.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. SSH with keys</h3>
+    <ol>
+      <li>Generate an SSH key pair.</li>
+      <li>Set up key-based login and disable password login.</li>
+      <li>Verify password login is no longer possible.</li>
+    </ol>
+    <h3>Part E. Integrity via hashing</h3>
+    <ol>
+      <li>Compute the SHA-256 hash of a file.</li>
+      <li>Change one byte and recompute — compare the hashes.</li>
+      <li>Explain how this is used to verify integrity.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent assignments</h2>
+    <ul>
+      <li>Draw a diagram of TLS handshake with signing, marking where asymmetric and where symmetric crypto is used.</li>
+      <li>Give two example use cases each for encryption and for hashing.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>Draw how TLS establishes a secure connection.</li>
+      <li>Explain the difference between symmetric and asymmetric encryption.</li>
+      <li>Give two example use cases each for hashing and for encryption.</li>
+      <li>Write a 10-point hardening checklist.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>How does symmetric encryption differ from asymmetric?</li>
+      <li>Why isn't hashing the same as encryption?</li>
+      <li>How does TLS combine both approaches?</li>
+      <li>What is a digital signature?</li>
+      <li>Name three server hardening measures.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Cryptography / Hardening</a></li>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Security+ (cryptography sections)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Connection to the course spiral.</strong> This module closes the vulnerabilities from the attack block: disabling SSH password login prevents the brute-force attack from week 6 and Incident #1.</p>
+    </blockquote>
+  </section>
+</div>

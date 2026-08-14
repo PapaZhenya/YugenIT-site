@@ -1,0 +1,201 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La primera semana del bloque «Fundamento» introduce la terminología básica de la seguridad de la información, la tríada CIA y enseña a construir un modelo de amenazas sencillo con una matriz de riesgos.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Dominar la terminología básica de seguridad de la información y la tríada CIA</li>
+      <li>Distinguir tipos de atacantes según motivos y habilidades</li>
+      <li>Construir un modelo de amenazas sencillo con una matriz de riesgos</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>La tríada CIA — tres pilares de la seguridad:</p>
+    <pre><code>        SEGURIDAD
+      /      |       \
+Confiden-  Integri-  Disponi-
+cialidad    dad       bilidad
+(quién ve)(no se altera)(funciona)</code></pre>
+    <p>Cómo un ataque vulnera las propiedades:</p>
+    <pre><code>Fuga de datos       -> se vulnera la Confidencialidad
+Alteración de archivo -> se vulnera la Integridad
+DDoS / ransomware    -> se vulnera la Disponibilidad</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>La seguridad de la información es un conjunto de prácticas y tecnologías que protegen los datos y sistemas del acceso no autorizado, la modificación y la destrucción. Toda la disciplina se sostiene sobre tres propiedades — la tríada CIA.</p>
+    <p><strong>La tríada CIA</strong></p>
+    <ul>
+      <li><strong>Confidentiality (confidencialidad)</strong> — los datos son accesibles solo para quienes deben tener acceso. Se vulnera con fugas, interceptación de tráfico, robo de credenciales.</li>
+      <li><strong>Integrity (integridad)</strong> — los datos no son alterados de forma imperceptible. Se vulnera con sustitución de archivos, inyecciones, ataques de tipo «hombre en el medio».</li>
+      <li><strong>Availability (disponibilidad)</strong> — el sistema está disponible cuando se necesita. Se vulnera con DDoS, ransomware, fallos.</li>
+    </ul>
+    <p>Cualquier ataque puede describirse a través de qué propiedad de estas vulnera — esta es la primera herramienta de pensamiento del especialista.</p>
+    <p><strong>Quiénes son los atacantes.</strong> El motivo y la habilidad determinan el vector: script kiddies (herramientas listas, baja habilidad), hacktivistas (ideología), ciberdelincuentes (dinero, habilidad media-alta), insiders (acceso legítimo, difíciles de detectar), grupos APT (patrocinados por estados, la habilidad más alta).</p>
+    <p><strong>Modelo de amenazas y STRIDE.</strong> El modelo de amenazas responde a cuatro preguntas: qué protegemos, de quién, cuáles son las consecuencias, con qué medidas. Para sistematizar resulta útil la metodología STRIDE: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege. El resultado es una matriz de riesgos, donde cada amenaza se evalúa según su probabilidad y el daño.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Autenticación, autorización, registro (AAA)</h3>
+    <p>Tres conceptos cercanos, pero distintos. <strong>Autenticación</strong> — quién eres (verificación de identidad: contraseña, llave, huella). <strong>Autorización</strong> — qué se te permite (qué acciones y recursos están autorizados). <strong>Registro (accounting)</strong> — qué hiciste (logs, auditoría). Suelen confundirse, pero la protección se construye sobre los tres: primero identificar, luego limitar los permisos, después registrar las acciones.</p>
+    <h3>Vulnerabilidad, amenaza, riesgo, exploit</h3>
+    <p>Desglosemos estos conceptos. <strong>Vulnerabilidad</strong> — un punto débil (una ventana sin cerrar). <strong>Amenaza</strong> — un evento potencial que la aprovecha (un ladrón cerca). <strong>Exploit</strong> — una forma concreta de aprovechar la vulnerabilidad. <strong>Riesgo</strong> — la probabilidad de que se materialice, multiplicada por el daño. El defensor reduce el riesgo: cierra vulnerabilidades, disminuye la probabilidad y limita el daño.</p>
+    <h3>Principio del mínimo privilegio y defensa en profundidad</h3>
+    <p>Dos principios fundamentales que aparecerán durante todo el curso. <strong>Mínimo privilegio</strong> — a cada quien exactamente los permisos que necesita. <strong>Defensa en profundidad</strong> — varias líneas de defensa, para que el fallo de una no lo abra todo. Una buena seguridad no es una «bala de plata» única, sino capas.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: modelo de amenazas para una tienda en línea</h2>
+    <p>El activo es la base de pagos de los clientes. Es crítica la <strong>confidencialidad</strong> (una fuga = golpe a los clientes y a la reputación). Amenazas según STRIDE: divulgación (fuga de la BD), alteración (manipulación de precios), denegación (DDoS durante una liquidación). El riesgo de fuga de la BD es alto (probable + gran daño) → prioridad n.º 1: cifrado, control de acceso, monitoreo. El DDoS es medio → protección contra sobrecarga. Así, un «miedo» abstracto se convierte en un plan concreto.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: construimos un modelo de amenazas en 5 pasos</h2>
+    <ol>
+      <li><strong>Describe el sistema</strong> — qué protegemos (activos: datos, servicios, dispositivos).</li>
+      <li><strong>Determina el valor</strong> — qué parte de la tríada CIA es crítica para cada activo.</li>
+      <li><strong>Encuentra las amenazas</strong> — con la metodología STRIDE (suplantación, alteración, denegación, divulgación, DoS, elevación de privilegios).</li>
+      <li><strong>Evalúa el riesgo</strong> — probabilidad × daño para cada amenaza.</li>
+      <li><strong>Planifica las medidas</strong> — qué hacer con los riesgos prioritarios (reducir, aceptar, transferir, evitar).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: mapa de amenazas de tu propio sistema</h2>
+    <p>Toma un sistema que conozcas (tu sitio, aplicación, red doméstica) y elabora un mini-modelo de amenazas:</p>
+    <ul>
+      <li>tabla de activos y su valor según CIA;</li>
+      <li>5–6 amenazas según STRIDE;</li>
+      <li>matriz de riesgos 3×3 (probabilidad × daño);</li>
+      <li>3 medidas de protección prioritarias.</li>
+    </ul>
+    <p>Es un excelente primer elemento para el portafolio de un profesional de seguridad.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>CIA</strong> — confidencialidad, integridad, disponibilidad.</li>
+      <li><strong>STRIDE</strong> — metodología de búsqueda de amenazas (6 categorías).</li>
+      <li><strong>Vulnerabilidad / amenaza / riesgo / exploit</strong> — ver «Profundizando en el tema».</li>
+      <li><strong>AAA</strong> — autenticación, autorización, registro.</li>
+      <li><strong>APT</strong> — ataque dirigido complejo y prolongado (habitualmente patrocinado por un estado).</li>
+      <li><strong>Mínimo privilegio</strong> — los permisos mínimos necesarios.</li>
+      <li><strong>Defensa en profundidad</strong> — varias líneas de defensa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: la seguridad trata sobre «hackers con capucha».</strong> En realidad, se trata de procesos, riesgos e higiene.</li>
+      <li><strong>Error: confundir amenaza y vulnerabilidad.</strong> La vulnerabilidad es el punto débil; la amenaza es el evento que lo aprovecha.</li>
+      <li><strong>Mito: «a nosotros nadie nos ataca».</strong> La mayoría de los ataques son automáticos y no eligen un objetivo específico.</li>
+      <li><strong>Error: perseguir la «bala de plata».</strong> Funciona la defensa en profundidad, no una sola medida.</li>
+      <li><strong>Mito: la seguridad estorba el trabajo.</strong> Una buena seguridad es proporcional al riesgo y casi imperceptible.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por dónde empezar en seguridad de la información?</strong> Por los fundamentos: redes, SO, modelo de amenazas — que es justo lo que ofrece este curso.</li>
+      <li><strong>¿Hace falta programación?</strong> Los scripts básicos son útiles, pero al inicio es más importante entender los sistemas.</li>
+      <li><strong>¿A qué se dedica un SOC-analista?</strong> Monitorea eventos, investiga incidentes — el objetivo de este curso.</li>
+      <li><strong>¿Qué es más importante — ataque o defensa?</strong> Para un junior, entender ambos lados; el ingreso suele ser a través de la defensa (Blue Team).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Tríada: <strong>CIA</strong>. Método de amenazas: <strong>STRIDE</strong>. Riesgo = probabilidad × daño.</li>
+      <li>Distingue: vulnerabilidad / amenaza / exploit / riesgo.</li>
+      <li>Principios: <strong>mínimo privilegio</strong>, <strong>defensa en profundidad</strong>.</li>
+      <li>Atacantes: script kiddie → insider → ciberdelincuente → APT.</li>
+      <li>Resultado del modelo de amenazas — matriz de riesgos y plan de medidas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Inventario de activos</h3>
+    <ol>
+      <li>Inventa una empresa ficticia y elabora una tabla de activos: sitio web, base de clientes, datos de pago, correo, contabilidad.</li>
+      <li>Para cada activo, determina qué parte de la tríada CIA es más crítica y justifícalo.</li>
+    </ol>
+    <h3>Parte B. Búsqueda de amenazas con STRIDE</h3>
+    <ol>
+      <li>Para 3–4 activos clave, identifica 1–2 amenazas por categoría de STRIDE.</li>
+      <li>Formula cada amenaza de forma concreta: quién, cómo y a qué obtiene acceso.</li>
+    </ol>
+    <h3>Parte C. Matriz de riesgos</h3>
+    <ol>
+      <li>Evalúa las amenazas por «probabilidad» y «daño» (bajo/medio/alto).</li>
+      <li>Construye una matriz 3×3 y destaca las amenazas prioritarias.</li>
+      <li>Para dos amenazas prioritarias, propón una medida de reducción de riesgo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Análisis de fugas reales</h3>
+    <ol>
+      <li>Encuentra 2 incidentes públicos (fugas de datos) en las noticias.</li>
+      <li>Para cada uno, determina qué propiedad de CIA fue vulnerada.</li>
+      <li>Supón qué vulnerabilidad y amenaza actuaron.</li>
+    </ol>
+    <h3>Parte E. Análisis STRIDE de una aplicación</h3>
+    <ol>
+      <li>Toma una aplicación que conozcas (mensajería, banca en línea).</li>
+      <li>Recorre las 6 categorías de STRIDE e imagina una amenaza para cada una.</li>
+      <li>Marca cuál amenaza es la más peligrosa para esa aplicación y por qué.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Analiza dos incidentes públicos reales y determina qué propiedad de CIA fue vulnerada.</li>
+      <li>Elabora un glosario personal de 15 términos de la semana con tus propias palabras.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica la tríada CIA con tres ejemplos cotidianos (uno por propiedad).</li>
+      <li>Desglosa los conceptos «vulnerabilidad → amenaza → exploit → riesgo» en un solo escenario.</li>
+      <li>Describe el principio del mínimo privilegio con un ejemplo de la vida real.</li>
+      <li>Elabora una lista de 5 tipos de atacantes y sus motivos.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Qué significa cada letra de la tríada CIA?</li>
+      <li>¿En qué se diferencia una amenaza de una vulnerabilidad?</li>
+      <li>Nombra tres categorías de STRIDE.</li>
+      <li>¿Qué es el riesgo en la fórmula?</li>
+      <li>¿Cuál es el sentido del principio del mínimo privilegio?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Intro to Cyber Security</a></li>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Security+ (vídeos gratuitos)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Conexión con la espiral del curso</h2>
+    <blockquote><p><strong>Conexión con la espiral del curso.</strong> Este es el fundamento de todo el curso: el lenguaje de amenazas y riesgos se utiliza en cada módulo posterior.</p></blockquote>
+  </section>
+</div>

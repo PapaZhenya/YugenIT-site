@@ -1,0 +1,323 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Este módulo explica por qué la transmisión de datos se describe mediante niveles, analiza los modelos TCP/IP y OSI, y muestra cómo la correspondencia entre ambos ayuda a encontrar rápidamente en qué nivel se rompió la red.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender por qué la red se describe mediante niveles</li>
+      <li>Analizar el modelo TCP/IP (4 niveles) y su funcionamiento</li>
+      <li>Conocer el modelo OSI (7 niveles)</li>
+      <li>Aprender a hacer corresponder los niveles de ambos modelos</li>
+      <li>Saber determinar en qué nivel surgió un problema</li>
+      <li>Entender el principio de la encapsulación de datos</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Ya has visto un intercambio de datos real y has entendido cómo funcionan las direcciones. Ahora pongamos orden en la cabeza.
+    Las redes se describen mediante niveles, y esto no es una teoría aburrida por el mero hecho de serlo, sino una herramienta de trabajo
+    que ahorra horas al buscar fallos. Cuando un especialista dice «el problema está en el nivel tres»,
+    reduce de inmediato el ámbito de búsqueda. Aprendamos a hacer lo mismo.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>Encapsulación: los datos se van cubriendo de cabeceras de arriba hacia abajo:</p>
+    <pre><code>Прикладной:                         [ ДАННЫЕ ]
+Транспортный:              [ TCP | ДАННЫЕ ]            = сегмент
+Сетевой:            [ IP | TCP | ДАННЫЕ ]              = пакет
+Канальный:   [ ETH | IP | TCP | ДАННЫЕ | ETH-конец ]  = кадр
+                        отправляется в сеть --&gt;</code></pre>
+    <p>Correspondencia entre los modelos:</p>
+    <pre><code>   TCP/IP (4)            OSI (7)
++----------------+   +-------------------+
+|  Прикладной    |   | Прикладной        |
+|                |   | Представления     |
+|                |   | Сеансовый         |
++----------------+   +-------------------+
+|  Транспортный  |   | Транспортный      |
++----------------+   +-------------------+
+|  Сетевой       |   | Сетевой           |
++----------------+   +-------------------+
+|  Канальный     |   | Канальный         |
+|                |   | Физический        |
++----------------+   +-------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen</h2>
+
+    <h3>Por qué la red se divide en niveles</h3>
+    <p>La tarea de «transmitir datos» es enorme: hay que conducir
+    físicamente la señal, encontrar el camino entre redes, garantizar la fiabilidad y mostrarle a la persona una página web.
+    Meter todo en un solo saco es imposible. Por eso la tarea se <strong>divide en capas</strong>, donde cada una es responsable
+    estrictamente de lo suyo y no interfiere con lo ajeno.</p>
+    <p>Es como la entrega de un paquete en un almacén: un empleado lo embala, otro escribe la dirección,
+    un tercero lo carga en el camión, un cuarto lo transporta. Cada uno se ocupa de su tarea. Si el paquete no llega,
+    enseguida se sabe a quién preguntar. De la misma manera, los niveles de la red simplifican tanto el desarrollo (se puede
+    mejorar una capa sin romper las demás) como el diagnóstico (el problema se localiza con facilidad).</p>
+
+    <h3>El modelo TCP/IP: cuatro niveles de trabajo</h3>
+    <p>Es precisamente este modelo el que sostiene en la práctica a internet. Tiene
+    cuatro niveles, de abajo hacia arriba:</p>
+    <ul>
+      <li><strong>Nivel de enlace</strong>: transmisión dentro de un mismo segmento local de la red, mediante direcciones MAC. Se encarga de
+      la entrega «al vecino» dentro de la LAN.</li>
+      <li><strong>Nivel de red</strong>: entrega entre redes distintas, mediante direcciones IP. Aquí precisamente funciona
+      el enrutamiento «a través de medio mundo».</li>
+      <li><strong>Nivel de transporte</strong>: hace llegar los datos al programa correcto. Aquí viven TCP (fiable, con
+      confirmación de cada fragmento) y UDP (rápido, sin garantías, para vídeo y juegos).</li>
+      <li><strong>Nivel de aplicación</strong>: lo que usas directamente: la web (HTTP/HTTPS), el correo, el DNS.</li>
+    </ul>
+    <p>Cada nivel utiliza los servicios del que tiene debajo y ofrece servicios al que tiene encima. Tú trabajas en el
+    nivel de aplicación, mientras que todo lo demás ocurre de forma imperceptible por debajo de él.</p>
+
+    <h3>El modelo OSI: siete niveles didácticos</h3>
+    <p>El <strong>OSI</strong> es un modelo más detallado, «de referencia», de siete
+    niveles: físico, de enlace, de red, de transporte, de sesión, de presentación, de aplicación.
+    En la práctica las redes funcionan según TCP/IP, pero el OSI se conserva como <strong>lenguaje común</strong>: es más detallado y resulta más cómodo
+    para discutir dónde exactamente surgió un problema.</p>
+    <p>No hace falta memorizar los siete de golpe el primer día. Basta con entender la lógica: abajo, «el hardware y la
+    señal»; en el medio, «las direcciones y la entrega»; arriba, «las aplicaciones y los datos para la persona». A los
+    detalles de los niveles superiores (sesión, presentación) volverás cuando realmente los necesites.</p>
+
+    <h3>Cómo se corresponden ambos modelos</h3>
+    <p>Los modelos no compiten entre sí: hablan de lo mismo, solo
+    con distinto nivel de detalle. Correspondencia aproximada: el nivel de aplicación de TCP/IP cubre más o menos los tres
+    niveles superiores del OSI (aplicación, presentación, sesión); el de transporte y el de red coinciden
+    casi uno a uno; y el nivel de enlace de TCP/IP abarca los niveles de enlace y físico del OSI.</p>
+    <p>El sentido práctico es este: si entendiste los cuatro niveles de TCP/IP, ya te orientas también en los siete niveles
+    del OSI; simplemente en este último algunas capas están descritas con más detalle.</p>
+
+    <h3>Encapsulación: cómo los datos se van cubriendo de cabeceras</h3>
+    <p>¿Recuerdas la imagen de «datos por dentro, etiquetas por
+    fuera» del módulo 1? Ahora cobra precisión. Cuando los datos bajan por los niveles, cada
+    nivel añade <strong>su propia cabecera</strong>; esto es precisamente la <strong>encapsulación</strong>. Los datos de aplicación quedan envueltos por
+    la cabecera de transporte (resultando un segmento), este por la de red (resultando un paquete), este por la de enlace
+    (resultando una trama). En el lado receptor todo se desenvuelve en orden inverso: las cabeceras se van
+    retirando capa por capa, hasta que quedan solo los datos limpios.</p>
+    <p>De ahí los distintos nombres para lo mismo en distintos niveles: en el de transporte, segmento; en el
+    de red, paquete; en el de enlace, trama. Esto suele confundir a los principiantes, pero ahora ya sabes que son
+    los mismos datos con una cantidad distinta de «etiquetas».</p>
+
+    <h3>Cómo ayudan los niveles ante las averías</h3>
+    <p>La principal utilidad práctica del modelo es el método de diagnóstico
+    «de abajo hacia arriba». Cuando la red no funciona, no vas probando al azar, sino que recorres los niveles: ¿hay
+    señal física/cable (abajo)? → ¿es correcta la IP (nivel de red)? → ¿llega hasta el programa correcto
+    (transporte/aplicación)? Donde se corta, ahí está el problema.</p>
+    <p>Aplicaremos esto de verdad en el módulo 8, dedicado al diagnóstico. Por ahora quédate con la idea: el modelo
+    de niveles es un mapa con el que se buscan averías rápido y sin pánico.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Qué hace cada nivel (con un poco más de detalle)</h3>
+    <ul>
+      <li><strong>Físico (OSI):</strong> las señales en sí: voltaje en el cable, luz en la fibra, ondas de radio.</li>
+      <li><strong>Enlace:</strong> tramas y direcciones MAC, entrega «al vecino» dentro de un segmento.</li>
+      <li><strong>Red:</strong> direcciones IP y enrutamiento «a través del mundo».</li>
+      <li><strong>Transporte:</strong> puertos, fiabilidad (TCP) o velocidad (UDP).</li>
+      <li><strong>Aplicación:</strong> protocolos que la persona ve directamente (HTTP, DNS, correo).</li>
+    </ul>
+
+    <h3>TCP con más detalle: por qué es «fiable»</h3>
+    <p>TCP garantiza la entrega mediante varios recursos: <strong>numera</strong> los fragmentos para poder reensamblarlos
+    en orden; espera la <strong>confirmación</strong> de recepción de cada uno; <strong>reenvía</strong> lo perdido; y regula
+    la velocidad para no saturarse. Todo esto tiene un pequeño coste adicional. Por eso se usa TCP
+    donde importa la integridad (sitios web, archivos, correo).</p>
+
+    <h3>UDP con más detalle: por qué es «rápido»</h3>
+    <p>UDP simplemente envía los datos sin confirmaciones ni reenvíos. Si un paquete se pierde, no pasa nada,
+    el siguiente es más importante. Esto es ideal para el vídeo en directo, la voz y los juegos: es mejor perder un fotograma que esperar
+    y ralentizar todo. Elegir entre TCP y UDP es elegir entre «fiable, pero con precaución» y «rápido, pero sin garantías».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejemplo práctico: qué ocurre en cada nivel al abrir un sitio web</h2>
+    <p>Tomemos la apertura de <code>example.com</code>
+    y recorramos los niveles de TCP/IP de arriba hacia abajo (así se preparan los datos para el envío):</p>
+    <p><strong>Aplicación:</strong> el navegador forma una solicitud HTTP: «dame la página». <strong>Transporte:</strong> TCP divide
+    la solicitud en segmentos y los marca para poder reensamblarlos en orden después y comprobar que nada se
+    perdió; añade el puerto de destino (443). <strong>Red:</strong> IP añade las direcciones, de dónde y hacia dónde
+    (tu IP y la IP del servidor); ahora es un paquete que se puede llevar entre redes. <strong>Enlace:</strong>
+    se añade una trama con direcciones MAC para la entrega hasta el dispositivo más cercano (el router).</p>
+    <p>En el servidor todo se desenvuelve en orden inverso: trama → paquete → segmento → y arriba, el servidor
+    lee la solicitud HTTP limpia y prepara la respuesta. La respuesta recorre el mismo camino de vuelta hacia ti.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: determina el nivel de la avería</h2>
+    <ul>
+      <li>«El cable está desconectado, la lucecita no se enciende» → <strong>físico</strong>.</li>
+      <li>«No se recibió la IP / es incorrecta» → <strong>red</strong> (y una pregunta para el DHCP).</li>
+      <li>«Se hace ping a la IP, pero el sitio no carga por nombre» → <strong>aplicación</strong> (DNS).</li>
+      <li>«La conexión se corta, la velocidad varía» → a menudo <strong>transporte/enlace</strong>.</li>
+    </ul>
+    <p>Saber nombrar el nivel reduce a la mitad la búsqueda de la causa de inmediato.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: una carta atraviesa todos los niveles</h2>
+    <p>Enviamos una solicitud HTTP de arriba hacia abajo:</p>
+    <ol>
+      <li><strong>Aplicación:</strong> el navegador escribe «GET /página».</li>
+      <li><strong>Transporte:</strong> TCP añade el puerto (443) y numera el segmento.</li>
+      <li><strong>Red:</strong> IP añade las direcciones de emisor y receptor; se convierte en un paquete.</li>
+      <li><strong>Enlace:</strong> se añade una trama con la MAC hasta el router más cercano.</li>
+      <li>La trama sale hacia la red; en cada router se actualiza la cabecera de enlace, mientras la IP se mantiene.</li>
+      <li>En el servidor todo se retira de abajo hacia arriba, y la aplicación lee la solicitud limpia.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: tu propio esquema de niveles</h2>
+    <p>Haz un póster-chuleta visual:</p>
+    <ul>
+      <li>dibuja los 4 niveles de TCP/IP en columna;</li>
+      <li>en cada uno indica: qué hace, qué direcciones/conceptos usa, un ejemplo de protocolo;</li>
+      <li>al lado, muestra cómo se llama la unidad de datos en cada nivel (segmento/paquete/trama);</li>
+      <li>añade una flecha de «encapsulación hacia abajo / desencapsulación hacia arriba».</li>
+    </ul>
+    <p>Cuélgalo a la vista: te será útil durante todo el curso.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Nivel (layer)</strong>: capa lógica responsable de una parte del trabajo de la red</li>
+      <li><strong>Modelo TCP/IP</strong>: modelo práctico de 4 niveles sobre el que funciona internet</li>
+      <li><strong>Modelo OSI</strong>: modelo de referencia de 7 niveles, lenguaje común para describir redes</li>
+      <li><strong>Encapsulación</strong>: incorporación de una cabecera en cada nivel a medida que los datos bajan</li>
+      <li><strong>Segmento</strong>: datos con cabecera de transporte (nivel TCP/UDP)</li>
+      <li><strong>Paquete</strong>: datos con cabecera de red (IP)</li>
+      <li><strong>Trama</strong>: datos con cabecera de enlace (direcciones MAC)</li>
+      <li><strong>TCP / UDP</strong>: protocolos de transporte: fiable con confirmación / rápido sin garantías</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Error: memorizar los 7 niveles del OSI el primer día.</strong> Primero entiende la lógica y los 4 niveles de TCP/IP.</li>
+      <li><strong>Mito: OSI y TCP/IP son competidores.</strong> Es lo mismo con distinto nivel de detalle.</li>
+      <li><strong>Error: confundir segmento/paquete/trama.</strong> Son los mismos datos con distinta cantidad de cabeceras.</li>
+      <li><strong>Mito: los niveles son una abstracción sin utilidad.</strong> Al contrario, son la principal herramienta de diagnóstico.</li>
+      <li><strong>Error: pensar que TCP siempre es mejor que UDP.</strong> Para el vídeo y los juegos, UDP es precisamente preferible.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Para qué hay dos modelos?</strong> OSI es un «mapa detallado para conversar», TCP/IP es el modelo de trabajo de internet.</li>
+      <li><strong>¿Hay que memorizar los 7 niveles?</strong> No. Domina la lógica y los 4 niveles de TCP/IP; con eso basta por mucho tiempo.</li>
+      <li><strong>¿Por qué a los mismos datos se los llama de forma distinta?</strong> Por la cantidad de cabeceras: segmento/paquete/trama son
+      etapas de una misma encapsulación.</li>
+      <li><strong>¿TCP siempre es mejor que UDP?</strong> No. Para vídeo/juegos, UDP es preferible.</li>
+      <li><strong>¿En qué nivel «vive» el Wi-Fi?</strong> Principalmente en el de enlace y el físico; el medio simplemente es radio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen rápido del módulo</h2>
+    <ul>
+      <li><strong>TCP/IP = 4 niveles:</strong> enlace (MAC) → red (IP) → transporte (puertos) → aplicación.</li>
+      <li><strong>OSI = 7 niveles</strong> (más detallado, lenguaje común).</li>
+      <li><strong>Encapsulación:</strong> datos → segmento → paquete → trama.</li>
+      <li><strong>TCP</strong>: fiable (confirmaciones, reenvío). <strong>UDP</strong>: rápido (sin garantías).</li>
+      <li>El diagnóstico se hace <strong>de abajo hacia arriba</strong> por los niveles.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Desglosa la apertura de un sitio por niveles</h3>
+    <ol>
+      <li>Toma el ejemplo de apertura de un sitio del módulo 1.</li>
+      <li>Describe qué ocurre en cada uno de los 4 niveles de TCP/IP al enviar la solicitud.</li>
+      <li>Haz corresponder esos 4 niveles con los niveles del modelo OSI.</li>
+    </ol>
+
+    <h3>Parte B. Encuentra los niveles en tráfico real</h3>
+    <ol>
+      <li>En Wireshark, abre un paquete capturado y despliega su estructura.</li>
+      <li>Encuentra en él las capas: Ethernet (enlace), IP (red), TCP/UDP (transporte), datos (aplicación).</li>
+      <li>Señala dónde están las direcciones MAC en el paquete y dónde las direcciones IP.</li>
+    </ol>
+
+    <h3>Parte C. La encapsulación sobre papel</h3>
+    <ol>
+      <li>Dibuja un esquema de encapsulación: cómo los datos de aplicación se convierten en segmento → paquete → trama.</li>
+      <li>Indica qué cabecera se añade en cada paso.</li>
+    </ol>
+
+    <h3>Parte D. Determina el nivel del problema</h3>
+    <ol>
+      <li>Para tres situaciones, determina el nivel probable: (a) cable desconectado, (b) IP incorrecta, (c) el sitio no abre por nombre pero sí por IP.</li>
+      <li>Justifica cada respuesta.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. TCP frente a UDP en el tráfico</h3>
+    <ol>
+      <li>En Wireshark, encuentra paquetes TCP y paquetes UDP (por ejemplo, el DNS suele ir por UDP).</li>
+      <li>Compara: ¿TCP tiene confirmaciones (ACK) y UDP no?</li>
+      <li>Saca una conclusión sobre por qué se usa TCP para los sitios web.</li>
+    </ol>
+
+    <h3>Parte F. Arma la encapsulación a mano</h3>
+    <ol>
+      <li>Toma una hoja y «empaqueta» un mensaje por niveles, anotando cada cabecera añadida.</li>
+      <li>Luego «desempaquétalo» en el lado receptor de abajo hacia arriba.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Explica con tus propias palabras por qué la red se divide en niveles.</li>
+      <li>Enumera los 4 niveles de TCP/IP y di brevemente de qué se encarga cada uno.</li>
+      <li>Describe la diferencia entre TCP y UDP y da un ejemplo de uso de cada uno.</li>
+      <li>Explica en qué se diferencian el segmento, el paquete y la trama.</li>
+      <li>Da un ejemplo de problema de red e indica en qué nivel se encuentra.</li>
+      <li>Describe con tus propias palabras qué es la encapsulación.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Elabora una tabla: nivel → qué hace → dirección/concepto → unidad de datos → ejemplo.</li>
+      <li>Da dos ejemplos de servicios para los que conviene TCP y dos para los que conviene UDP.</li>
+      <li>Explica para qué TCP numera los segmentos.</li>
+      <li>Para cinco situaciones de avería, indica el nivel probable.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿Cuántos niveles tiene el modelo TCP/IP y cómo se llaman?</li>
+      <li>¿En qué nivel funcionan las direcciones IP y en cuál las direcciones MAC?</li>
+      <li>¿Qué es la encapsulación?</li>
+      <li>¿En qué se diferencia un segmento de una trama?</li>
+      <li>¿Para qué sirve en la práctica el modelo de niveles?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics: modelos de red</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Los niveles son el mapa con el que nos orientaremos en las partes II y III, especialmente en el módulo de diagnóstico. A partir de ahora empezamos a construir la red de verdad.</p>
+    </blockquote>
+  </section>
+</div>

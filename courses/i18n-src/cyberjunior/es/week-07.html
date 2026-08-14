@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Esta semana del bloque «Defensa» está dedicada al hardening de servidores y a los fundamentos de la criptografía: cómo reducir la superficie de ataque y usar correctamente el cifrado, el hashing y TLS.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Aplicar los principios de reducción de la superficie de ataque</li>
+      <li>Distinguir el cifrado simétrico, el asimétrico y el hashing</li>
+      <li>Configurar la protección básica de un servidor y comprender TLS</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Cifrado simétrico vs asimétrico:</p>
+    <pre><code>Simétrico (AES):   una clave  🔑  cifra y descifra (rápido)
+Asimétrico (RSA):  un par  🔑pública / 🔒privada  (resuelve el intercambio de claves)
+TLS: con asimetría se acuerda la clave -&gt; luego, simétricamente (rápido)</code></pre>
+    <p>Hardening = reducción de la superficie de ataque:</p>
+    <pre><code>Antes:   [muchos servicios][puertos abiertos][software antiguo][777]
+Después:[solo lo necesario][puertos cerrados][actualizado][mínimos permisos]</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Después de ver cómo se rompen los sistemas, el estudiante está listo para reforzarlos. La defensa se apoya en dos pilares: el hardening (eliminar lo innecesario) y la criptografía (proteger el resto).</p>
+    <p><strong>Hardening.</strong> Reducción de la superficie de ataque: desactivar servicios innecesarios, cerrar puertos, actualizar el software, permisos mínimos, firewall. En su base está el principio del mínimo privilegio.</p>
+    <p><strong>Simétrico frente a asimétrico.</strong> El simétrico (AES) usa una clave compartida, es rápido, pero surge el problema de transmitir la clave. El asimétrico (RSA) usa un par de claves (la pública cifra, la privada descifra), resuelve el intercambio, pero es más lento.</p>
+    <p><strong>Hashing ≠ cifrado.</strong> El hashing (SHA-256) es irreversible, sirve para la integridad y el almacenamiento de contraseñas. El cifrado es reversible mediante una clave. Confundirlos es un error típico.</p>
+    <p><strong>Cómo lo une todo TLS.</strong> Las partes usan asimetría para verificar el certificado y acordar una clave de sesión, luego cifran el intercambio con un algoritmo simétrico rápido.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Simetría, asimetría y hashing — cuándo usar cada uno</h3>
+    <p>Tres herramientas, tres tareas. <strong>Simétrico</strong> (AES) — cifrar grandes volúmenes de datos rápidamente (requiere una clave compartida). <strong>Asimétrico</strong> (RSA) — intercambiar claves de forma segura y firmar (par de claves). <strong>Hashing</strong> (SHA-256) — verificación de integridad y almacenamiento de contraseñas (irreversible). Confundirlos es un error clásico; cada uno tiene su propio papel.</p>
+    <h3>Cómo funciona TLS (HTTPS por dentro)</h3>
+    <p>TLS combina ambos enfoques: las partes, mediante asimetría, verifican el certificado y acuerdan una <strong>clave de sesión</strong> secreta, y luego cifran el intercambio con un algoritmo simétrico rápido. Así se logra tanto la seguridad del intercambio de claves como la velocidad. El candado en el navegador es TLS funcionando.</p>
+    <h3>Firma digital y certificados</h3>
+    <p>La asimetría no solo permite cifrar, sino también <strong>firmar</strong>: se firma con la clave privada, se verifica con la pública. Sobre esto se sustentan los certificados de los sitios web (que demuestran autenticidad) y la verificación de integridad de las actualizaciones. Comprender la firma es clave para la confianza en la red.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué hash ≠ cifrado</h2>
+    <p>Un desarrollador «cifró» las contraseñas, pero en realidad usó un hash — y ahora no puede «descifrarlas» para recuperarlas. ¡Esto es correcto! Las contraseñas deben almacenarse de forma irreversible (hash + sal), no se recuperan, se restablecen. En cambio, un archivo que luego debe leerse se cifra (de forma reversible, con una clave). Con un solo ejemplo, la diferencia «hash vs cifrado» queda asimilada para siempre.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: hardening básico de un servidor Linux</h2>
+    <ol>
+      <li>Actualiza el sistema y el software (cierra brechas conocidas).</li>
+      <li>Desactiva los servicios innecesarios y cierra los puertos sobrantes.</li>
+      <li>Configura el firewall (ufw): denegar todo, permitir solo lo necesario.</li>
+      <li>Desactiva el acceso por contraseña en SSH, deja solo el acceso por llaves.</li>
+      <li>Configura permisos mínimos y cuentas separadas.</li>
+      <li>Elabora una lista de verificación y repítela en cada despliegue.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: lista de verificación de hardening + demo criptográfica</h2>
+    <p>Elabora dos artefactos:</p>
+    <ul>
+      <li><strong>Lista de verificación de hardening</strong> del servidor con 10 puntos (servicios, puertos, actualizaciones, llaves SSH, permisos).</li>
+      <li><strong>Demo criptográfica</strong>: cifra un archivo de forma simétrica y asimétrica, calcula su SHA-256, cambia un byte y demuestra que el hash cambió. Describe dónde es apropiado cada uno.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Hardening</strong> — reducción de la superficie de ataque.</li>
+      <li><strong>AES / RSA</strong> — cifrado simétrico / asimétrico.</li>
+      <li><strong>SHA-256</strong> — hash (integridad, contraseñas).</li>
+      <li><strong>TLS</strong> — canal protegido (HTTPS).</li>
+      <li><strong>Firma digital / certificado</strong> — confirmación de autenticidad.</li>
+      <li><strong>Mínimo privilegio</strong> — principio básico de protección.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: el hash es un tipo de cifrado.</strong> El hash es irreversible; el cifrado es reversible mediante una clave.</li>
+      <li><strong>Error: almacenar contraseñas cifradas.</strong> Las contraseñas se hashean (+ sal), no se recuperan.</li>
+      <li><strong>Mito: el hardening rompe la comodidad.</strong> Solo elimina lo innecesario; el riesgo baja, el trabajo no se ve afectado.</li>
+      <li><strong>Error: usar algoritmos «caseros» propios.</strong> Usa los ya probados (AES, RSA, SHA-2).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Qué es más rápido, AES o RSA?</strong> AES (simétrico); RSA es más lento, por eso solo se usa para intercambiar la clave.</li>
+      <li><strong>¿Para qué sirve el certificado de un sitio?</strong> Para demostrar autenticidad y habilitar el cifrado (HTTPS).</li>
+      <li><strong>¿Cuándo usar hash y cuándo cifrado?</strong> Hash — integridad/contraseñas; cifrado — cuando los datos deben poder recuperarse.</li>
+      <li><strong>¿Por dónde empezar a proteger un servidor?</strong> Por las actualizaciones, cerrar lo innecesario y las llaves SSH.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>AES</strong> — rápido, una clave. <strong>RSA</strong> — par de claves, intercambio/firma. <strong>SHA-256</strong> — hash (irreversible).</li>
+      <li><strong>TLS</strong> = asimetría (intercambio de clave) + simetría (datos).</li>
+      <li>Hardening: actualizar, cerrar lo innecesario, firewall, llaves SSH, permisos mínimos.</li>
+      <li>Las contraseñas — hashearlas con sal, no cifrarlas.</li>
+      <li>No inventes tu propia criptografía — usa lo probado.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Hardening de un servidor Linux</h3>
+    <ol>
+      <li>Realiza una auditoría de servicios y desactiva los innecesarios.</li>
+      <li>Configura el firewall (ufw): cierra todo, abre solo lo necesario.</li>
+      <li>Elabora una lista de verificación de hardening de 10 puntos.</li>
+    </ol>
+    <h3>Parte B. Llaves en lugar de contraseñas</h3>
+    <ol>
+      <li>Genera un par de llaves SSH.</li>
+      <li>Configura el acceso por llave y desactiva la autenticación por contraseña.</li>
+      <li>Verifica que el acceso por contraseña sea imposible.</li>
+    </ol>
+    <h3>Parte C. Criptografía en la práctica</h3>
+    <ol>
+      <li>Cifra un archivo de forma simétrica (AES) y asimétrica, y compara.</li>
+      <li>Calcula el SHA-256, cambia un byte, verifica que el hash cambió.</li>
+      <li>Formula cuándo es apropiado el cifrado y cuándo basta con el hash.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. SSH por llaves</h3>
+    <ol>
+      <li>Genera un par de llaves SSH.</li>
+      <li>Configura el acceso por llave y desactiva el acceso por contraseña.</li>
+      <li>Verifica que el acceso por contraseña ya no sea posible.</li>
+    </ol>
+    <h3>Parte E. Integridad mediante hash</h3>
+    <ol>
+      <li>Calcula el SHA-256 de un archivo.</li>
+      <li>Cambia un byte y recalcula — compara los hashes.</li>
+      <li>Explica cómo se usa esto para verificar la integridad.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Dibuja un esquema del establecimiento de TLS indicando dónde hay asimetría y dónde simetría.</li>
+      <li>Da dos ejemplos de tareas para el cifrado y dos para el hashing.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Dibuja cómo TLS establece una conexión protegida.</li>
+      <li>Explica la diferencia entre el cifrado simétrico y el asimétrico.</li>
+      <li>Da dos ejemplos de tareas para el hashing y dos para el cifrado.</li>
+      <li>Elabora una lista de verificación de hardening de 10 puntos.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿En qué se diferencia el cifrado simétrico del asimétrico?</li>
+      <li>¿Por qué el hashing no es cifrado?</li>
+      <li>¿Cómo combina TLS ambos enfoques?</li>
+      <li>¿Qué es una firma digital?</li>
+      <li>Nombra tres medidas de hardening de un servidor.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Cryptography / Hardening</a></li>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Security+ (secciones de criptografía)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote>
+      <p><strong>Conexión con la espiral del curso.</strong> El módulo cierra vulnerabilidades del bloque de ataque: desactivar el SSH por contraseña previene el ataque de fuerza bruta de la semana 6 y el incidente n.º 1.</p>
+    </blockquote>
+  </section>
+</div>

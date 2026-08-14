@@ -1,0 +1,1615 @@
+{
+  "week-01": [
+    {
+      "id": "1.1",
+      "type": "mc",
+      "text": "¿Qué significa la letra «I» en la tríada CIA?",
+      "options": {
+        "A": "Identity",
+        "B": "Integrity",
+        "C": "Isolation",
+        "D": "Injection"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.2",
+      "type": "mc",
+      "text": "¿Quién suele tener el NIVEL DE HABILIDAD más bajo?",
+      "options": {
+        "A": "Grupo APT",
+        "B": "Insider",
+        "C": "Script kiddie",
+        "D": "Grupo cibercriminal"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "1.3",
+      "type": "tf",
+      "text": "La disponibilidad (Availability) se vulnera durante un ataque DDoS.",
+      "correct": "Верно"
+    },
+    {
+      "id": "1.4",
+      "type": "tf",
+      "text": "El modelo de amenazas solo es necesario para grandes empresas.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "1.5",
+      "type": "mc",
+      "text": "¿A qué corresponde la letra «S» en STRIDE?",
+      "options": {
+        "A": "Scanning",
+        "B": "Spoofing",
+        "C": "Sniffing",
+        "D": "Sandboxing"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.6",
+      "type": "open",
+      "text": "Explica la diferencia entre amenaza, vulnerabilidad y riesgo."
+    },
+    {
+      "id": "1.7",
+      "type": "open",
+      "text": "Para la base de datos de pagos de una tienda en línea, ¿qué parte de la CIA es más crítica y por qué?"
+    },
+    {
+      "id": "1.8",
+      "type": "open",
+      "text": "¿Según qué dos criterios se priorizan los riesgos?"
+    },
+    {
+      "id": "1.9",
+      "type": "mc",
+      "text": "¿Qué es un exploit?",
+      "options": {
+        "A": "Un punto débil",
+        "B": "Una forma de aprovechar una vulnerabilidad",
+        "C": "Un tipo de atacante",
+        "D": "Un registro (log)"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.10",
+      "type": "mc",
+      "text": "¿Qué significa el principio del mínimo privilegio?",
+      "options": {
+        "A": "Root para todos",
+        "B": "Los permisos mínimos necesarios",
+        "C": "Desactivar los logs",
+        "D": "Una sola contraseña"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.11",
+      "type": "mc",
+      "text": "¿Qué es AAA en seguridad?",
+      "options": {
+        "A": "Tres antivirus",
+        "B": "Autenticación, autorización, registro",
+        "C": "Un tipo de cifrado",
+        "D": "Un modelo de red"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.12",
+      "type": "tf",
+      "text": "La defensa en profundidad consiste en varias líneas de defensa.",
+      "correct": "Верно"
+    },
+    {
+      "id": "1.13",
+      "type": "tf",
+      "text": "La mayoría de los ataques eligen cuidadosamente una víctima específica.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "1.14",
+      "type": "open",
+      "text": "¿En qué se diferencia un exploit de una vulnerabilidad?"
+    },
+    {
+      "id": "1.15",
+      "type": "open",
+      "text": "¿Qué es el riesgo en la fórmula de seguridad?"
+    },
+    {
+      "id": "1.16",
+      "type": "open",
+      "text": "Da un ejemplo del principio del mínimo privilegio."
+    }
+  ],
+  "week-02": [
+    {
+      "id": "2.1",
+      "type": "mc",
+      "text": "¿Cuál es el puerto predeterminado de HTTPS?",
+      "options": {
+        "A": "21",
+        "B": "80",
+        "C": "443",
+        "D": "3389"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "2.2",
+      "type": "mc",
+      "text": "¿Cuál es la secuencia del handshake de TCP?",
+      "options": {
+        "A": "ACK → SYN → SYN-ACK",
+        "B": "SYN → SYN-ACK → ACK",
+        "C": "SYN → ACK → SYN",
+        "D": "SYN-ACK → SYN → ACK"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.3",
+      "type": "mc",
+      "text": "¿Qué protocolo convierte un nombre en una dirección IP?",
+      "options": {
+        "A": "DHCP",
+        "B": "DNS",
+        "C": "ARP",
+        "D": "SMTP"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.4",
+      "type": "tf",
+      "text": "HTTP cifra los datos transmitidos.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "2.5",
+      "type": "tf",
+      "text": "UDP establece una conexión antes de transmitir.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "2.6",
+      "type": "mc",
+      "text": "¿Qué herramienta se usa para interceptar y analizar tráfico?",
+      "options": {
+        "A": "Nmap",
+        "B": "Wireshark",
+        "C": "Hydra",
+        "D": "John"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.7",
+      "type": "open",
+      "text": "¿Por qué es peligroso iniciar sesión por HTTP en Wi-Fi abierto?"
+    },
+    {
+      "id": "2.8",
+      "type": "open",
+      "text": "¿En qué se diferencia el campo «puerto» de la dirección IP?"
+    },
+    {
+      "id": "2.9",
+      "type": "mc",
+      "text": "¿Qué ve un interceptor al iniciar sesión en un sitio HTTP?",
+      "options": {
+        "A": "Nada",
+        "B": "El inicio de sesión y los datos en texto plano",
+        "C": "Solo la IP",
+        "D": "Basura cifrada"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.10",
+      "type": "mc",
+      "text": "¿Qué hace una VPN en Wi-Fi abierto?",
+      "options": {
+        "A": "Acelera la conexión",
+        "B": "Cifra tu tráfico",
+        "C": "Cambia la IP del sitio",
+        "D": "Desactiva el DNS"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.11",
+      "type": "mc",
+      "text": "El escaneo de puertos suele pertenecer a:",
+      "options": {
+        "A": "Protección de datos",
+        "B": "Reconocimiento/preparación de un ataque",
+        "C": "Cifrado",
+        "D": "Respaldo (backup)"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.12",
+      "type": "tf",
+      "text": "Cada capa de OSI está asociada a su propia clase de amenazas.",
+      "correct": "Верно"
+    },
+    {
+      "id": "2.13",
+      "type": "tf",
+      "text": "HTTPS hace que el sitio en sí quede totalmente protegido frente a todas las vulnerabilidades.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "2.14",
+      "type": "open",
+      "text": "¿Por qué es importante HTTPS para la seguridad?"
+    },
+    {
+      "id": "2.15",
+      "type": "open",
+      "text": "¿Por qué es peligroso un puerto abierto innecesario?"
+    },
+    {
+      "id": "2.16",
+      "type": "open",
+      "text": "¿Qué es el handshake de TCP?"
+    }
+  ],
+  "week-03": [
+    {
+      "id": "3.1",
+      "type": "mc",
+      "text": "¿Qué comando cambia los permisos de acceso a un archivo en Linux?",
+      "options": {
+        "A": "chown",
+        "B": "chmod",
+        "C": "ls",
+        "D": "grep"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.2",
+      "type": "mc",
+      "text": "¿Qué significan los permisos 777?",
+      "options": {
+        "A": "Lectura para todos",
+        "B": "Acceso completo (rwx) para todos",
+        "C": "Acceso solo para el propietario",
+        "D": "Sin acceso"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.3",
+      "type": "mc",
+      "text": "¿Dónde están los logs de autenticación en Linux?",
+      "options": {
+        "A": "/etc/passwd",
+        "B": "/var/log/auth.log",
+        "C": "/home",
+        "D": "/tmp"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.4",
+      "type": "tf",
+      "text": "sudo otorga privilegios temporales de superusuario.",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.5",
+      "type": "tf",
+      "text": "En Windows, los logs de eventos se consultan mediante el Visor de eventos (Event Viewer).",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.6",
+      "type": "mc",
+      "text": "¿Qué representa el Event ID 4625 en Windows?",
+      "options": {
+        "A": "Inicio de sesión exitoso",
+        "B": "Inicio de sesión fallido",
+        "C": "Creación de archivo",
+        "D": "Apagado"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.7",
+      "type": "open",
+      "text": "¿Por qué son peligrosos los permisos 777 en un archivo de configuración?"
+    },
+    {
+      "id": "3.8",
+      "type": "open",
+      "text": "¿Cómo se cuentan los inicios de sesión fallidos en auth.log con un solo comando?"
+    },
+    {
+      "id": "3.9",
+      "type": "mc",
+      "text": "¿Quién es root en Linux?",
+      "options": {
+        "A": "Un usuario común",
+        "B": "El superusuario",
+        "C": "Un servicio",
+        "D": "Un puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.10",
+      "type": "mc",
+      "text": "¿A qué apunta un atacante al escalar privilegios?",
+      "options": {
+        "A": "Al invitado",
+        "B": "A root",
+        "C": "A los logs",
+        "D": "Al DNS"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.11",
+      "type": "mc",
+      "text": "¿Dónde suele persistir el malware?",
+      "options": {
+        "A": "En el inicio automático (autostart)",
+        "B": "En el monitor",
+        "C": "En el cable",
+        "D": "En la máscara"
+      },
+      "correct": "A"
+    },
+    {
+      "id": "3.12",
+      "type": "tf",
+      "text": "Los permisos 777 en un archivo son peligrosos.",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.13",
+      "type": "tf",
+      "text": "history -c garantiza la eliminación de todo rastro.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "3.14",
+      "type": "open",
+      "text": "¿Qué hace sudo?"
+    },
+    {
+      "id": "3.15",
+      "type": "open",
+      "text": "¿Por qué son peligrosos los permisos excesivos en un archivo?"
+    },
+    {
+      "id": "3.16",
+      "type": "open",
+      "text": "¿Cómo se cuentan los inicios de sesión fallidos en auth.log?"
+    }
+  ],
+  "week-04": [
+    {
+      "id": "4.1",
+      "type": "mc",
+      "text": "¿En qué se diferencia el reconocimiento pasivo del activo?",
+      "options": {
+        "A": "Es más rápido",
+        "B": "No contacta directamente con el objetivo",
+        "C": "El activo es indetectable",
+        "D": "No hay diferencia"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.2",
+      "type": "mc",
+      "text": "¿Qué flag de Nmap se usa para detectar versiones de servicios?",
+      "options": {
+        "A": "-sn",
+        "B": "-sV",
+        "C": "-p-",
+        "D": "-O"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.3",
+      "type": "mc",
+      "text": "¿Qué hace nmap -sn?",
+      "options": {
+        "A": "Escanea todos los puertos",
+        "B": "Descubre hosts sin escanear puertos",
+        "C": "Determina el sistema operativo",
+        "D": "Ejecuta exploits"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.4",
+      "type": "tf",
+      "text": "Escanear la red de otra persona sin permiso es legal si no se rompe nada.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "4.5",
+      "type": "tf",
+      "text": "OSINT es la recopilación de datos de fuentes abiertas.",
+      "correct": "Верно"
+    },
+    {
+      "id": "4.6",
+      "type": "mc",
+      "text": "¿Por qué es peligrosa una versión desactualizada de un servicio?",
+      "options": {
+        "A": "Es lenta",
+        "B": "Puede contener vulnerabilidades conocidas",
+        "C": "Ocupa memoria",
+        "D": "No es peligrosa"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.7",
+      "type": "open",
+      "text": "¿Por qué un defensor debería ejecutar Nmap sobre su propia red?"
+    },
+    {
+      "id": "4.8",
+      "type": "open",
+      "text": "¿Qué incluye un «mapa del objetivo»?"
+    },
+    {
+      "id": "4.9",
+      "type": "mc",
+      "text": "¿Qué es OSINT?",
+      "options": {
+        "A": "Un escáner de puertos",
+        "B": "Reconocimiento mediante fuentes abiertas",
+        "C": "Un tipo de cifrado",
+        "D": "Un exploit"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.10",
+      "type": "mc",
+      "text": "¿Qué es el banner de un servicio?",
+      "options": {
+        "A": "Publicidad",
+        "B": "La autopresentación del servicio con su versión",
+        "C": "Un puerto",
+        "D": "Una contraseña"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.11",
+      "type": "mc",
+      "text": "¿Qué flag de Nmap se usa para detectar hosts activos?",
+      "options": {
+        "A": "-sV",
+        "B": "-sn",
+        "C": "-p-",
+        "D": "-A"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.12",
+      "type": "tf",
+      "text": "El reconocimiento pasivo no contacta directamente con el objetivo.",
+      "correct": "Верно"
+    },
+    {
+      "id": "4.13",
+      "type": "tf",
+      "text": "Escanear la red de otra persona sin permiso es legal.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "4.14",
+      "type": "open",
+      "text": "¿Por qué debería un defensor escanear su propia red?"
+    },
+    {
+      "id": "4.15",
+      "type": "open",
+      "text": "¿Por qué es peligrosa una versión desactualizada de un servicio?"
+    },
+    {
+      "id": "4.16",
+      "type": "open",
+      "text": "¿Qué incluye el mapa del objetivo?"
+    }
+  ],
+  "week-05": [
+    {
+      "id": "5.1",
+      "type": "mc",
+      "text": "¿Qué protege más eficazmente contra las inyecciones SQL?",
+      "options": {
+        "A": "Ocultar los errores",
+        "B": "Las consultas parametrizadas",
+        "C": "Cambiar el puerto de la base de datos",
+        "D": "Contraseñas largas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.2",
+      "type": "mc",
+      "text": "¿En qué se diferencia el XSS almacenado (Stored)?",
+      "options": {
+        "A": "Es más rápido",
+        "B": "Se guarda en el servidor y afecta a muchos usuarios",
+        "C": "No requiere JS",
+        "D": "Es más seguro"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.3",
+      "type": "mc",
+      "text": "La entrada ' OR '1'='1 es un ejemplo de:",
+      "options": {
+        "A": "XSS",
+        "B": "Inyección SQL",
+        "C": "Phishing",
+        "D": "Fuerza bruta"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.4",
+      "type": "tf",
+      "text": "El flag HttpOnly impide robar cookies mediante JavaScript.",
+      "correct": "Верно"
+    },
+    {
+      "id": "5.5",
+      "type": "tf",
+      "text": "Las configuraciones de seguridad incorrectas (security misconfiguration) son poco frecuentes.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "5.6",
+      "type": "mc",
+      "text": "¿Qué es el OWASP Top 10?",
+      "options": {
+        "A": "Un escáner",
+        "B": "Una lista de los 10 riesgos web más críticos",
+        "C": "Un estándar de cifrado",
+        "D": "Un lenguaje"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.7",
+      "type": "open",
+      "text": "¿Por qué las consultas parametrizadas protegen contra las inyecciones?"
+    },
+    {
+      "id": "5.8",
+      "type": "open",
+      "text": "¿Cuáles son dos medidas contra el robo de sesión mediante XSS?"
+    },
+    {
+      "id": "5.9",
+      "type": "mc",
+      "text": "¿Qué tipo de XSS se guarda en el servidor y afecta a todos?",
+      "options": {
+        "A": "Reflected",
+        "B": "Stored",
+        "C": "DOM",
+        "D": "Ninguno"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.10",
+      "type": "mc",
+      "text": "¿Cuál es la causa raíz de las inyecciones?",
+      "options": {
+        "A": "Un servidor lento",
+        "B": "La mezcla de datos y código",
+        "C": "Wi-Fi débil",
+        "D": "Un navegador antiguo"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.11",
+      "type": "mc",
+      "text": "¿Qué protege una cookie contra el robo mediante JavaScript?",
+      "options": {
+        "A": "HTTPS",
+        "B": "El flag HttpOnly",
+        "C": "Una contraseña larga",
+        "D": "NAT"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.12",
+      "type": "tf",
+      "text": "Las consultas parametrizadas protegen contra las inyecciones SQL.",
+      "correct": "Верно"
+    },
+    {
+      "id": "5.13",
+      "type": "tf",
+      "text": "HTTPS protege al sitio contra las inyecciones SQL y el XSS.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "5.14",
+      "type": "open",
+      "text": "¿Por qué las consultas parametrizadas protegen contra las inyecciones?"
+    },
+    {
+      "id": "5.15",
+      "type": "open",
+      "text": "¿Dónde se puede practicar legalmente con vulnerabilidades web?"
+    },
+    {
+      "id": "5.16",
+      "type": "open",
+      "text": "Menciona dos medidas de protección contra XSS."
+    }
+  ],
+  "week-06": [
+    {
+      "id": "6.1",
+      "type": "mc",
+      "text": "¿Qué es el hash de una contraseña?",
+      "options": {
+        "A": "Una contraseña cifrada de forma reversible",
+        "B": "El resultado de una función unidireccional",
+        "C": "Un nombre de usuario",
+        "D": "Una sal (salt)"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.2",
+      "type": "mc",
+      "text": "¿Qué herramienta se usa para ataques de fuerza bruta contra un servicio SSH activo?",
+      "options": {
+        "A": "John the Ripper",
+        "B": "Hydra",
+        "C": "Wireshark",
+        "D": "Nmap"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.3",
+      "type": "mc",
+      "text": "¿Cuál es el vector más común de ingeniería social?",
+      "options": {
+        "A": "Intrusión física",
+        "B": "Phishing",
+        "C": "DDoS",
+        "D": "Inyección SQL"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.4",
+      "type": "tf",
+      "text": "El MFA neutraliza la mayoría de los ataques contra contraseñas.",
+      "correct": "Верно"
+    },
+    {
+      "id": "6.5",
+      "type": "tf",
+      "text": "Romper un hash es «descifrarlo».",
+      "correct": "Неверно"
+    },
+    {
+      "id": "6.6",
+      "type": "mc",
+      "text": "¿Cuál es una señal de un correo de phishing?",
+      "options": {
+        "A": "Remitente correcto",
+        "B": "Urgencia y presión",
+        "C": "Sin enlaces",
+        "D": "Trato personalizado"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.7",
+      "type": "open",
+      "text": "¿Por qué es peligrosa la reutilización de contraseñas?"
+    },
+    {
+      "id": "6.8",
+      "type": "open",
+      "text": "¿Cuáles son tres medidas de protección de contraseñas?"
+    },
+    {
+      "id": "6.9",
+      "type": "mc",
+      "text": "¿Qué es la sal (salt) en el hashing?",
+      "options": {
+        "A": "Un algoritmo",
+        "B": "Un añadido aleatorio a la contraseña",
+        "C": "Un tipo de ataque",
+        "D": "Un puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.10",
+      "type": "mc",
+      "text": "¿Qué es el credential stuffing?",
+      "options": {
+        "A": "Una contraseña nueva",
+        "B": "Probar contraseñas filtradas en otros servicios",
+        "C": "Cifrado",
+        "D": "Phishing"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.11",
+      "type": "mc",
+      "text": "¿Qué anula el valor de una contraseña robada?",
+      "options": {
+        "A": "La sal",
+        "B": "MFA",
+        "C": "NAT",
+        "D": "DNS"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.12",
+      "type": "tf",
+      "text": "El hash de una contraseña no se puede descifrar, solo se puede intentar por fuerza bruta.",
+      "correct": "Верно"
+    },
+    {
+      "id": "6.13",
+      "type": "tf",
+      "text": "Una contraseña segura se puede usar tranquilamente en todas partes.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "6.14",
+      "type": "open",
+      "text": "¿Para qué se usa la sal en el hashing?"
+    },
+    {
+      "id": "6.15",
+      "type": "open",
+      "text": "¿Por qué es peligrosa la reutilización de contraseñas?"
+    },
+    {
+      "id": "6.16",
+      "type": "open",
+      "text": "Menciona tres señales de un correo de phishing."
+    }
+  ],
+  "week-07": [
+    {
+      "id": "7.1",
+      "type": "mc",
+      "text": "¿Qué utiliza el cifrado simétrico?",
+      "options": {
+        "A": "Un par de claves",
+        "B": "Una única clave compartida",
+        "C": "Solo un hash",
+        "D": "Sin claves"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.2",
+      "type": "mc",
+      "text": "¿Cuál es un ejemplo de algoritmo asimétrico?",
+      "options": {
+        "A": "AES",
+        "B": "RSA",
+        "C": "SHA-256",
+        "D": "MD5"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.3",
+      "type": "mc",
+      "text": "¿En qué se diferencia el hashing del cifrado?",
+      "options": {
+        "A": "En nada",
+        "B": "Es irreversible",
+        "C": "Cifra más rápido",
+        "D": "Se descifra con una clave"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.4",
+      "type": "tf",
+      "text": "TLS usa tanto cifrado asimétrico como simétrico.",
+      "correct": "Верно"
+    },
+    {
+      "id": "7.5",
+      "type": "tf",
+      "text": "El hardening aumenta la superficie de ataque.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "7.6",
+      "type": "mc",
+      "text": "El principio del mínimo privilegio:",
+      "options": {
+        "A": "Root para todos",
+        "B": "Los permisos mínimos necesarios",
+        "C": "Desactivar los logs",
+        "D": "Una sola contraseña"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.7",
+      "type": "open",
+      "text": "¿Cuándo basta con el hashing y cuándo se necesita cifrado?"
+    },
+    {
+      "id": "7.8",
+      "type": "open",
+      "text": "¿Cuáles son dos pasos del establecimiento de TLS?"
+    },
+    {
+      "id": "7.9",
+      "type": "mc",
+      "text": "¿Qué algoritmo es asimétrico?",
+      "options": {
+        "A": "AES",
+        "B": "RSA",
+        "C": "SHA-256",
+        "D": "MD5"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.10",
+      "type": "mc",
+      "text": "¿Para qué se usa el hashing?",
+      "options": {
+        "A": "Recuperación de datos",
+        "B": "Verificación de integridad y almacenamiento de contraseñas",
+        "C": "Intercambio de claves",
+        "D": "Enrutamiento"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.11",
+      "type": "mc",
+      "text": "¿Qué usa TLS para mayor velocidad después del intercambio de claves?",
+      "options": {
+        "A": "Cifrado asimétrico",
+        "B": "Cifrado simétrico",
+        "C": "Un hash",
+        "D": "NAT"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.12",
+      "type": "tf",
+      "text": "Las contraseñas deben almacenarse como un hash con sal, no cifradas.",
+      "correct": "Верно"
+    },
+    {
+      "id": "7.13",
+      "type": "tf",
+      "text": "Un algoritmo de cifrado casero es más seguro que uno estándar.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "7.14",
+      "type": "open",
+      "text": "¿Cuándo se necesita un hash y cuándo cifrado?"
+    },
+    {
+      "id": "7.15",
+      "type": "open",
+      "text": "¿Cómo combina TLS los dos tipos de cifrado?"
+    },
+    {
+      "id": "7.16",
+      "type": "open",
+      "text": "Menciona tres medidas de hardening de un servidor."
+    }
+  ],
+  "week-08": [
+    {
+      "id": "8.1",
+      "type": "mc",
+      "text": "¿En qué se diferencia un IPS de un IDS?",
+      "options": {
+        "A": "El IPS solo detecta",
+        "B": "El IPS también bloquea",
+        "C": "El IDS bloquea",
+        "D": "No hay diferencia"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.2",
+      "type": "mc",
+      "text": "¿Qué hace un SIEM?",
+      "options": {
+        "A": "Cifra discos",
+        "B": "Recopila/correlaciona logs y genera alertas",
+        "C": "Escanea puertos",
+        "D": "Prueba contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.3",
+      "type": "mc",
+      "text": "¿Para qué sirve la segmentación de red?",
+      "options": {
+        "A": "Acelerar internet",
+        "B": "Limitar la propagación de un atacante",
+        "C": "Ahorrar direcciones IP",
+        "D": "Desactivar los logs"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.4",
+      "type": "tf",
+      "text": "Los logs son útiles incluso si nadie los lee.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "8.5",
+      "type": "tf",
+      "text": "La DMZ es una zona para servicios accesibles desde el exterior.",
+      "correct": "Верно"
+    },
+    {
+      "id": "8.6",
+      "type": "mc",
+      "text": "Muchos «Failed password» en un minuto son indicio de:",
+      "options": {
+        "A": "Una actualización",
+        "B": "Fuerza bruta",
+        "C": "Un respaldo",
+        "D": "Comportamiento normal"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.7",
+      "type": "open",
+      "text": "¿Por qué un SIEM es más importante que «simples logs»?"
+    },
+    {
+      "id": "8.8",
+      "type": "open",
+      "text": "Da un ejemplo de regla de alerta para detectar fuerza bruta."
+    },
+    {
+      "id": "8.9",
+      "type": "mc",
+      "text": "¿Qué hace un SIEM?",
+      "options": {
+        "A": "Cifra discos",
+        "B": "Recopila y correlaciona logs, genera alertas",
+        "C": "Escanea puertos",
+        "D": "Prueba contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.10",
+      "type": "mc",
+      "text": "¿Qué se coloca en la DMZ?",
+      "options": {
+        "A": "Bases de datos secretas",
+        "B": "Servicios públicos",
+        "C": "Copias de respaldo",
+        "D": "Contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.11",
+      "type": "mc",
+      "text": "¿En qué se diferencia un IPS de un IDS?",
+      "options": {
+        "A": "Solo detecta",
+        "B": "También bloquea",
+        "C": "Es más lento",
+        "D": "En nada"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.12",
+      "type": "tf",
+      "text": "Los logs son inútiles si no se correlacionan ni se actúa sobre ellos.",
+      "correct": "Верно"
+    },
+    {
+      "id": "8.13",
+      "type": "tf",
+      "text": "Las reglas de alerta demasiado ruidosas son algo bueno.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "8.14",
+      "type": "open",
+      "text": "¿Por qué un SIEM es más importante que «simples logs»?"
+    },
+    {
+      "id": "8.15",
+      "type": "open",
+      "text": "¿Para qué se necesita la segmentación de red?"
+    },
+    {
+      "id": "8.16",
+      "type": "open",
+      "text": "Da un ejemplo de regla de alerta para detectar fuerza bruta de contraseñas."
+    }
+  ],
+  "week-09": [
+    {
+      "id": "9.1",
+      "type": "mc",
+      "text": "¿Cuál es la primera etapa del ciclo de vida de IR?",
+      "options": {
+        "A": "Recuperación",
+        "B": "Preparación",
+        "C": "Erradicación",
+        "D": "Lecciones aprendidas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.2",
+      "type": "mc",
+      "text": "¿Qué es la chain of custody (cadena de custodia)?",
+      "options": {
+        "A": "Un tipo de cifrado",
+        "B": "La cadena de responsabilidad sobre las evidencias",
+        "C": "Un protocolo",
+        "D": "Una regla de firewall"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.3",
+      "type": "mc",
+      "text": "¿Por qué no se debe «limpiar» de inmediato una máquina infectada?",
+      "options": {
+        "A": "Toma mucho tiempo",
+        "B": "Se pueden destruir las evidencias",
+        "C": "No hay permisos",
+        "D": "Es más rápido"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.4",
+      "type": "tf",
+      "text": "El hash de una imagen de disco demuestra que no ha sido alterada.",
+      "correct": "Верно"
+    },
+    {
+      "id": "9.5",
+      "type": "tf",
+      "text": "history -c garantiza la eliminación de todo rastro.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "9.6",
+      "type": "mc",
+      "text": "El nombre oculto /tmp/.e.sh es indicio de:",
+      "options": {
+        "A": "Un archivo del sistema",
+        "B": "Camuflaje",
+        "C": "Un error de log",
+        "D": "Un respaldo"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.7",
+      "type": "open",
+      "text": "Menciona las 6 etapas del ciclo de vida de IR."
+    },
+    {
+      "id": "9.8",
+      "type": "open",
+      "text": "¿Por qué no se puede confiar en una sola fuente de logs?"
+    },
+    {
+      "id": "9.9",
+      "type": "mc",
+      "text": "¿Qué es un IoC?",
+      "options": {
+        "A": "Un tipo de cifrado",
+        "B": "Un indicador de compromiso",
+        "C": "Un protocolo",
+        "D": "Un puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.10",
+      "type": "mc",
+      "text": "¿Cuál es la primera etapa del ciclo de vida de IR?",
+      "options": {
+        "A": "Recuperación",
+        "B": "Preparación",
+        "C": "Erradicación",
+        "D": "Lecciones aprendidas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.11",
+      "type": "mc",
+      "text": "¿Por qué no se debe «limpiar» de inmediato una máquina infectada?",
+      "options": {
+        "A": "Toma mucho tiempo",
+        "B": "Se pueden destruir las evidencias",
+        "C": "No hay permisos",
+        "D": "Es más rápido"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.12",
+      "type": "tf",
+      "text": "La verdad sobre un incidente se reconstruye a partir de varias fuentes de logs.",
+      "correct": "Верно"
+    },
+    {
+      "id": "9.13",
+      "type": "tf",
+      "text": "history -c elimina todo rastro del atacante.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "9.14",
+      "type": "open",
+      "text": "Menciona las 6 etapas del ciclo de vida de IR."
+    },
+    {
+      "id": "9.15",
+      "type": "open",
+      "text": "¿Qué es la cadena de custodia (chain of custody) y para qué sirve?"
+    },
+    {
+      "id": "9.16",
+      "type": "open",
+      "text": "Da 3 indicadores de compromiso."
+    }
+  ],
+  "week-10": [
+    {
+      "id": "10.1",
+      "type": "mc",
+      "text": "¿Qué es MITRE ATT&CK?",
+      "options": {
+        "A": "Un antivirus",
+        "B": "Una base de tácticas y técnicas de atacantes",
+        "C": "Un firewall",
+        "D": "Un lenguaje de consultas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.2",
+      "type": "mc",
+      "text": "WINWORD.EXE ejecutando powershell.exe es:",
+      "options": {
+        "A": "Algo normal",
+        "B": "Una relación parent/child sospechosa",
+        "C": "Un error de Office",
+        "D": "Una actualización"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.3",
+      "type": "mc",
+      "text": "El acceso de un proceso ajeno a lsass.exe suele indicar:",
+      "options": {
+        "A": "Desfragmentación",
+        "B": "Robo de credenciales",
+        "C": "Un respaldo",
+        "D": "Impresión"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.4",
+      "type": "tf",
+      "text": "El threat hunting es una búsqueda proactiva basada en hipótesis.",
+      "correct": "Верно"
+    },
+    {
+      "id": "10.5",
+      "type": "tf",
+      "text": "Al romper cualquier eslabón de la kill chain, se puede frustrar el ataque.",
+      "correct": "Верно"
+    },
+    {
+      "id": "10.6",
+      "type": "mc",
+      "text": "La táctica Persistence en ATT&CK es:",
+      "options": {
+        "A": "Robo de datos",
+        "B": "Persistencia en el sistema",
+        "C": "Acceso inicial",
+        "D": "Reconocimiento"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.7",
+      "type": "open",
+      "text": "¿En qué se diferencia el threat hunting del monitoreo?"
+    },
+    {
+      "id": "10.8",
+      "type": "open",
+      "text": "Un implante en AppData y una clave de inicio automático — ¿qué tácticas son?"
+    },
+    {
+      "id": "10.9",
+      "type": "mc",
+      "text": "¿Qué es MITRE ATT&CK?",
+      "options": {
+        "A": "Un antivirus",
+        "B": "Una base de tácticas y técnicas de atacantes",
+        "C": "Un firewall",
+        "D": "Un lenguaje de consultas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.10",
+      "type": "mc",
+      "text": "¿Qué es C2?",
+      "options": {
+        "A": "Un tipo de cable",
+        "B": "El canal de mando y control del atacante",
+        "C": "Un puerto",
+        "D": "Un hash"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.11",
+      "type": "mc",
+      "text": "La relación WINWORD.EXE → powershell.exe es:",
+      "options": {
+        "A": "Algo normal",
+        "B": "Una cadena sospechosa",
+        "C": "Una actualización",
+        "D": "Un error de Office"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "10.12",
+      "type": "tf",
+      "text": "Al romper cualquier eslabón de la kill chain, se puede frustrar el ataque.",
+      "correct": "Верно"
+    },
+    {
+      "id": "10.13",
+      "type": "tf",
+      "text": "El monitoreo y el threat hunting son lo mismo.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "10.14",
+      "type": "open",
+      "text": "¿En qué se diferencia una táctica de una técnica en ATT&CK?"
+    },
+    {
+      "id": "10.15",
+      "type": "open",
+      "text": "¿En qué se diferencia el threat hunting del monitoreo?"
+    },
+    {
+      "id": "10.16",
+      "type": "open",
+      "text": "Menciona una señal de alerta (red flag) en una cadena de procesos."
+    }
+  ],
+  "week-11": [
+    {
+      "id": "11.1",
+      "type": "mc",
+      "text": "¿Cuál es la mejor puerta de entrada a la profesión?",
+      "options": {
+        "A": "Pentesting",
+        "B": "SOC-analista",
+        "C": "GRC",
+        "D": "Forense"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "11.2",
+      "type": "mc",
+      "text": "¿Cuál es la certificación básica para empezar?",
+      "options": {
+        "A": "OSCP",
+        "B": "CISSP",
+        "C": "CompTIA Security+",
+        "D": "CCIE"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "11.3",
+      "type": "mc",
+      "text": "OSCP es una certificación de:",
+      "options": {
+        "A": "Auditoría",
+        "B": "Pentesting práctico",
+        "C": "Gestión de riesgos",
+        "D": "Redes"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "11.4",
+      "type": "tf",
+      "text": "El portafolio puede ser más importante que la certificación al ingresar.",
+      "correct": "Верно"
+    },
+    {
+      "id": "11.5",
+      "type": "tf",
+      "text": "GRC trata sobre seguridad ofensiva.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "11.6",
+      "type": "mc",
+      "text": "AppSec se ocupa de:",
+      "options": {
+        "A": "Seguridad física",
+        "B": "La seguridad de aplicaciones y código",
+        "C": "Solo redes",
+        "D": "Marketing"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "11.7",
+      "type": "open",
+      "text": "¿Qué incluir en el portafolio de un especialista junior?"
+    },
+    {
+      "id": "11.8",
+      "type": "open",
+      "text": "¿Cuál es una trayectoria de certificaciones para un pentester?"
+    },
+    {
+      "id": "11.9",
+      "type": "mc",
+      "text": "¿Qué track es la mejor puerta de entrada a la profesión?",
+      "options": {
+        "A": "Pentesting",
+        "B": "SOC/Blue Team",
+        "C": "GRC",
+        "D": "Forense"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "11.10",
+      "type": "mc",
+      "text": "¿Cuál es la certificación básica para empezar?",
+      "options": {
+        "A": "OSCP",
+        "B": "CISSP",
+        "C": "Security+",
+        "D": "CCIE"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "11.11",
+      "type": "mc",
+      "text": "¿Qué suele ser más importante que la certificación al ingresar?",
+      "options": {
+        "A": "El diploma",
+        "B": "El portafolio",
+        "C": "La edad",
+        "D": "La ciudad"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "11.12",
+      "type": "tf",
+      "text": "GRC trata sobre seguridad ofensiva.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "11.13",
+      "type": "tf",
+      "text": "La práctica y los writeups ayudan mucho a conseguir empleo.",
+      "correct": "Верно"
+    },
+    {
+      "id": "11.14",
+      "type": "open",
+      "text": "¿Qué incluir en el portafolio de un especialista junior?"
+    },
+    {
+      "id": "11.15",
+      "type": "open",
+      "text": "Describe una trayectoria de certificaciones razonable."
+    },
+    {
+      "id": "11.16",
+      "type": "open",
+      "text": "¿Por qué se suele ingresar a la profesión a través del SOC?"
+    }
+  ],
+  "week-12": [
+    {
+      "id": "12.1",
+      "type": "mc",
+      "text": "¿Cuál es el artefacto clave del proyecto final?",
+      "options": {
+        "A": "Una captura de pantalla del escritorio",
+        "B": "Un informe profesional",
+        "C": "Una lista de comandos",
+        "D": "Un currículum"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.2",
+      "type": "mc",
+      "text": "¿Qué NO debe incluir un buen informe de auditoría?",
+      "options": {
+        "A": "La metodología",
+        "B": "Hallazgos con evidencias",
+        "C": "Evaluación de riesgo",
+        "D": "Datos personales sin consentimiento"
+      },
+      "correct": "D"
+    },
+    {
+      "id": "12.3",
+      "type": "mc",
+      "text": "Un CTF evalúa principalmente:",
+      "options": {
+        "A": "La velocidad de escritura",
+        "B": "La amplitud de habilidades prácticas",
+        "C": "La teoría memorizada",
+        "D": "El diseño de las diapositivas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.4",
+      "type": "tf",
+      "text": "Los hallazgos del informe se priorizan según su criticidad.",
+      "correct": "Верно"
+    },
+    {
+      "id": "12.5",
+      "type": "tf",
+      "text": "Las recomendaciones se pueden omitir si la vulnerabilidad es obvia.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "12.6",
+      "type": "mc",
+      "text": "¿Cuál es el orden correcto de auditoría de una máquina?",
+      "options": {
+        "A": "Informe → reconocimiento → explotación",
+        "B": "Reconocimiento → explotación → recomendaciones → informe",
+        "C": "Explotación → reconocimiento → informe",
+        "D": "Recomendaciones → informe → reconocimiento"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.7",
+      "type": "open",
+      "text": "¿De qué secciones consta un informe de auditoría?"
+    },
+    {
+      "id": "12.8",
+      "type": "open",
+      "text": "¿Por qué el informe es más importante que el hecho mismo de haber vulnerado el sistema?"
+    },
+    {
+      "id": "12.9",
+      "type": "mc",
+      "text": "¿Cuál es el artefacto clave del proyecto final?",
+      "options": {
+        "A": "Una captura de pantalla",
+        "B": "Un informe profesional",
+        "C": "Una lista de comandos",
+        "D": "Un currículum"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.10",
+      "type": "mc",
+      "text": "¿Cuál es el orden correcto de auditoría?",
+      "options": {
+        "A": "Informe→reconocimiento→explotación",
+        "B": "Reconocimiento→explotación→recomendaciones→informe",
+        "C": "Explotación→reconocimiento→informe",
+        "D": "Recomendaciones→informe→reconocimiento"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.11",
+      "type": "mc",
+      "text": "¿Cómo se evalúan los hallazgos?",
+      "options": {
+        "A": "Por orden alfabético",
+        "B": "Por criticidad (riesgo)",
+        "C": "Por extensión",
+        "D": "Al azar"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "12.12",
+      "type": "tf",
+      "text": "El informe suele ser más importante que el hecho mismo de haber vulnerado el sistema.",
+      "correct": "Верно"
+    },
+    {
+      "id": "12.13",
+      "type": "tf",
+      "text": "La auditoría final se puede realizar en cualquier máquina ajena.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "12.14",
+      "type": "open",
+      "text": "¿De qué secciones consta un informe de auditoría?"
+    },
+    {
+      "id": "12.15",
+      "type": "open",
+      "text": "¿Por qué el informe es más importante que la intrusión?"
+    },
+    {
+      "id": "12.16",
+      "type": "open",
+      "text": "¿En qué máquinas se puede realizar la auditoría final?"
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Este módulo enseña a localizar averías de red de forma sistemática con el método «de abajo hacia arriba», usando cuatro herramientas básicas de diagnóstico: ping, tracert/traceroute, ipconfig/ip y nslookup.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Dominar las herramientas básicas de diagnóstico de red</li>
+      <li>Aprender a buscar la avería de forma sistemática y no al azar</li>
+      <li>Aplicar el método de diagnóstico «de abajo hacia arriba» por niveles</li>
+      <li>Saber localizar los problemas más comunes</li>
+      <li>Leer la salida de los comandos ping y traceroute</li>
+      <li>Conocer las causas más frecuentes de «no funciona internet»</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Tarde o temprano, cualquier red un día «deja de funcionar». En ese momento, el principiante entra
+    en pánico y prueba al azar: reinicia todo, cambia cables, llama al proveedor. El especialista actúa
+    de otra manera: con un sistema, descartando opciones paso a paso. Este módulo te da ese sistema y un
+    conjunto simple de comandos que se usan a diario.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>El método «de abajo hacia arriba»: donde se corta, ahí está el problema:</p>
+    <pre><code>[6] El propio sitio/servicio  ← ¿problema del lado del servidor?
+[5] DNS (nslookup)            ← ¿se resuelven los nombres?
+[4] Salida hacia fuera (ping 8.8.8.8)
+[3] Puerta de enlace (ping al router)
+[2] Tu propia configuración (ipconfig/ip)  ← ¿no hay 169.254.x.x?
+[1] Física (cable/Wi-Fi, luces)
+      ↑ empezamos por abajo y subimos</code></pre>
+    <p>Árbol de decisiones:</p>
+    <pre><code>¿ping a la puerta de enlace?
+ ├─ no  -&gt; problema en la red local (cable/dirección/puerta de enlace)
+ └─ sí -&gt; ¿ping a 8.8.8.8?
+          ├─ no  -&gt; problema con la salida hacia fuera/el proveedor
+          └─ sí -&gt; ¿el sitio por nombre?
+                    ├─ no  -&gt; problema de DNS
+                    └─ sí -&gt; problema del lado del sitio</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>Tu caja de herramientas de diagnóstico</h3>
+    <p>Cuatro comandos cubren la mayoría de las situaciones cotidianas,
+    y están presentes en cualquier sistema:</p>
+    <ul>
+      <li><strong><code>ping</code></strong>: «¿estás vivo?». Envía al nodo una petición corta y espera respuesta. Si hay respuesta,
+      el nodo es accesible y la red hasta él funciona.</li>
+      <li><strong><code>tracert</code> / <code>traceroute</code></strong>: «¿dónde está el corte?». Muestra la ruta hasta el nodo salto a salto y en
+      qué punto se pierde la conexión.</li>
+      <li><strong><code>ipconfig</code> / <code>ip</code></strong>: «¿y qué tengo yo?». Muestra tu dirección, tu máscara, tu puerta de enlace y tu DNS.</li>
+      <li><strong><code>nslookup</code></strong>: «¿los nombres siguen funcionando?». Comprueba si el DNS responde y si convierte
+      correctamente los nombres en direcciones.</li>
+    </ul>
+    <p>Dominando estos cuatro, ya cubres la inmensa mayoría de los problemas de red.</p>
+
+    <h3>El método «de abajo hacia arriba» por niveles</h3>
+    <p>¿Recuerdas los niveles del módulo 3? El diagnóstico se hace precisamente siguiéndolos,
+    de lo simple a lo complejo:</p>
+    <ol>
+      <li><strong>Física.</strong> ¿Está enchufado el cable, está conectado el Wi-Fi, están encendidos los indicadores?</li>
+      <li><strong>Tu propia configuración.</strong> ¿Tienes una IP normal (<code>ipconfig</code>/<code>ip</code>)? ¿No es una «autoasignada»
+      (169.254.x.x = el DHCP no funcionó)?</li>
+      <li><strong>Puerta de enlace.</strong> ¿Responde al ping la dirección del router? Si no, el problema está dentro de la red local.</li>
+      <li><strong>Salida hacia fuera.</strong> ¿Responde al ping una IP externa (por ejemplo, <code>8.8.8.8</code>)? Si sí, pero los sitios no
+      cargan, el problema no es de conectividad, sino de DNS.</li>
+      <li><strong>DNS.</strong> ¿Funciona <code>nslookup</code>? Si los nombres no se resuelven, ahí está la causa.</li>
+      <li><strong>El propio sitio/servicio.</strong> Puede que el problema no esté de tu lado, sino del lado del servidor.</li>
+    </ol>
+    <p>Donde se corta la cadena, ahí está la raíz del problema. Este orden ahorra muchísimo tiempo.</p>
+
+    <h3>Cómo leer el ping</h3>
+    <p><code>ping</code> muestra si llegaron las respuestas y en cuánto tiempo. Conviene fijarse en
+    tres cosas: <strong>si hay respuestas en absoluto</strong> (si aparece «se agotó el tiempo de espera de la solicitud», el nodo no
+    está disponible o bloquea el ping), <strong>el tiempo de respuesta</strong> (retrasos grandes indican una red saturada o lejana) y las
+    <strong>pérdidas</strong> (si parte de las respuestas se pierde, la conexión es inestable).</p>
+    <p>Un matiz importante: algunos nodos deliberadamente no responden al ping por motivos de seguridad, así que
+    la ausencia de respuesta no siempre significa avería. Pero como primera prueba rápida, el ping es insustituible.</p>
+
+    <h3>Cómo leer traceroute</h3>
+    <p><code>traceroute</code>/<code>tracert</code> muestra una lista de saltos (los enrutadores en el camino
+    hacia el destino) y el tiempo hasta cada uno. Leerlo es sencillo: vas de arriba abajo y observas hasta qué salto
+    todo va bien, y dónde empiezan las pérdidas o los «asteriscos» (sin respuesta).</p>
+    <p>Si el corte está en el primer o segundo salto, el problema es tuyo o de tu router. Si está más allá, es del
+    proveedor: el problema no está de tu lado. Esto ayuda a saber a quién llamar: si arreglarlo tú mismo o
+    contactar con el proveedor.</p>
+
+    <h3>Las tres causas más frecuentes de «no hay internet»</h3>
+    <p>La experiencia muestra que, en la mayoría de los casos, la culpa es de tres cosas.
+    Primero, <strong>problemas con el DHCP/la dirección</strong>: el dispositivo no obtuvo una IP normal (esa misma
+    169.254.x.x). Segundo, una <strong>puerta de enlace incorrecta o inaccesible</strong>: en local parece que todo está bien, pero no
+    sale hacia fuera. Tercero, un <strong>DNS que no funciona</strong>: todo responde al ping por IP, pero los sitios no cargan por nombre.</p>
+    <p>Comprueba estas tres cosas en primer lugar, y la mayoría de los problemas se resolverán en un par de minutos. Precisamente por eso
+    el método «de abajo hacia arriba» es tan eficaz: te lleva directo a estas causas típicas.</p>
+
+    <h3>Disciplina del diagnóstico: cambia una cosa a la vez</h3>
+    <p>Regla de oro: <strong>cambia una sola cosa a la vez y
+    comprueba el resultado</strong>. Si reiniciaste el router, cambiaste el cable y modificaste el DNS al mismo tiempo, y
+    funcionó, no sabrás qué fue lo que realmente ayudó, y la próxima vez volverás a adivinar. Cambia de
+    uno en uno, anota qué comprobaste y qué cambió. Esto distingue al profesional del que «prueba a ciegas» y
+    te será útil en cualquier campo técnico, no solo en redes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Qué significan las respuestas del ping</h3>
+    <ul>
+      <li><strong>«Respuesta desde …»</strong>: el nodo es accesible; fíjate en el tiempo (ms).</li>
+      <li><strong>«Se agotó el tiempo de espera de la solicitud»</strong>: no hay respuesta: el nodo no está disponible, está saturado o bloquea el ping.</li>
+      <li><strong>«Host de destino inaccesible»</strong>: no hay ruta: a menudo es un problema con la puerta de enlace/la configuración.</li>
+      <li>Tiempos variables y pérdidas en una serie: conexión inestable.</li>
+    </ul>
+
+    <h3>Parámetros útiles de los comandos</h3>
+    <p><code>ping -t</code> (Windows) / <code>ping</code> sin contador (Linux): ping continuo, útil para detectar cortes «intermitentes».
+    <code>ping -n 100</code>: envía 100 solicitudes y permite evaluar las pérdidas. <code>tracert -d</code>: no traduce
+    las direcciones a nombres (más rápido). Conocer un par de estos parámetros acelera bastante el diagnóstico.</p>
+
+    <h3>Registros e indicadores luminosos</h3>
+    <p>No olvides lo sencillo: las <strong>luces</strong> del router y de la tarjeta de red dicen mucho (sin enlace no hay
+    cable/señal). Y en la configuración del router suele haber un <strong>registro de eventos</strong>: ahí se ven reinicios,
+    problemas con el proveedor, conexiones de dispositivos. A veces la respuesta está a la vista.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis de un ejemplo: el sitio no carga, buscamos la causa</h2>
+    <p>Situación: el navegador dice que el sitio no está disponible.
+    Sigamos el método.</p>
+    <p>El cable/Wi-Fi está bien, los indicadores están encendidos: la física está en orden. <code>ipconfig</code> muestra una
+    dirección normal <code>192.168.1.20</code> y una puerta de enlace <code>192.168.1.1</code>: la configuración existe. Hacemos ping a la puerta de enlace <code>192.168.1.1</code>:
+    responde, así que la red local funciona. Hacemos ping a <code>8.8.8.8</code>: también responde. Entonces la salida a
+    internet existe, la conectividad no es el problema.</p>
+    <p>Queda el DNS. Hacemos <code>nslookup example.com</code>: error, el nombre no se resuelve. Ahí está la causa: la conectividad
+    funciona, pero los nombres no se convierten en direcciones. Se soluciona cambiando el servidor DNS en la configuración. Fíjate:
+    no reiniciamos todo a ciegas, sino que en cinco pasos encontramos la raíz con precisión.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: el internet «a veces va, a veces no»</h2>
+    <p>Los cortes intermitentes son lo más molesto. Ejecuto <code>ping -t 8.8.8.8</code> y lo dejo correr 10 minutos. Veo
+    «se agotó el tiempo de espera de la solicitud» de forma periódica y picos en el tiempo: eso significa que la conexión es inestable (no que
+    esté «completamente rota»). Luego reduzco el foco: ¿pasa lo mismo hasta la puerta de enlace? Si hasta la puerta de enlace va estable pero más allá no,
+    el problema está en el proveedor o en el canal. El ping continuo es el mejor amigo en estos casos.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: «no me carga ningún sitio»</h2>
+    <ol>
+      <li>Miro las luces/el icono de red: hay conexión.</li>
+      <li><code>ipconfig</code> → dirección <code>169.254.1.7</code>. Ajá, esto es una señal: <strong>el DHCP no funcionó</strong>.</li>
+      <li>Entonces el problema está en el paso de la configuración: el dispositivo no recibió una dirección.</li>
+      <li>Reinicio la conexión / compruebo el DHCP en el router.</li>
+      <li>Ahora la dirección es normal, <code>192.168.1.20</code>, y hay puerta de enlace.</li>
+      <li><code>ping</code> a la puerta de enlace y a <code>8.8.8.8</code>: funcionan; el sitio carga. Listo.</li>
+    </ol>
+    <p>Fíjate: encontré la causa en el segundo paso, sin tocar todo a ciegas.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: tu propia lista de verificación de diagnóstico</h2>
+    <p>Haz una lista de verificación de bolsillo (una página) con la que puedas arreglar la red de cualquiera:</p>
+    <ul>
+      <li>6 pasos «de abajo hacia arriba» con un comando para cada uno;</li>
+      <li>el significado de las respuestas típicas del ping;</li>
+      <li>las tres causas más frecuentes y cómo comprobarlas;</li>
+      <li>la regla de «cambia una cosa a la vez».</li>
+    </ul>
+    <p>Prueba la lista de verificación con una avería real (o simulada).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>ping</strong>: comando para comprobar la disponibilidad de un nodo</li>
+      <li><strong>traceroute / tracert</strong>: comando que muestra la ruta hasta un nodo salto a salto</li>
+      <li><strong>ipconfig / ip</strong>: comando para ver tu propia configuración de red</li>
+      <li><strong>nslookup</strong>: comando para comprobar el funcionamiento del DNS</li>
+      <li><strong>Método «de abajo hacia arriba»</strong>: diagnóstico por niveles, de la física a la aplicación</li>
+      <li><strong>Latencia (latency)</strong>: tiempo de respuesta de un nodo que muestra el ping</li>
+      <li><strong>Pérdida de paquetes</strong>: proporción de respuestas que no llegaron; indicio de una conexión inestable</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Error: cambiar todo a la vez.</strong> Cambia de uno en uno y comprueba; si no, no sabrás qué ayudó.</li>
+      <li><strong>Mito: sin respuesta al ping = avería.</strong> Algunos nodos no responden al ping deliberadamente.</li>
+      <li><strong>Error: culpar al proveedor de inmediato.</strong> Primero comprueba tu propio lado (dirección, puerta de enlace, DNS).</li>
+      <li><strong>Mito: si 8.8.8.8 responde al ping pero los sitios no cargan, «el internet está roto».</strong> Es un indicio clásico de un problema de DNS.</li>
+      <li><strong>Error: saltarse el paso de la configuración.</strong> A menudo la raíz es, simplemente, una dirección o una puerta de enlace incorrecta.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>El nodo no responde al ping, ¿seguro que está averiado?</strong> No, puede simplemente estar bloqueando el ping.</li>
+      <li><strong>¿Por dónde se empieza?</strong> Desde abajo: el cable/Wi-Fi y tu propia configuración.</li>
+      <li><strong>¿Cómo saber si arreglarlo yo mismo o llamar al proveedor?</strong> Por el traceroute: dónde está el corte, en tu lado o más allá.</li>
+      <li><strong>¿Qué es <code>ping -t</code>?</strong> Un ping continuo para detectar cortes «intermitentes».</li>
+      <li><strong>¿Por qué no se puede cambiar todo a la vez?</strong> Porque no sabrás qué fue lo que ayudó.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Comandos: <code>ping</code>, <code>tracert/traceroute</code>, <code>ipconfig/ip</code>, <code>nslookup</code>.</li>
+      <li>Orden: física → configuración → puerta de enlace → salida hacia fuera (8.8.8.8) → DNS → sitio.</li>
+      <li><code>169.254.x.x</code> = el DHCP no funcionó.</li>
+      <li>8.8.8.8 responde, los nombres no = <strong>DNS</strong>.</li>
+      <li>Corte en el primer salto = de tu lado; más allá = del proveedor.</li>
+      <li>Cambia <strong>de uno en uno</strong> y comprueba.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Recorre el diagnóstico de tu red</h3>
+    <ol>
+      <li>Consulta tu configuración: <code>ipconfig</code> (Windows) o <code>ip addr</code> (Linux/Mac).</li>
+      <li>Haz ping en orden: puerta de enlace → IP externa <code>8.8.8.8</code> → sitio por nombre.</li>
+      <li>Determina en qué paso estaría el problema si <code>8.8.8.8</code> respondiera al ping, pero el sitio por nombre no.</li>
+    </ol>
+
+    <h3>Parte B. Lee un traceroute</h3>
+    <ol>
+      <li>Ejecuta <code>tracert</code> (o <code>traceroute</code>) hacia cualquier sitio.</li>
+      <li>Encuentra tu router (primer salto) y determina cuántos saltos hay en total.</li>
+      <li>Anota dónde empieza la red del proveedor y dónde el «mundo exterior».</li>
+    </ol>
+
+    <h3>Parte C. Repara una avería en el simulador</h3>
+    <ol>
+      <li>En Packet Tracer, toma tu red del módulo 5.</li>
+      <li>Rompe algo (por ejemplo, quita la puerta de enlace de un PC o asigna un DNS incorrecto).</li>
+      <li>Recorre el diagnóstico paso a paso y encuentra dónde se corta la conexión.</li>
+      <li>Repara la avería y confirma la recuperación con el comando <code>ping</code>.</li>
+    </ol>
+
+    <h3>Parte D. Elabora tu propio algoritmo</h3>
+    <ol>
+      <li>Redacta una nota con «los 6 pasos del diagnóstico de red» con tus propias palabras.</li>
+      <li>Añade a cada paso el comando con el que se comprueba.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Ping continuo</h3>
+    <ol>
+      <li>Ejecuta <code>ping -t 8.8.8.8</code> (o sin contador en Linux) durante un par de minutos.</li>
+      <li>Evalúa la estabilidad: ¿hay pérdidas y picos de tiempo?</li>
+    </ol>
+
+    <h3>Parte F. Escenario de diagnóstico</h3>
+    <ol>
+      <li>Pide a alguien (o hazlo tú mismo a ciegas) que introduzca una avería en una red simulada.</li>
+      <li>Encuéntrala estrictamente con el método «de abajo hacia arriba», anotando cada paso.</li>
+      <li>Redacta un miniinforme: qué comprobaste, dónde estaba el corte, qué reparaste.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios para el trabajo autónomo</h2>
+    <ul>
+      <li>Redacta una nota con «los 6 pasos del diagnóstico de red».</li>
+      <li>Describe un caso real en el que se cortó el internet y cómo lo arreglarías paso a paso.</li>
+      <li>Explica qué indica la situación «8.8.8.8 responde al ping, pero los sitios no cargan por nombre».</li>
+      <li>Explica por qué es importante cambiar un solo parámetro a la vez.</li>
+      <li>Analiza qué se puede deducir de un traceroute si el corte está en el primer salto, y qué si está en el décimo.</li>
+      <li>Averigua qué es el comando <code>ping -t</code> (ping continuo) y cuándo es útil.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios adicionales</h2>
+    <ul>
+      <li>Detalla qué significan los cuatro tipos de respuesta del ping.</li>
+      <li>Da un ejemplo de un corte en el primer salto y otro de un corte en el décimo.</li>
+      <li>Elabora un árbol de decisiones de diagnóstico con tus propias palabras.</li>
+      <li>Averigua qué muestra <code>pathping</code> (Windows) y para qué sirve.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿Qué cuatro comandos forman el conjunto básico de diagnóstico?</li>
+      <li>¿En qué orden se realiza el diagnóstico según el método «de abajo hacia arriba»?</li>
+      <li>¿Qué indica la dirección 169.254.x.x?</li>
+      <li>¿Qué significa que 8.8.8.8 responda al ping pero el sitio por nombre no cargue?</li>
+      <li>¿Por qué no se pueden cambiar varias cosas a la vez?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Cisco Packet Tracer — práctica de diagnóstico</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> El diagnóstico es una habilidad de trabajo del día a día. El módulo final añadirá a esta capacidad de reparar la de proteger, y reunirá todo en el proyecto final.</p>
+    </blockquote>
+  </section>
+</div>

@@ -1,0 +1,209 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La semana 5 del bloque «Ataque» analiza el OWASP Top 10 — inyecciones SQL, XSS, autenticación rota y configuración insegura — y enseña a encontrar, explotar y describir correctamente estas vulnerabilidades en un laboratorio seguro.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Comprender el OWASP Top 10 como referencia</li>
+      <li>Analizar inyecciones, XSS, autenticación rota, configuración insegura</li>
+      <li>Encontrar y explotar estas vulnerabilidades en un laboratorio seguro</li>
+      <li>Describir el hallazgo como en un informe real</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Inyección SQL — entrada tratada como código:</p>
+    <pre><code>Normalmente:  SELECT * FROM users WHERE login='admin' AND pass='1234'
+Inyección: login = admin'--
+          SELECT * FROM users WHERE login='admin'--' AND pass='...'
+          (todo después de -- se ignora -&gt; inicio de sesión sin contraseña)</code></pre>
+    <p>XSS — un script ajeno en el navegador de la víctima:</p>
+    <pre><code>Campo de comentario:  &lt;script&gt;robar_cookie()&lt;/script&gt;
+-&gt; se guarda en el sitio -&gt; se ejecuta en CADA visitante</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>El OWASP Top 10 es una lista actualizada periódicamente con los riesgos más críticos de las aplicaciones web, elaborada por la comunidad OWASP. Es la prioridad: por dónde empezar tanto el defensor como el atacante.</p>
+    <p><strong>Inyección SQL (Injection).</strong> Ocurre cuando la entrada llega a una consulta SQL sin procesar. Ejemplo: <code>' OR '1'='1</code> en un formulario de login hace que la condición sea siempre verdadera. La causa es la concatenación de cadenas en vez de consultas parametrizadas. Defensa: sentencias preparadas, validación, permisos mínimos de la base de datos.</p>
+    <p><strong>Cross-Site Scripting (XSS).</strong> El JavaScript inyectado se ejecuta en el navegador de la víctima. Reflected vive en un enlace; Stored se guarda en el servidor y afecta a todos. Defensa: escape de salida, CSP, flag HttpOnly en las cookies.</p>
+    <p><strong>Autenticación rota.</strong> Sin protección contra fuerza bruta, tokens predecibles, contraseñas por defecto. Defensa: MFA, protección contra brute-force, tokens de sesión seguros.</p>
+    <p><strong>Configuración insegura.</strong> Paneles de administración abiertos, cuentas estándar, errores detallados, servicios innecesarios. La vulnerabilidad más frecuente. Defensa: hardening, verificaciones de configuración, minimalismo.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Por qué surgen las inyecciones (y cómo defenderse)</h3>
+    <p>La raíz es la <strong>mezcla de datos y código</strong>: la entrada del usuario llega a una consulta como parte del comando. La defensa son las <strong>consultas parametrizadas</strong> (la entrada se trata como datos, no como código), la validación de entrada, los permisos mínimos de la base de datos. Esta regla es más amplia que SQL: cualquier mezcla de datos y comandos es peligrosa (inyecciones de comandos, LDAP, etc.).</p>
+    <h3>Reflected, Stored y DOM XSS</h3>
+    <p>Tres tipos de XSS. <strong>Reflected</strong> — el script está en un enlace, se activa en quien hace clic en él. <strong>Stored</strong> — el script se guarda en el servidor (en un comentario) y afecta a todos los visitantes — el más peligroso. <strong>DOM-based</strong> — se ejecuta en el navegador debido a JavaScript inseguro. La defensa es común: escape de salida, Content Security Policy, flag HttpOnly en las cookies.</p>
+    <h3>El resto del OWASP Top 10 (panorama general)</h3>
+    <p>Además de las inyecciones y XSS, la lista incluye: control de acceso roto, fallos criptográficos, configuración insegura, componentes vulnerables (bibliotecas antiguas), errores de identificación/autenticación, falsificación de solicitudes (SSRF) y otros. La idea general es que son errores típicos y recurrentes por los que empiezan tanto el atacante como el defensor.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: cómo se roba una sesión mediante Stored XSS</h2>
+    <p>El atacante deja en un comentario un script que envía la cookie del visitante a su propio servidor. Cada persona que abre la página, sin querer, «entrega» su sesión — el atacante inicia sesión con su identidad sin necesitar la contraseña. Defensa: hacer escape de la salida (el script no se ejecutará), poner el flag <strong>HttpOnly</strong> en la cookie (JavaScript no podrá leerla). Un solo ejemplo — a la vez un ataque y dos medidas de defensa.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: búsqueda de SQLi en el laboratorio</h2>
+    <ol>
+      <li>Despliega la aplicación de práctica (DVWA/Juice Shop) en un entorno aislado.</li>
+      <li>Encuentra un campo que consulte la base de datos (búsqueda/login).</li>
+      <li>Introduce una comilla simple <code>'</code> — un error de la base de datos indica una vulnerabilidad.</li>
+      <li>Prueba la carga clásica de evasión de autenticación.</li>
+      <li>Documenta el hallazgo: dónde, cómo reproducirlo, riesgo, cómo corregirlo (parametrización).</li>
+    </ol>
+    <blockquote>⚠️ Solo aplicaciones de práctica en un laboratorio aislado. Los sitios reales están prohibidos.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: fichas de vulnerabilidades</h2>
+    <p>Después de completar los laboratorios de práctica, elabora «fichas de hallazgos» (como en un informe real de pentesting):</p>
+    <ul>
+      <li>nombre de la vulnerabilidad y dónde se encontró;</li>
+      <li>pasos para reproducirla;</li>
+      <li>evaluación de riesgo (bajo/medio/alto);</li>
+      <li>recomendación de corrección;</li>
+      <li>captura de pantalla como evidencia.</li>
+    </ul>
+    <p>El conjunto de fichas es un elemento sólido para el portafolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>OWASP Top 10</strong> — lista de riesgos web críticos.</li>
+      <li><strong>Inyección SQL</strong> — inserción de SQL a través de la entrada.</li>
+      <li><strong>XSS</strong> — inserción de JavaScript (reflected/stored/DOM).</li>
+      <li><strong>Consulta parametrizada</strong> — defensa contra inyecciones.</li>
+      <li><strong>CSP / HttpOnly</strong> — medidas contra XSS.</li>
+      <li><strong>DVWA / Juice Shop</strong> — aplicaciones vulnerables de práctica.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: las inyecciones se evitan «filtrando palabras malas».</strong> La defensa real es la parametrización, no las listas negras.</li>
+      <li><strong>Error: considerar iguales el XSS stored y el reflected.</strong> El stored es más peligroso — afecta a todos.</li>
+      <li><strong>Mito: HTTPS protege contra SQLi/XSS.</strong> No, son vulnerabilidades de la aplicación, no del canal.</li>
+      <li><strong>Error: probar en sitios ajenos.</strong> Solo aplicaciones de práctica en el laboratorio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Dónde practicar legalmente vulnerabilidades web?</strong> PortSwigger Academy, DVWA, Juice Shop, HTB — creados especialmente para esto.</li>
+      <li><strong>¿Hace falta saber programar?</strong> Una comprensión básica de código y SQL ayuda mucho.</li>
+      <li><strong>¿Qué es lo más importante para aprender primero?</strong> Las inyecciones y el XSS — las más frecuentes y representativas.</li>
+      <li><strong>¿Cómo proteger mi sitio?</strong> Parametrización, escape, actualización de componentes, hardening.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>SQLi</strong> → defensa: consultas parametrizadas, validación, permisos mínimos de la BD.</li>
+      <li><strong>XSS</strong> (reflected/stored/DOM) → defensa: escape, CSP, HttpOnly.</li>
+      <li>La raíz de las inyecciones es la mezcla de <strong>datos y código</strong>.</li>
+      <li>Práctica — solo DVWA/Juice Shop/PortSwigger en el laboratorio.</li>
+      <li>Documenta el hallazgo con una ficha: dónde / cómo / riesgo / corrección / evidencia.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <blockquote>⚠️ <strong>Marco legal.</strong> Todas las acciones — solo en un laboratorio aislado o en plataformas explícitamente autorizadas. Atacar sistemas ajenos sin permiso es ilegal.</blockquote>
+    <h3>Parte A. Preparación del entorno</h3>
+    <ol>
+      <li>Despliega DVWA u OWASP Juice Shop localmente (Docker o una VM ya preparada).</li>
+      <li>Para DVWA, configura el nivel de seguridad en «low».</li>
+      <li>Configura un proxy interceptor (Burp Suite Community u OWASP ZAP).</li>
+    </ol>
+    <h3>Parte B. Inyección SQL</h3>
+    <ol>
+      <li>Encuentra un campo que consulte la base de datos (búsqueda o login).</li>
+      <li>Introduce una comilla simple <code>'</code> y observa el error de la base de datos.</li>
+      <li>Aplica la carga de evasión de autenticación y documenta el resultado.</li>
+      <li>En el proxy, observa cómo la entrada modificó la consulta SQL.</li>
+    </ol>
+    <h3>Parte C. XSS</h3>
+    <ol>
+      <li>Encuentra un campo cuya entrada se muestre en la página.</li>
+      <li>Inserta un script de prueba inofensivo (alert).</li>
+      <li>Determina el tipo: reflected o stored.</li>
+      <li>Describe cómo un atacante robaría la cookie de sesión.</li>
+    </ol>
+    <h3>Parte D. Autenticación y configuración</h3>
+    <ol>
+      <li>Prueba credenciales estándar (admin/admin).</li>
+      <li>Comprueba la protección contra fuerza bruta.</li>
+      <li>Encuentra una página de servicio abierta o un error detallado.</li>
+    </ol>
+    <h3>Parte E. Documentación de hallazgos</h3>
+    <ol>
+      <li>Completa una ficha para cada vulnerabilidad: nombre, dónde, cómo reproducirla, riesgo, cómo corregirla.</li>
+      <li>Adjunta evidencias (capturas de pantalla de la solicitud/respuesta).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte F. PortSwigger Academy</h3>
+    <ol>
+      <li>Completa 2 laboratorios sobre SQL Injection y sobre XSS (gratuitos).</li>
+      <li>Para cada uno, anota la esencia de la vulnerabilidad y la medida de defensa.</li>
+    </ol>
+    <h3>Parte G. Aumento del nivel de DVWA</h3>
+    <ol>
+      <li>Sube el nivel de seguridad de DVWA a medium.</li>
+      <li>Explica por qué los trucos anteriores dejaron de funcionar y qué cambió en la defensa.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Completa SQL Injection y XSS en PortSwigger Web Security Academy — 2 laboratorios por tema.</li>
+      <li>Sube DVWA a «medium» y explica por qué los trucos anteriores dejaron de funcionar.</li>
+      <li>Para cada una de las 4 vulnerabilidades, escribe 2 medidas de defensa.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica por qué las consultas parametrizadas protegen contra las inyecciones.</li>
+      <li>Compara el XSS reflected, stored y DOM.</li>
+      <li>Nombra dos medidas de defensa contra SQLi y contra XSS.</li>
+      <li>Describe cómo se roba una sesión mediante XSS y cómo evitarlo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Qué protege más eficazmente contra las inyecciones SQL?</li>
+      <li>¿Por qué el XSS stored es más peligroso que el reflected?</li>
+      <li>¿Qué hace el flag de cookie HttpOnly?</li>
+      <li>¿Qué es el OWASP Top 10?</li>
+      <li>¿Dónde practicar legalmente vulnerabilidades web?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://portswigger.net/web-security" target="_blank" rel="noopener">PortSwigger Web Security Academy (gratuito)</a></li>
+      <li><a href="https://owasp.org/www-project-juice-shop/" target="_blank" rel="noopener">OWASP Juice Shop</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Conexión con la espiral del curso.</strong> El reconocimiento de la semana 4 da el mapa de la aplicación; el hardening de la semana 7 cerrará los agujeros encontrados.</blockquote>
+  </section>
+</div>

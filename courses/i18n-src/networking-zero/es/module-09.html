@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">El módulo final del curso trata la protección básica de la red: amenazas, cifrado, higiene de contraseñas y actualizaciones, firewall y segmentación, y reúne todo lo aprendido en el proyecto final.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Conocer las amenazas de red básicas</li>
+      <li>Dominar las medidas básicas de protección de red</li>
+      <li>Entender los principios del cifrado, el firewall y la segmentación</li>
+      <li>Relacionar la protección con los temas ya estudiados</li>
+      <li>Reunir todas las habilidades del curso en el proyecto final</li>
+      <li>Entender hacia dónde seguir avanzando en el aprendizaje</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Una red que funciona es solo la mitad del trabajo. La otra mitad es que no la hackeen, no la espíen y no la dejen fuera de servicio. En este módulo final veremos la protección básica, la relacionaremos con todo lo que ya sabes, y armaremos un proyecto final que muestre tus habilidades por completo.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>La segmentación limita el daño:</p>
+    <pre><code>Sin segmentación:            Con segmentación:
+[todos en una sola red]      [Trabajo]   [Invitados]   [Casa inteligente]
+hackear uno = acceso           |              |                |
+a todos                      cada zona está aislada;
+                              hackear una no abre las demás</code></pre>
+    <p>Principio «cerrar lo innecesario, proteger lo necesario»:</p>
+    <pre><code>[ Firewall ] — deja pasar solo el tráfico necesario
+[ Cifrado ] — lo interceptado resulta inútil
+[ Actualizaciones ] — se cierran los agujeros conocidos
+[ Contraseñas/2FA ] — nadie ajeno entra</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>De qué nos protegemos: las amenazas principales</h3>
+    <p>Para que la protección tenga sentido, empecemos por las amenazas. Las más frecuentes en redes domésticas y pequeñas son: la <strong>interceptación</strong> de tráfico sin cifrar (leer datos ajenos en una red abierta); el <strong>punto de acceso falso</strong> (un clon de un Wi-Fi conocido que roba el tráfico); el <strong>malware</strong> (se infiltra y se propaga por la red); el <strong>acceso no autorizado</strong> (alguien ajeno entra en la red o en la configuración de los dispositivos por contraseñas débiles); y la <strong>sobrecarga de red / DoS</strong> (un dispositivo o un canal se satura de solicitudes y el servicio deja de responder).</p>
+    <p>Entender la amenaza es el primer paso para cerrarla. Ahora, las medidas concretas.</p>
+
+    <h3>Cifrado: hacemos que la interceptación sea inútil</h3>
+    <p>Ya que el tráfico se puede interceptar, hagamos que lo interceptado sea imposible de leer. Para eso sirve el <strong>cifrado</strong>. En la web es <strong>HTTPS</strong> (el candado en la barra de direcciones): los datos entre tú y el sitio viajan cifrados. En las redes inalámbricas es <strong>WPA2/WPA3</strong>: el cifrado del propio Wi-Fi.</p>
+    <p>Regla práctica: introduce contraseñas y datos personales solo en sitios con HTTPS, y conéctate solo a redes Wi-Fi con un cifrado adecuado. Así, incluso si alguien intercepta el tráfico, obtendrá un conjunto de bytes sin sentido.</p>
+
+    <h3>Contraseñas, actualizaciones y configuraciones por defecto</h3>
+    <p>Una enorme parte de los ataques no ocurre por técnicas sofisticadas, sino por <strong>agujeros evidentes</strong>: contraseñas por defecto, contraseñas débiles, firmwares desactualizados. Las medidas son simples pero obligatorias: cambia todas las contraseñas de fábrica (sobre todo la del router), usa contraseñas largas y únicas (mejor con un gestor de contraseñas), activa la autenticación de dos factores donde sea posible, y <strong>actualiza</strong> los dispositivos: las actualizaciones cierran vulnerabilidades conocidas.</p>
+    <p>Es aburrido, pero son precisamente estas cosas básicas las que evitan la mayoría de los problemas. La seguridad empieza por la higiene, no por herramientas sofisticadas.</p>
+
+    <h3>Firewall y segmentación</h3>
+    <p>Dos herramientas importantes de protección de red. El <strong>firewall (cortafuegos)</strong> es un filtro que decide qué tráfico dejar pasar y cuál bloquear; se sitúa en el borde de la red o en el propio dispositivo y corta las conexiones no deseadas.</p>
+    <p>La <strong>segmentación</strong> es la división de la red en zonas aisladas (recuerda la VLAN del módulo 4). La idea: si un atacante logra entrar en una zona, no obtiene de inmediato toda la red. El Wi-Fi de invitados separado de los dispositivos de trabajo, la «casa inteligente» separada de las computadoras con datos importantes: eso es la segmentación en la práctica. El principio general es <strong>limitar la propagación</strong> del problema.</p>
+
+    <h3>El principio de la protección: cerrar lo innecesario, proteger lo necesario</h3>
+    <p>Toda la seguridad básica se puede resumir en una sola idea: <strong>quitar las puertas de más y cerrar bien las que hacen falta</strong>. Desactiva servicios y puertos que no usas; cierra el acceso donde no es necesario; cifra lo que es importante; divide la red en zonas. No existe una protección «absoluta», pero un mínimo bien pensado reduce el riesgo drásticamente.</p>
+    <p>Y fíjate cómo todo se conecta con el curso: el cifrado del Wi-Fi viene del módulo 7, la segmentación se apoya en la VLAN del módulo 4, y encontrar los puntos débiles lo ayuda el diagnóstico del módulo 8. La protección no es un tema aparte, sino una mirada sobre todo lo que ya estudiaste, bajo el ángulo de «¿y cómo evito que rompan esto?».</p>
+
+    <h3>Hacia dónde seguir</h3>
+    <p>Recorriste el camino desde «qué ocurre al abrir un sitio web» hasta armar y proteger tu propia red: eso ya es una base sólida. ¿Hacia dónde crecer ahora? Pasos lógicos: la certificación <strong>CompTIA Network+</strong> (afianza y sistematiza las redes), y luego <strong>Cisco CCNA</strong> (más profundo y valorado por los empleadores). Si te atrae la seguridad, el camino directo es el curso de ciberseguridad de esta plataforma, donde las redes se encuentran con la protección. Lo principal: sigue practicando con las manos: arma redes en el simulador, rómpelas y repáralas, analiza tráfico.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>El principio del mínimo privilegio</h3>
+    <p>Regla básica de seguridad: cada usuario, dispositivo y programa debe tener <strong>exactamente los permisos que necesita para trabajar, ni uno más</strong>. Un invitado no necesita acceso a los archivos de trabajo, una bombilla inteligente no necesita acceso a la computadora. Cuantos menos permisos de más, menos hay que capturar en caso de hackeo.</p>
+
+    <h3>Defensa en profundidad (varias líneas de defensa)</h3>
+    <p>No confíes en una sola medida. La <strong>defensa en profundidad</strong> son varias líneas a la vez: cifrado + firewall + segmentación + contraseñas + actualizaciones. Si falla una línea, quedan las demás. Como en una fortaleza: foso, muralla y guardia, no una sola cosa.</p>
+
+    <h3>Copias de seguridad y el factor humano</h3>
+    <p>Dos cosas que suelen olvidarse. Las <strong>copias de seguridad</strong> salvan cuando la protección de todos modos falló (por ejemplo, con un ransomware): los datos importantes deben estar copiados aparte. Y la <strong>persona</strong> es el eslabón más débil: phishing, contraseñas simples, «hice clic en el enlace». Por eso la concienciación importa tanto como la técnica.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis de un ejemplo: protegemos una red doméstica en 6 pasos</h2>
+    <p>Apliquemos todo a la vez a un piso normal.</p>
+    <p>1) Cambiamos la contraseña de administrador del router, de la de fábrica a una fiable. 2) Activamos el cifrado Wi-Fi WPA2/WPA3 con una contraseña larga. 3) Actualizamos el firmware del router: cerramos agujeros conocidos. 4) Sacamos el Wi-Fi de invitados y la «casa inteligente» a una red aparte (segmentación), para que no vean el portátil de trabajo. 5) Nos aseguramos de que los sitios importantes cargan por HTTPS. 6) Revisamos qué dispositivos están conectados y quitamos los desconocidos.</p>
+    <p>Ni una sola herramienta de «hacker»: solo higiene básica. Pero una red así ya es resistente a la mayoría de las amenazas domésticas. Eso es exactamente lo que significa «cerrar lo innecesario, proteger lo necesario».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué «a mi red no la va a tocar nadie» es una idea peligrosa</h2>
+    <p>La mayoría de los ataques son <strong>automáticos</strong>: unos bots escanean internet seguido y prueban contraseñas estándar y agujeros conocidos. Les da igual si eres una gran empresa o una red doméstica: el objetivo es cualquier red vulnerable. Precisamente por eso la higiene básica (cambiar contraseñas, actualizar, cifrar) protege del 90% de los problemas: te saca de la lista de «objetivos fáciles».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: reacción ante «creo que me hackearon»</h2>
+    <ol>
+      <li><strong>No entres en pánico ni borres todo sin pensar</strong>: primero evalúa qué está pasando.</li>
+      <li>Desconecta de la red el dispositivo sospechoso (limita la propagación).</li>
+      <li>Cambia las contraseñas clave desde un dispositivo limpio (router, correo, cuentas importantes).</li>
+      <li>Revisa la lista de dispositivos conectados y quita los desconocidos.</li>
+      <li>Actualiza los firmwares y el antivirus, y ejecuta un análisis.</li>
+      <li>Restaura los datos desde una copia de seguridad si hace falta.</li>
+      <li>Saca conclusiones: qué causó el problema y cómo cerrarlo de cara al futuro.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: plan de protección de tu red</h2>
+    <p>Elabora un documento «Seguridad de mi red» con:</p>
+    <ul>
+      <li>una lista de activos (qué protegemos: dispositivos, datos);</li>
+      <li>2-3 amenazas principales para tu situación;</li>
+      <li>medidas para cada amenaza (cifrado, contraseñas, segmentación, actualizaciones, copias de seguridad);</li>
+      <li>una lista de verificación de 7-10 puntos marcados como «hecho/no hecho»;</li>
+      <li>un plan a futuro: qué mejorar el próximo mes.</li>
+    </ul>
+    <p>Es una gran pieza para tu portafolio y algo realmente útil.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Interceptación de tráfico</strong>: lectura de datos ajenos transmitidos por la red sin cifrar</li>
+      <li><strong>Punto de acceso falso</strong>: Wi-Fi malicioso que imita una red conocida</li>
+      <li><strong>DoS</strong>: sobrecarga de un servicio con solicitudes hasta provocar la denegación del servicio</li>
+      <li><strong>Cifrado</strong>: transformación de los datos de forma que lo interceptado no se pueda leer</li>
+      <li><strong>Firewall</strong>: cortafuegos que filtra el tráfico según reglas</li>
+      <li><strong>Segmentación</strong>: división de la red en zonas aisladas para limitar el daño</li>
+      <li><strong>Autenticación de dos factores</strong>: acceso con contraseña más un segundo factor (código/dispositivo)</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Error: dejar las contraseñas por defecto.</strong> Los pares de fábrica son de conocimiento general: cámbialas de inmediato.</li>
+      <li><strong>Mito: el NAT protege como un firewall.</strong> El NAT trata de direcciones; para filtrar hace falta un firewall.</li>
+      <li><strong>Error: no actualizar el firmware.</strong> Las actualizaciones cierran vulnerabilidades conocidas.</li>
+      <li><strong>Mito: «a mi red doméstica no la va a tocar nadie».</strong> Los ataques automáticos no eligen: el objetivo es cualquiera.</li>
+      <li><strong>Error: mantener todo en una sola red.</strong> Sin segmentación, hackear un dispositivo abre todos los demás.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por dónde empezar a proteger la casa?</strong> Cambia las contraseñas (¡el router!), activa el cifrado, actualiza los dispositivos.</li>
+      <li><strong>¿El NAT me protege?</strong> Oculta un poco la red, pero no es un firewall.</li>
+      <li><strong>¿Para qué sirve la segmentación en casa?</strong> Para que hackear una bombilla inteligente no abra el acceso a tu portátil.</li>
+      <li><strong>¿Hacen falta copias de seguridad si ya hay protección?</strong> Sí: salvan cuando la protección no funcionó.</li>
+      <li><strong>¿Seguro que a mí no me van a tocar?</strong> Los ataques son automáticos y no eligen; el objetivo es cualquier red vulnerable.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Amenazas: interceptación, punto falso, malware, acceso no autorizado, DoS.</li>
+      <li>Medidas: <strong>cifrado</strong> (HTTPS/WPA3), <strong>contraseñas+2FA</strong>, <strong>actualizaciones</strong>, <strong>firewall</strong>, <strong>segmentación</strong>, <strong>copias de seguridad</strong>.</li>
+      <li>Principios: <strong>mínimo privilegio</strong>, <strong>defensa en profundidad</strong>, «cerrar lo innecesario».</li>
+      <li>NAT ≠ firewall. Contraseñas por defecto = agujero.</li>
+      <li>La persona es el eslabón débil (phishing, contraseñas simples).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Evalúa la protección de tu red</h3>
+    <ol>
+      <li>Elabora una lista de 5-7 medidas básicas de protección para una red doméstica y explica cada una en una frase.</li>
+      <li>Revisa tu red con esa lista y marca qué está ya hecho y qué conviene mejorar.</li>
+      <li>Determina el punto más débil de tu red y propón cómo cerrarlo.</li>
+    </ol>
+
+    <h3>Parte B. Analiza amenazas y medidas</h3>
+    <ol>
+      <li>Para cada una de las amenazas (interceptación, punto falso, contraseña débil, falta de actualizaciones), elige una medida de protección adecuada.</li>
+      <li>Explica por qué el cifrado deja sin valor la interceptación del tráfico.</li>
+    </ol>
+
+    <h3>Parte C. Proyecto final — montaje</h3>
+    <ol>
+      <li>En Packet Tracer, arma una red de dos subredes conectadas por un enrutador, con estaciones de trabajo y una salida al exterior simulada.</li>
+      <li>Configura el direccionamiento (puedes usar DHCP) y logra conectividad de <code>ping</code> entre las subredes.</li>
+      <li>Si es posible, saca un grupo de dispositivos a una zona aparte (segmentación/VLAN).</li>
+    </ol>
+
+    <h3>Parte D. Proyecto final — diagnóstico e informe</h3>
+    <ol>
+      <li>Introduce una avería en tu red y encuéntrala usando el método del módulo 8.</li>
+      <li>Repara la avería y confirma la recuperación de la conectividad.</li>
+      <li>Elabora un informe: esquema de la red, configuración, cómo lo comprobaste, qué y por qué reparaste, qué medidas de protección aplicaste.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Revisión de higiene</h3>
+    <ol>
+      <li>Revisa tus dispositivos: dónde hay contraseñas por defecto, dónde no se han actualizado los firmwares.</li>
+      <li>Elabora una lista de 3 correcciones concretas y realiza al menos una.</li>
+    </ol>
+
+    <h3>Parte F. Segmentación en el simulador</h3>
+    <ol>
+      <li>En Packet Tracer, divide la red en zonas de «trabajo» e «invitados» (VLAN/subredes).</li>
+      <li>Comprueba que la zona de invitados no tiene acceso a la de trabajo.</li>
+      <li>Explica en el informe cómo esto limita el daño en caso de hackeo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios para el trabajo autónomo</h2>
+    <ul>
+      <li>Explica por qué el tráfico sin cifrar es peligroso y cómo lo resuelve el cifrado.</li>
+      <li>Describe cómo la segmentación de red limita el daño en caso de hackeo.</li>
+      <li>Elabora una lista de verificación de seguridad de red doméstica de 7 puntos.</li>
+      <li>Explica la diferencia entre firewall y NAT.</li>
+      <li>Para tres amenazas del módulo, elige una medida de protección concreta para cada una.</li>
+      <li>Elabora un plan personal: qué 3 pasos darás después del curso (certificación, práctica, siguiente curso).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios adicionales</h2>
+    <ul>
+      <li>Explica el principio del mínimo privilegio con un ejemplo cotidiano.</li>
+      <li>¿Qué es la defensa en profundidad y por qué no basta con una sola medida?</li>
+      <li>Describe paso a paso qué hacer si sospechas que te hackearon.</li>
+      <li>Elabora el plan de protección de red doméstica del miniproyecto en forma de lista de verificación.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>Nombra tres amenazas de red básicas.</li>
+      <li>¿Cómo ayuda el cifrado contra la interceptación de tráfico?</li>
+      <li>¿Qué hace un firewall?</li>
+      <li>¿Qué es la segmentación y para qué sirve?</li>
+      <li>¿Cuáles son los dos pasos más simples, pero importantes, que protegen una red doméstica?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Network+ (gratis)</a></li>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer — proyecto final</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Este es el final: desde «qué ocurre al abrir un sitio web» llegaste a armar, diagnosticar y proteger tu propia red. A continuación: las certificaciones Network+/CCNA o el curso de ciberseguridad de la plataforma.</p>
+    </blockquote>
+  </section>
+</div>

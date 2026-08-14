@@ -1,0 +1,253 @@
+<div class="lesson-content">
+  <p class="lesson-intro">A module about how a local network works on the inside: MAC addresses, Ethernet frames, how a switch operates and its MAC address table, plus the idea of VLANs for logically splitting one network into several.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand how a wired local area network (LAN) is built</li>
+      <li>Get to grips with MAC addresses and Ethernet frames</li>
+      <li>Understand what a switch does and how</li>
+      <li>Learn what a MAC address table is</li>
+      <li>Get acquainted with VLANs and the idea of logically splitting a network</li>
+      <li>Distinguish between collision domains and broadcast domains at a basic level</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>Let's come down from the heights of "the internet in general" to earth — into the local network. This is your apartment, your classroom, your office: a small area where devices talk to each other directly through a switch. It has its own rules and its own addresses, and this is exactly where any real "construction" begins.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>A switch delivers a frame to a specific address (not to everyone):</p>
+    <pre><code>                 [ Switch ]
+                  MAC table:
+                  port1 -> MAC-A
+                  port2 -> MAC-B
+                  port3 -> MAC-C
+   PC-A(port1) --frame "to MAC-C"--> [SW] --only to port3--> PC-C(port3)
+   PC-B(port2)  ...receives nothing...   PC-D(port4) ...also nothing...</code></pre>
+    <p>An Ethernet frame (simplified):</p>
+    <pre><code>+----------+----------+---------------------+
+| DEST MAC | SRC MAC  | DATA (contains IP)  |
++----------+----------+---------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>What a LAN is, and what makes it special</h3>
+    <p><strong>LAN (Local Area Network)</strong> is a local network within a small area: a home, a floor, an office. It's characterized by high speed, low latency, and the fact that all the devices are usually owned by one person or organization. Inside a LAN, devices talk to each other directly, without going out "into the big world" — and they do it by their own, link-layer rules.</p>
+    <p>It's important not to confuse things: getting out to the internet is already a job for a router (next module). Inside the LAN, everything is run by the switch and addressing by MAC.</p>
+
+    <h3>MAC address: a device's factory passport</h3>
+    <p>Every network card has a <strong>MAC address</strong> — a physical address "burned in" by the manufacturer (for example, <code>00:1A:2B:3C:4D:5E</code>). Whereas an IP address can be changed and is assigned by the network, a MAC is like a device's factory serial number — unique and permanent.</p>
+    <p>Inside a local network, devices find each other <strong>by MAC address</strong>, not by IP. The first six characters of a MAC encode the card's manufacturer — from them you can tell whose hardware it is. Remember the difference: IP is a logical address for "where in the networks of the world," MAC is a physical address for "who you are in this local segment."</p>
+
+    <h3>Ethernet frame: the local network's envelope</h3>
+    <p>Data inside a LAN is transmitted in <strong>frames</strong>. A frame is the link layer's "envelope": it states the sender's MAC address, the recipient's MAC address, and the data itself (inside which, like a matryoshka doll, sits an IP packet). The technology that makes all this work in wired networks is called <strong>Ethernet</strong> — the most widespread local network standard in the world.</p>
+    <p>When one device wants to send data to another on the same LAN, it packages it into a frame with the recipient's MAC address and sends it into the network. From there, the switch takes over.</p>
+
+    <h3>Switch: a smart frame distributor</h3>
+    <p>A <strong>switch</strong> is a device that physically connects the nodes of a local network (cables from computers plug into it). Its main trick is that it <strong>doesn't broadcast</strong> every frame to everyone, but delivers it strictly to whoever needs it.</p>
+    <p>How does it do that? The switch remembers which device sits behind which of its ports (by MAC address), and stores this in a <strong>MAC address table</strong>. When it receives a frame, it checks the recipient's MAC, finds the right port in the table, and sends the frame only there. If the address isn't known yet, the frame is temporarily flooded to all ports, and the switch learns the device's location from the reply. Thanks to this, a LAN works fast and without unnecessary "noise" on the wire.</p>
+
+    <h3>Collisions, and why switches beat hubs</h3>
+    <p>In the past, simple devices called <strong>hubs</strong> were used instead of switches — they simply repeated a signal out to all ports. Because of this, devices got in each other's way: their signals collided — <strong>collisions</strong> occurred, and the data had to be retransmitted. The more devices, the worse such a network performed.</p>
+    <p>The switch solved the problem: it splits the network into separate segments, and each device gets its own "channel" to the switch. In modern switched networks, collisions are practically nonexistent. This is one of the reasons networks became fast and reliable.</p>
+
+    <h3>VLAN: one piece of hardware — several networks</h3>
+    <p>Sometimes you need devices connected to the same switch to be logically in <strong>different</strong> networks and not see each other directly. That's what <strong>VLANs (virtual local area networks)</strong> are for: the switch is divided into several independent logical networks.</p>
+    <p>Example: in an office, guest Wi-Fi and work computers might be plugged into the same switch but split across different VLANs — guests won't see work resources. This is a simple and powerful technique for order and security; we'll come back to the idea of isolation in the module on protection.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>How a switch "learns" (self-learning)</h3>
+    <p>A switch isn't born knowing who is where. It <strong>learns on the fly</strong>: when a frame arrives, it looks at the sender's MAC and remembers "this MAC is on this port." If the recipient's MAC isn't known yet, the frame is temporarily sent out to all ports (this is called flooding), and the switch learns the missing piece from the reply. After a couple of exchanges, the table is filled in, and the "send to everyone" stops.</p>
+
+    <h3>Duplex: talking and listening at the same time</h3>
+    <p>Modern connections operate in <strong>full duplex</strong> — a device sends and receives at the same time, like a phone conversation. In the past there was <strong>half duplex</strong> (like a walkie-talkie: either you talk or you listen), which is what caused collisions. Full duplex plus switches equals fast networks without collisions.</p>
+
+    <h3>Broadcast domain</h3>
+    <p>A switch eliminates collisions, but it still floods broadcast frames (messages addressed "to everyone") across the whole LAN — this is the <strong>broadcast domain</strong>. When a network gets large, there's too much broadcast traffic, and it gets split up with a router or into VLANs. This is another reason why VLANs and subnets are needed.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: how a switch delivers a frame</h2>
+    <p>Imagine a switch with four computers: PC-A on port 1, PC-B on port 2, PC-C on port 3, PC-D on port 4.</p>
+    <p>PC-A wants to send data to PC-C. It builds a frame: "from MAC A — to MAC C" and sends it into the switch through port 1. The switch checks the MAC address table: "MAC C is on port 3." And it sends the frame only to port 3, to PC-C. PC-B and PC-D get nothing at all — it doesn't concern them.</p>
+    <p>If an old hub had been in the switch's place, it would have sent the frame to all three, and PC-B and PC-D would have had to discard it — and at the same time they wouldn't have been able to transmit their own data. See the difference? A switch is addressed delivery; a hub is shouting across the whole room.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: why "the whole network slows down at once"</h2>
+    <p>On an old hub-based network, one person downloads a big file — and everyone's speed drops: the hub sends everything to everyone, devices get in each other's way, and collisions pile up. Replace the hub with a switch, and the problem goes away: now each person's traffic goes over its own "channel" to the switch, and addressed delivery doesn't interfere with the neighbors. This clearly shows the difference between a hub and a switch.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: the first exchange on a new network</h2>
+    <ol>
+      <li>PC-A wants to send data to PC-C, but only knows its IP.</li>
+      <li>First, A figures out the MAC from the IP (via a service request called ARP — "who has address X?").</li>
+      <li>C replies with its MAC; A remembers the mapping.</li>
+      <li>A builds a frame "to MAC-C" and sends it into the switch.</li>
+      <li>The switch (if it doesn't know C yet) floods the frame to everyone, and C replies.</li>
+      <li>From the reply, the switch learns C's port — after that it sends frames to it directly.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a LAN with 6 devices</h2>
+    <p>In Packet Tracer, build a small network:</p>
+    <ul>
+      <li>a switch and 6 computers on one subnet;</li>
+      <li>check connectivity with <code>ping</code> between several pairs;</li>
+      <li>look at the MAC address table and explain each entry;</li>
+      <li>split the devices into 2 VLANs (for example, "work" and "guests") and make sure there's no direct connectivity between the VLANs;</li>
+      <li>describe in your report why this kind of separation is useful.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>LAN</strong> — a local network within a small area</li>
+      <li><strong>MAC address</strong> — a network card's physical address, "burned in" by the manufacturer</li>
+      <li><strong>Frame</strong> — a unit of link-layer data with the sender's and recipient's MAC addresses</li>
+      <li><strong>Ethernet</strong> — the most widespread wired local network standard</li>
+      <li><strong>Switch</strong> — a device that delivers frames to a specific address by MAC within a LAN</li>
+      <li><strong>MAC address table</strong> — a switch's memory of which MAC is behind which port</li>
+      <li><strong>Hub</strong> — an outdated device that repeats a signal to all ports (causes collisions)</li>
+      <li><strong>VLAN</strong> — the logical splitting of a switch into several independent networks</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: confusing MAC and IP.</strong> MAC is a physical address within the LAN, IP is a logical address for routing.</li>
+      <li><strong>Myth: a switch broadcasts frames to everyone.</strong> No, it delivers them to a specific address using the MAC table.</li>
+      <li><strong>Mistake: treating a hub and a switch as the same thing.</strong> A hub causes collisions, a switch doesn't.</li>
+      <li><strong>Myth: VLANs are separate physical networks.</strong> No, it's a logical split on a single piece of hardware.</li>
+      <li><strong>Mistake: thinking a MAC can easily be "assigned like an IP."</strong> A MAC is tied to the card (though technically savvy people can spoof it).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>How does a switch know who's where?</strong> It remembers the sender's MAC from incoming frames.</li>
+      <li><strong>What if the recipient is unknown?</strong> The frame is temporarily sent to everyone, and the port is learned from the reply.</li>
+      <li><strong>Are VLANs separate wires?</strong> No, it's a logical split on one piece of hardware.</li>
+      <li><strong>Can a MAC be changed?</strong> Technically yes (spoofing), but by default it's "burned in" to the card.</li>
+      <li><strong>Why is there so much "broadcast" on a big network?</strong> All broadcast frames travel across the whole domain; it's reduced through VLANs/subnets.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>MAC</strong> — a card's physical address; <strong>IP</strong> — a logical address for routing.</li>
+      <li><strong>Frame</strong> — a unit of data in a LAN (with sender and recipient MAC).</li>
+      <li>A <strong>switch</strong> delivers to a specific address using the <strong>MAC table</strong>, and "learns" on its own.</li>
+      <li>A <strong>hub</strong> sends to everyone → collisions (outdated).</li>
+      <li><strong>VLAN</strong> — the logical division of a switch into isolated networks.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Find your MAC</h3>
+    <ol>
+      <li>Run <code>ipconfig /all</code> (Windows) or <code>ip link</code> (Linux) and find your network card's MAC address.</li>
+      <li>Determine the card's manufacturer from the first characters of the MAC (you can look up the OUI online).</li>
+      <li>State in one sentence how a MAC differs from an IP.</li>
+    </ol>
+
+    <h3>Part B. Build a LAN in a simulator</h3>
+    <ol>
+      <li>In Packet Tracer, place a switch and 3 computers, and connect them with cables.</li>
+      <li>Assign the computers IP addresses on the same subnet (for example, 192.168.1.0/24).</li>
+      <li>Ping the computers against each other and confirm that the switch has connected them.</li>
+    </ol>
+
+    <h3>Part C. Take a look at the MAC table</h3>
+    <ol>
+      <li>In the simulator, after a few pings, look at the switch's MAC address table.</li>
+      <li>Match which MAC is tied to which port.</li>
+      <li>Explain how the switch learned this mapping.</li>
+    </ol>
+
+    <h3>Part D. Experiment with VLANs (optional)</h3>
+    <ol>
+      <li>Create two VLANs on the switch and distribute the computers between them.</li>
+      <li>Verify that devices in different VLANs do NOT ping each other directly.</li>
+      <li>Explain why this kind of separation might be needed.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+
+    <h3>Part E. Observe ARP</h3>
+    <ol>
+      <li>Run <code>arp -a</code> and look at the IP ↔ MAC mapping your computer has remembered.</li>
+      <li>Explain why this table is needed.</li>
+    </ol>
+
+    <h3>Part F. Compare a hub and a switch (simulator)</h3>
+    <ol>
+      <li>In Packet Tracer, build one network on a hub, and another on a switch.</li>
+      <li>Turn on simulation mode and watch and compare how frames spread in each case.</li>
+      <li>Draw a conclusion about collisions.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Describe in your own words how a switch decides which port to send a frame to.</li>
+      <li>Explain the difference between a hub and a switch, and why collisions are bad.</li>
+      <li>Come up with a situation from an office or home where VLANs would come in handy.</li>
+      <li>Explain why devices inside a LAN find each other by MAC, not by IP.</li>
+      <li>Look up what a broadcast frame is, and describe it in two sentences.</li>
+      <li>Draw a diagram of a LAN made up of a switch and 4 devices, and label the MACs and ports on it.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain in your own words how a switch's self-learning process works.</li>
+      <li>What's the difference between full and half duplex, and what does it have to do with collisions?</li>
+      <li>What is a broadcast domain, and how is it reduced?</li>
+      <li>Look up what the ARP protocol does, and describe it in two sentences.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Test yourself</h2>
+    <ol>
+      <li>How does a MAC address differ from an IP address?</li>
+      <li>What does a switch store in its MAC address table?</li>
+      <li>What is the unit of data at the link layer called?</li>
+      <li>Why is a switch better than a hub?</li>
+      <li>What are VLANs for?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer — switching</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — Ethernet and switches</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connection to the course.</strong> The LAN you've built here will become one of the subnets we'll connect with a router in the next module. MAC addresses and frames are the foundation for understanding how a router differs from a switch.</p>
+    </blockquote>
+  </section>
+</div>

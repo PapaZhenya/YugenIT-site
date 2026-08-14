@@ -1,0 +1,19 @@
+{
+  "title": "Networking from zero: how communication works",
+  "cardText": "A hands-on course: from \"what happens when you press Enter\" to building and troubleshooting your own network. 9 modules, 3 parts.",
+  "modules": {
+    "overview": "About the course",
+    "program-map": "Course map",
+    "module-01": "Module 1. The journey of a single message",
+    "module-02": "Module 2. Addresses, names, and ports",
+    "module-03": "Module 3. Two models that sort everything into place",
+    "module-04": "Module 4. The local network from the inside",
+    "module-05": "Module 5. Connecting networks",
+    "module-06": "Module 6. The magic of autoconfiguration: DHCP and NAT",
+    "module-07": "Module 7. Without wires: Wi-Fi",
+    "module-08": "Module 8. When something breaks: troubleshooting",
+    "module-09": "Module 9. Securing the network",
+    "resources": "Free tools and platforms",
+    "assessment": "Grading system"
+  }
+}

@@ -1,0 +1,254 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Este módulo explica cómo el DHCP asigna automáticamente la configuración de red a los dispositivos, y cómo el NAT permite que muchos dispositivos compartan una sola dirección pública al salir a internet.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender por qué los dispositivos se configuran «solos» en la red</li>
+      <li>Analizar paso a paso el funcionamiento del DHCP</li>
+      <li>Entender qué es el arrendamiento de una dirección</li>
+      <li>Comprender en detalle cómo funciona el NAT</li>
+      <li>Entender qué problemas están relacionados con el DHCP y el NAT</li>
+      <li>Aprender a configurar la asignación automática de direcciones en el simulador</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>¿Te has preguntado por qué un teléfono nuevo en una cafetería sale a internet solo, aunque no hayas introducido ni la dirección, ni la máscara, ni la puerta de enlace? ¿Y por qué una decena de dispositivos en casa comparten una única dirección del proveedor? Detrás de esto hay dos mecanismos discretos pero fundamentales: el DHCP y el NAT. Veamos cómo convierten una configuración complicada en algo que «simplemente funciona».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Diálogo DHCP (DORA):</p>
+    <pre><code>Dispositivo                      Servidor DHCP (router)
+    |----- Discover (¡necesito configuración!) ----->|
+    |&lt;---- Offer (ofrezco 10.0.0.57) ------|
+    |----- Request (lo acepto) -------------->|
+    |&lt;---- Acknowledge (asignado) ---------|</code></pre>
+    <p>NAT: muchas privadas detrás de una pública:</p>
+    <pre><code>[PC 192.168.1.10]\
+[PC 192.168.1.11]-[ Router ]== pública 203.0.113.5 ==&gt; Internet
+[TV 192.168.1.12]/    (sustituye la dirección y recuerda a quién devolver la respuesta)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>El problema que resuelve el DHCP</h3>
+    <p>Para que un dispositivo funcione en la red, necesita como mínimo cuatro parámetros: <strong>dirección IP, máscara, puerta de enlace predeterminada y dirección del servidor DNS</strong>. Configurar esto manualmente en cada teléfono, portátil y bombilla inteligente sería una pesadilla: es fácil equivocarse, asignar la misma dirección a dos dispositivos u olvidar la puerta de enlace.</p>
+    <p>La solución es automatizar la asignación de la configuración. De eso se encarga el <strong>DHCP (Dynamic Host Configuration Protocol)</strong>. Gracias a él, te conectas a la red y, un segundo después, ya estás funcionando, sin necesidad de saber qué son la «máscara» o la «puerta de enlace».</p>
+
+    <h3>Cómo funciona el DHCP: cuatro pasos</h3>
+    <p>El intercambio DHCP se describe clásicamente en cuatro pasos (es fácil recordarlos como DORA):</p>
+    <ol>
+      <li><strong>Discover</strong> — el dispositivo acaba de conectarse y «grita» en la red: «¿Hay algún servidor DHCP por aquí? ¡Necesito configuración!»</li>
+      <li><strong>Offer</strong> — el servidor DHCP (normalmente el router) responde: «¡Aquí estoy! Te ofrezco esta dirección y estos parámetros».</li>
+      <li><strong>Request</strong> — el dispositivo dice: «De acuerdo, tomo esta dirección».</li>
+      <li><strong>Acknowledge</strong> — el servidor confirma: «Asignada a ti», y entrega el conjunto completo de la configuración.</li>
+    </ol>
+    <p>Todo este diálogo dura fracciones de segundo y ocurre de forma imperceptible cada vez que te conectas a la red.</p>
+
+    <h3>El arrendamiento de la dirección</h3>
+    <p>El DHCP no asigna la dirección para siempre, sino <strong>en arrendamiento (lease)</strong>, por un tiempo determinado (horas o días). Mientras el arrendamiento esté vigente, la dirección queda reservada para el dispositivo. Si el dispositivo abandona la red y no renueva el arrendamiento, al vencer el plazo la dirección vuelve al <strong>grupo (pool)</strong> común y se asigna a otro dispositivo.</p>
+    <p>Este enfoque ahorra direcciones: no hace falta mantener reservada una dirección para un teléfono que hace tiempo salió de la cafetería. Los dispositivos que permanecen en la red renuevan el arrendamiento automáticamente de forma periódica.</p>
+
+    <h3>NAT: una sola dirección pública para todos</h3>
+    <p>Ahora veamos la segunda «magia». Dentro de tu red, los dispositivos tienen direcciones privadas, y la dirección pública del proveedor suele ser una sola. El <strong>NAT (Network Address Translation)</strong> permite que todos salgan a internet a través de esa única dirección.</p>
+    <p>El mecanismo es el siguiente: cuando un dispositivo envía un paquete a internet, el enrutador <strong>sustituye</strong> su dirección privada por su propia dirección pública y anota en una tabla especial a quién y a qué puerto debe devolver la respuesta. Cuando llega la respuesta, el router consulta la tabla y la dirige al dispositivo correcto. Desde afuera, todo parece como si una sola dirección navegara por internet, aunque detrás de ella se escondan hasta cien dispositivos.</p>
+
+    <h3>Para qué sirve el NAT además de ahorrar direcciones</h3>
+    <p>La razón principal del NAT es la escasez de direcciones IPv4 públicas: no alcanzan para todos, y el NAT permite que una sola dirección dé servicio a toda una red. También tiene un efecto secundario agradable: desde afuera no se ve la estructura interna de la red, ni cuántos dispositivos tienes ni qué direcciones usan. No es una protección completa (el firewall es un tema aparte), pero sí una pequeña barrera.</p>
+    <p>La otra cara de la moneda: el NAT a veces complica algunos escenarios, por ejemplo, cuando se necesita que dispositivos externos se conecten al tuyo (juegos, servidores). En ese caso se configura el «reenvío de puertos» (port forwarding), pero eso ya queda fuera del curso básico.</p>
+
+    <h3>Qué suele fallar en el DHCP y el NAT</h3>
+    <p>Entender estos mecanismos explica de inmediato la mitad de los problemas de red cotidianos. Si dos dispositivos reciben la <strong>misma dirección</strong> (conflicto), su conectividad se cortará intermitentemente. Si el servidor DHCP no está disponible, el dispositivo no recibirá la configuración y se asignará a sí mismo una extraña dirección «autoinventada» (normalmente del rango <code>169.254.x.x</code>), una señal segura de que el DHCP no funcionó. Y si algo falla con el NAT o el reenvío de puertos, las conexiones externas hacia tu dispositivo no llegarán. Sabiendo esto, reducirás rápidamente la búsqueda de la causa.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Reserva de dirección (DHCP reservation)</h3>
+    <p>A veces es necesario que un dispositivo concreto reciba siempre <strong>la misma</strong> dirección, por ejemplo, una impresora de red o un servidor. Para eso, en el DHCP se hace una <strong>reserva</strong>: se vincula la dirección a la MAC del dispositivo. El dispositivo sigue recibiendo la configuración automáticamente, pero su dirección es fija. Cómodo: automatización y previsibilidad a la vez.</p>
+
+    <h3>Reenvío de puertos (port forwarding)</h3>
+    <p>El NAT esconde tus dispositivos, y desde afuera no se puede llegar hasta ellos; normalmente esto es bueno. Pero si montaste un servidor de juegos en casa y quieres que tus amigos se conecten, se configura el <strong>reenvío de puertos</strong>: se le indica al router «las solicitudes a tal puerto, redirígelas a este dispositivo interno». Es una «ventana» manual a través del NAT.</p>
+
+    <h3>DHCP y DNS juntos</h3>
+    <p>Ten en cuenta que el DHCP también entrega al dispositivo la <strong>dirección del servidor DNS</strong>. Por eso, si el DHCP está mal configurado y entrega un DNS que no funciona, se produce un panorama extraño: hay red, las IP responden al ping, pero los sitios web por nombre no cargan. La combinación «el DHCP entregó un DNS malo» es una fuente frecuente de fallos misteriosos.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis con un ejemplo: el teléfono se conecta al Wi-Fi de la cafetería</h2>
+    <p>Entraste a una cafetería y te conectaste a su Wi-Fi. ¿Qué ocurrió en ese segundo?</p>
+    <p>Tu teléfono gritó en la red: «¡Necesito configuración!» (<strong>Discover</strong>). El router de la cafetería respondió: «Toma la dirección <code>10.0.0.57</code>, la máscara, la puerta de enlace <code>10.0.0.1</code> y el DNS» (<strong>Offer</strong>). El teléfono aceptó (<strong>Request</strong>), y el router le asignó la dirección en arrendamiento por un par de horas (<strong>Acknowledge</strong>). Listo: el teléfono quedó configurado y listo para funcionar, y tú ni siquiera te diste cuenta.</p>
+    <p>Ahora abres un sitio web. El teléfono envía un paquete con su dirección privada <code>10.0.0.57</code>, y el router de la cafetería, mediante <strong>NAT</strong>, la sustituye por su única dirección pública y recuerda que la respuesta debe devolverse precisamente a tu teléfono. Desde afuera, todo el salón de la cafetería sale a internet bajo una sola dirección, y todo funciona.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: conflicto de direcciones</h2>
+    <p>Un administrador asignó manualmente <code>192.168.1.50</code> a un servidor sin excluir esa dirección del grupo (pool) del DHCP. Más tarde, el DHCP le asignó <code>192.168.1.50</code> a un portátil. Ahora hay dos dispositivos con la misma dirección: la conectividad de ambos se corta intermitentemente y los paquetes van «al lugar equivocado». La solución: dejar las direcciones estáticas fuera del pool, o usar la reserva DHCP. De ahí la regla: <strong>no asignes manualmente direcciones dentro del rango del DHCP</strong>.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: un dispositivo pierde y renueva el arrendamiento</h2>
+    <ol>
+      <li>El dispositivo se conectó y recibió una dirección mediante DORA con un arrendamiento (digamos, 24 horas).</li>
+      <li>Aproximadamente a la mitad del plazo, pide en silencio renovar el arrendamiento.</li>
+      <li>El servidor confirma: la dirección permanece asignada al dispositivo.</li>
+      <li>Si el dispositivo abandonó la red y no la renovó, al vencer el plazo la dirección vuelve al pool.</li>
+      <li>La dirección liberada, más tarde, se asigna a un nuevo dispositivo.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: una red automática con una impresora en dirección fija</h2>
+    <p>En Packet Tracer:</p>
+    <ul>
+      <li>configura la asignación DHCP para los ordenadores;</li>
+      <li>añade una «impresora» y hazle una reserva DHCP (dirección fija según su MAC);</li>
+      <li>comprueba que los ordenadores reciban direcciones automáticamente y que la impresora siempre reciba la misma;</li>
+      <li>describe en el informe para qué se hace esto.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>DHCP</strong> — protocolo de asignación automática de la configuración de red a los dispositivos</li>
+      <li><strong>DORA</strong> — los cuatro pasos del DHCP: Discover, Offer, Request, Acknowledge</li>
+      <li><strong>Arrendamiento (lease)</strong> — el plazo durante el cual el DHCP reserva una dirección para un dispositivo</li>
+      <li><strong>Pool de direcciones</strong> — el rango de direcciones desde el cual el DHCP las asigna a los dispositivos</li>
+      <li><strong>NAT</strong> — sustitución de direcciones privadas por una pública al salir a internet</li>
+      <li><strong>Conflicto de direcciones</strong> — situación en la que dos dispositivos reciben la misma IP</li>
+      <li><strong>169.254.x.x</strong> — la dirección que un dispositivo se asigna a sí mismo si el DHCP no respondió</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores frecuentes y mitos</h2>
+    <ul>
+      <li><strong>Error: pensar que la dirección se asigna para siempre.</strong> El DHCP la entrega en arrendamiento por un tiempo.</li>
+      <li><strong>Mito: el NAT es un firewall.</strong> El NAT resuelve la escasez de direcciones; la protección es una tarea aparte.</li>
+      <li><strong>Error: ignorar la dirección 169.254.x.x.</strong> Significa que el DHCP no funcionó.</li>
+      <li><strong>Mito: con el NAT cada dispositivo necesita una dirección pública.</strong> Al contrario: basta con una sola para todos.</li>
+      <li><strong>Error: asignar manualmente una dirección del pool del DHCP.</strong> Puede producirse un conflicto con una dirección ya asignada.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por qué en la cafetería el teléfono funciona de inmediato?</strong> El DHCP le asignó la configuración automáticamente.</li>
+      <li><strong>¿Se le puede dar a un dispositivo una dirección fija pero a través del DHCP?</strong> Sí, es la reserva por MAC.</li>
+      <li><strong>¿El NAT es seguridad?</strong> Oculta un poco la red, pero no sustituye a un firewall.</li>
+      <li><strong>¿Por qué los sitios web no cargan aunque las IP respondan al ping?</strong> Es posible que el DHCP haya entregado un DNS que no funciona.</li>
+      <li><strong>¿Qué es el reenvío de puertos?</strong> Una regla manual que permite conexiones externas hacia tu dispositivo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>El DHCP</strong> entrega: IP, máscara, puerta de enlace, DNS. Los pasos son <strong>DORA</strong>.</li>
+      <li><strong>Arrendamiento</strong> — la dirección se entrega por un tiempo y luego vuelve al pool.</li>
+      <li><strong>NAT</strong> — direcciones privadas detrás de una sola pública; recuerda a quién devolver la respuesta.</li>
+      <li><strong>169.254.x.x</strong> = el DHCP no respondió.</li>
+      <li>No asignes direcciones estáticas del pool del DHCP → conflicto.</li>
+      <li><strong>Reenvío de puertos</strong> — una «ventana» de afuera hacia adentro a través del NAT.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Observa el DHCP en acción</h3>
+    <ol>
+      <li>Revisa tu configuración (<code>ipconfig /all</code> o <code>ip addr</code>) y encuentra la IP, la máscara, la puerta de enlace y el DNS.</li>
+      <li>Determina si fueron asignados automáticamente (DHCP) o configurados manualmente.</li>
+      <li>Determina qué nodo de tu red actúa como servidor DHCP (normalmente el router).</li>
+    </ol>
+
+    <h3>Parte B. Configura el DHCP en el simulador</h3>
+    <ol>
+      <li>En Packet Tracer, configura en el enrutador o en un servidor la asignación de direcciones por DHCP (define el pool y los parámetros).</li>
+      <li>Cambia los ordenadores a la obtención automática de dirección.</li>
+      <li>Comprueba que recibieron direcciones del pool definido y verifica la conectividad con <code>ping</code>.</li>
+    </ol>
+
+    <h3>Parte C. Provoca un problema de DHCP</h3>
+    <ol>
+      <li>Desactiva el servidor DHCP en el simulador y vuelve a conectar el ordenador.</li>
+      <li>Observa qué dirección se asigna a sí mismo (presta atención a 169.254.x.x).</li>
+      <li>Saca una conclusión sobre cómo reconocer, por la dirección, que el DHCP no funcionó.</li>
+    </ol>
+
+    <h3>Parte D. Analiza el NAT</h3>
+    <ol>
+      <li>Dibuja un esquema: tres dispositivos con direcciones privadas → un router con una dirección pública → internet.</li>
+      <li>Indica qué es exactamente lo que sustituye el router y qué memoriza para devolver la respuesta al dispositivo correcto.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. El arrendamiento de la dirección</h3>
+    <ol>
+      <li>Busca en la configuración del router el plazo de arrendamiento del DHCP.</li>
+      <li>Revisa la lista de direcciones asignadas (DHCP leases), si está disponible.</li>
+      <li>Explica qué ocurrirá con la dirección de un dispositivo que se fue.</li>
+    </ol>
+
+    <h3>Parte F. Simula un conflicto</h3>
+    <ol>
+      <li>En el simulador, asigna manualmente a un dispositivo una dirección del pool del DHCP.</li>
+      <li>Observa el problema de conectividad y explica la causa.</li>
+      <li>Corrígelo dejando la dirección fuera del pool.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Explica con tus propias palabras qué hace el DHCP y para qué sirve.</li>
+      <li>Enumera los cuatro pasos del DHCP (DORA) y describe cada uno brevemente.</li>
+      <li>Explica qué es el arrendamiento de una dirección y para qué sirve.</li>
+      <li>Describe con tus propias palabras cómo funciona el NAT.</li>
+      <li>Describe qué ocurrirá si dos dispositivos reciben la misma dirección.</li>
+      <li>Busca qué es el «reenvío de puertos» (port forwarding) y explica en dos frases para qué sirve.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>¿Qué es la reserva DHCP y cuándo es necesaria?</li>
+      <li>Explica para qué sirve el reenvío de puertos y da un ejemplo.</li>
+      <li>Describe la cadena «DNS malo entregado por el DHCP → los sitios web no cargan».</li>
+      <li>Busca en qué se diferencia una dirección estática de una reserva DHCP.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿Qué cuatro parámetros suele entregar el DHCP?</li>
+      <li>¿Qué significan las letras DORA?</li>
+      <li>¿Qué es el arrendamiento de una dirección?</li>
+      <li>¿Qué hace el NAT y para qué sirve?</li>
+      <li>¿Qué indica una dirección del tipo 169.254.x.x?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer: DHCP y NAT</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics: servicios de red</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Con la autoconfiguración, la red se volvió cómoda. Solo falta liberarla de los cables (Wi-Fi) y aprender a repararla y protegerla: eso es la parte III.</p>
+    </blockquote>
+  </section>
+</div>

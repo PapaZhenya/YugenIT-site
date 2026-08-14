@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="yGrad" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.55" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#0f1230"/>
+      <stop offset="1" stop-color="#030712"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="none" stroke="#a855f7" stroke-opacity="0.35" stroke-width="1.5"/>
+
+  <g filter="url(#glow)">
+    <path d="M14 12 L32 34 L50 12"
+          fill="none" stroke="url(#yGrad)" stroke-width="8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M32 34 L32 54"
+          fill="none" stroke="url(#yGrad)" stroke-width="8"
+          stroke-linecap="round"/>
+  </g>
+
+  <circle cx="14" cy="12" r="4.2" fill="#22d3ee"/>
+  <circle cx="50" cy="12" r="4.2" fill="#a855f7"/>
+</svg>

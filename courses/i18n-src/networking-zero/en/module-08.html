@@ -1,0 +1,314 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module teaches you to systematically troubleshoot network problems using the "bottom-up" method, working with four basic diagnostic tools: ping, tracert/traceroute, ipconfig/ip, and nslookup.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Master the core network diagnostic tools</li>
+      <li>Learn to search for a fault systematically, not at random</li>
+      <li>Apply the "bottom-up" diagnostic method, layer by layer</li>
+      <li>Be able to localize typical problems</li>
+      <li>Read the output of the ping and traceroute commands</li>
+      <li>Know the most common causes of "the internet isn't working"</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>Sooner or later, every network "stops working" at some point. A beginner panics in that moment
+    and pokes around at random: rebooting everything, swapping cables, calling the provider. A specialist
+    acts differently — following a system, ruling out options step by step. This module gives you that
+    system and a simple set of commands used every single day.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>The "bottom-up" method — wherever the chain breaks, that's where the problem is:</p>
+    <pre><code>[6] The site/service itself  ← problem on the server side?
+[5] DNS (nslookup)   ← are names resolving?
+[4] Getting out to the internet (ping 8.8.8.8)
+[3] Gateway (ping the router)
+[2] Your own settings (ipconfig/ip)  ← any 169.254.x.x?
+[1] Physical layer (cable/Wi-Fi, link lights)
+      ↑ start at the bottom and work up</code></pre>
+    <p>Decision tree:</p>
+    <pre><code>ping the gateway?
+ ├─ no  -&gt; problem is in the local network (cable/address/gateway)
+ └─ yes -&gt; ping 8.8.8.8?
+          ├─ no  -&gt; problem getting out to the internet/with the provider
+          └─ yes -&gt; site by name?
+                    ├─ no  -&gt; DNS problem
+                    └─ yes -&gt; problem is on the site's side</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>Your diagnostic toolkit</h3>
+    <p>Four commands cover most everyday situations,
+    and they're available on any system:</p>
+    <ul>
+      <li><strong><code>ping</code></strong> — "are you alive?". Sends a short request to a host and waits for a reply. If there's a reply —
+      the host is reachable and the network to it is working.</li>
+      <li><strong><code>tracert</code> / <code>traceroute</code></strong> — "where's the break?". Shows the path to a host hop by hop and at which
+      step the connection is lost.</li>
+      <li><strong><code>ipconfig</code> / <code>ip</code></strong> — "what about my own setup?". Shows your address, mask, gateway, and DNS.</li>
+      <li><strong><code>nslookup</code></strong> — "do names still work?". Checks whether DNS responds and whether it correctly
+      resolves names into addresses.</li>
+    </ul>
+    <p>Master these four, and you'll already cover the vast majority of network problems.</p>
+
+    <h3>The "bottom-up" method, layer by layer</h3>
+    <p>Remember the layers from module 3? Diagnostics are done exactly along them,
+    from simple to complex:</p>
+    <ol>
+      <li><strong>Physical layer.</strong> Is the cable plugged in, is Wi-Fi connected, are the indicator lights on?</li>
+      <li><strong>Your own settings.</strong> Is there a proper IP (<code>ipconfig</code>/<code>ip</code>)? Is it not "self-assigned"
+      (169.254.x.x = DHCP failed)?</li>
+      <li><strong>Gateway.</strong> Does the router's address respond to ping? If not — the problem is inside the local network.</li>
+      <li><strong>Getting out to the internet.</strong> Does an external IP respond to ping (for example, <code>8.8.8.8</code>)? If yes, but sites
+      don't open — the issue isn't connectivity, it's DNS.</li>
+      <li><strong>DNS.</strong> Does <code>nslookup</code> work? If names aren't resolving — there's the cause.</li>
+      <li><strong>The site/service itself.</strong> Maybe the problem isn't on your end but on the server's.</li>
+    </ol>
+    <p>Wherever the chain breaks — that's where the root of the problem is. This order saves a huge amount of time.</p>
+
+    <h3>How to read ping</h3>
+    <p><code>ping</code> shows whether replies got through and how long they took. It's useful to look at
+    three things: <strong>whether there are any replies at all</strong> (if it's "request timed out" — the host is unreachable or is
+    blocking ping), <strong>response time</strong> (large delays mean the network is congested or far away), and <strong>loss</strong>
+    (if part of the replies are lost, the connection is unstable).</p>
+    <p>An important nuance: some hosts deliberately don't respond to ping for security reasons, so
+    a missing reply doesn't always mean something's broken. But as a first quick test, ping is indispensable.</p>
+
+    <h3>How to read traceroute</h3>
+    <p><code>traceroute</code>/<code>tracert</code> outputs a list of hops — the routers along the path
+    to the destination — and the time to each one. It's simple to read: go from top to bottom and see up to which hop
+    everything's fine, and where losses or "asterisks" (no reply) begin.</p>
+    <p>If the break is at the first or second hop, the problem is with you or your router. If it's further along, it's with the
+    provider — the problem isn't on your side. This helps you figure out who to actually call: fix it
+    yourself or contact the provider.</p>
+
+    <h3>The three most common causes of "no internet"</h3>
+    <p>Experience shows that three things are usually to blame.
+    First — <strong>DHCP/address problems</strong>: the device didn't get a proper IP (that same
+    169.254.x.x). Second — <strong>a wrong or unreachable gateway</strong>: locally everything seems fine, but it doesn't
+    reach the outside. Third — <strong>DNS not working</strong>: everything pings fine by IP, but sites don't open by name.</p>
+    <p>Check these three first — and most problems will be solved in a couple of minutes. This is exactly why
+    the "bottom-up" method is so effective: it leads you straight to these typical causes.</p>
+
+    <h3>Diagnostic discipline: change one thing at a time</h3>
+    <p>Golden rule: <strong>change one thing at a time and
+    check the result</strong>. If you rebooted the router, changed the cable, and switched DNS all at once — and
+    it started working, you won't know what actually helped, and next time you'll be guessing again. Change
+    one thing at a time, record what you checked and what changed. This is what separates a master from
+    a "random poker," and it will serve you in any technical field, not just networking.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>What ping replies mean</h3>
+    <ul>
+      <li><strong>"Reply from …"</strong> — the host is reachable; check the time (ms).</li>
+      <li><strong>"Request timed out"</strong> — no reply: the host is unreachable, overloaded, or blocking ping.</li>
+      <li><strong>"Destination host unreachable"</strong> — no route: often a gateway/settings problem.</li>
+      <li>Varying times and losses across a series — an unstable connection.</li>
+    </ul>
+
+    <h3>Useful command flags</h3>
+    <p><code>ping -t</code> (Windows) / <code>ping</code> without a count (Linux) — continuous ping, handy for catching "intermittent"
+    drops. <code>ping -n 100</code> — send 100 requests and assess loss. <code>tracert -d</code> — don't resolve
+    addresses to names (faster). Knowing a couple of flags speeds up diagnostics noticeably.</p>
+
+    <h3>Logs and indicators</h3>
+    <p>Don't forget the simple stuff: <strong>the lights</strong> on the router and network adapter say a lot (no link — no
+    cable/signal). And the router's settings often have an <strong>event log</strong> — showing reboots,
+    provider issues, device connections. Sometimes the answer is right there on the surface.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: a site won't open — finding the cause</h2>
+    <p>Situation: the browser says the site is unavailable.
+    Let's follow the method.</p>
+    <p>The cable/Wi-Fi is in place, the indicators are lit — the physical layer is fine. <code>ipconfig</code> shows a proper
+    address, <code>192.168.1.20</code>, and gateway <code>192.168.1.1</code> — settings are present. We ping the gateway <code>192.168.1.1</code> —
+    it replies, so the local network works. We ping <code>8.8.8.8</code> — it replies too! So there's a way out to the
+    internet, connectivity isn't the issue.</p>
+    <p>That leaves DNS. We run <code>nslookup example.com</code> — an error, the name doesn't resolve. There's the cause: the connection
+    works, but names aren't turning into addresses. It's fixed by changing the DNS server in the settings. Notice:
+    we didn't reboot everything in a row — in five steps we pinpointed the root exactly.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: internet that's "there, then not"</h2>
+    <p>Intermittent drops are the most annoying kind. I run <code>ping -t 8.8.8.8</code> and leave it for 10 minutes. I see
+    periodic "request timed out" messages and spikes in response time — meaning the connection is unstable (not
+    "completely broken"). Next I narrow it down: is it the same up to the gateway? If it's stable up to the gateway but not beyond,
+    the problem is with the provider or on the channel. Continuous ping is your best friend in cases like this.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: "not a single site is loading for me"</h2>
+    <ol>
+      <li>I check the lights/network icon — there's a connection.</li>
+      <li><code>ipconfig</code> → address <code>169.254.1.7</code>. Ah, that's a telltale sign: <strong>DHCP failed</strong>.</li>
+      <li>So the problem is at the settings step — the device didn't get an address.</li>
+      <li>I restart the connection / check DHCP on the router.</li>
+      <li>Now the address is proper, <code>192.168.1.20</code>, and there's a gateway.</li>
+      <li><code>ping</code> to the gateway and to <code>8.8.8.8</code> both go through; the site opens. Done.</li>
+    </ol>
+    <p>Notice: I found the cause at step two, without touching everything in a row.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: your own diagnostic checklist</h2>
+    <p>Make a pocket checklist (one page) you could use to fix a network for anyone:</p>
+    <ul>
+      <li>6 "bottom-up" steps with a command for each;</li>
+      <li>a breakdown of typical ping replies;</li>
+      <li>the three most common causes and how to check for them;</li>
+      <li>the "change one thing at a time" rule.</li>
+    </ul>
+    <p>Test your checklist on a real (or simulated) fault.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>ping</strong> — a command for checking host reachability</li>
+      <li><strong>traceroute / tracert</strong> — a command that shows the path to a host hop by hop</li>
+      <li><strong>ipconfig / ip</strong> — a command for viewing your own network settings</li>
+      <li><strong>nslookup</strong> — a command for checking that DNS works</li>
+      <li><strong>The "bottom-up" method</strong> — diagnostics by layer, from the physical layer to the application</li>
+      <li><strong>Latency</strong> — a host's response time, shown by ping</li>
+      <li><strong>Packet loss</strong> — the share of replies that didn't arrive — a sign of an unstable connection</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: changing everything at once.</strong> Change one thing at a time and check — otherwise you won't know what helped.</li>
+      <li><strong>Myth: no reply to ping = broken.</strong> Some hosts deliberately don't respond to ping.</li>
+      <li><strong>Mistake: blaming the provider right away.</strong> First check your own side (address, gateway, DNS).</li>
+      <li><strong>Myth: if 8.8.8.8 responds to ping but sites won't load — "the internet is broken."</strong> This is a classic sign of a DNS problem.</li>
+      <li><strong>Mistake: skipping the settings step.</strong> Often the root cause is simply a wrong address or gateway.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>A host isn't responding to ping — is it definitely broken?</strong> No, it might just be blocking ping.</li>
+      <li><strong>Where do you even start?</strong> At the bottom: the cable/Wi-Fi and your own settings.</li>
+      <li><strong>How do you know whether to fix it yourself or call the provider?</strong> Via traceroute: is the break on your end or further along.</li>
+      <li><strong>What is <code>ping -t</code>?</strong> A continuous ping for catching "intermittent" drops.</li>
+      <li><strong>Why can't you change everything at once?</strong> You won't know what actually helped.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Commands: <code>ping</code>, <code>tracert/traceroute</code>, <code>ipconfig/ip</code>, <code>nslookup</code>.</li>
+      <li>Order: physical layer → settings → gateway → getting out (8.8.8.8) → DNS → site.</li>
+      <li><code>169.254.x.x</code> = DHCP failed.</li>
+      <li>8.8.8.8 works, names don't = <strong>DNS</strong>.</li>
+      <li>Break at hop 1 = on your end; further along = with the provider.</li>
+      <li>Change <strong>one thing at a time</strong> and check.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Run diagnostics on your own network</h3>
+    <ol>
+      <li>Check your own settings: <code>ipconfig</code> (Windows) or <code>ip addr</code> (Linux/Mac).</li>
+      <li>Ping in order: gateway → external IP <code>8.8.8.8</code> → the site by name.</li>
+      <li>Determine at which step the problem would be if <code>8.8.8.8</code> responded to ping, but the site by name did not.</li>
+    </ol>
+
+    <h3>Part B. Read a traceroute</h3>
+    <ol>
+      <li>Run <code>tracert</code> (or <code>traceroute</code>) to any site.</li>
+      <li>Find your router (the first hop) and determine the total number of hops.</li>
+      <li>Mark where the provider's network begins, and where the "outside world" begins.</li>
+    </ol>
+
+    <h3>Part C. Fix a fault in the simulator</h3>
+    <ol>
+      <li>In Packet Tracer, take your network from module 5.</li>
+      <li>Break one thing (for example, remove the gateway on a PC or set a wrong DNS).</li>
+      <li>Run diagnostics step by step and find where the connection breaks.</li>
+      <li>Fix the fault and confirm recovery with the <code>ping</code> command.</li>
+    </ol>
+
+    <h3>Part D. Build your own algorithm</h3>
+    <ol>
+      <li>Write up a "6 steps of network diagnostics" reference sheet in your own words.</li>
+      <li>Add to each step the command used to check it.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. Continuous ping</h3>
+    <ol>
+      <li>Run <code>ping -t 8.8.8.8</code> (or without a count on Linux) for a couple of minutes.</li>
+      <li>Assess stability: is there loss and are there spikes in time.</li>
+    </ol>
+
+    <h3>Part F. Diagnostic scenario</h3>
+    <ol>
+      <li>Ask someone (or do it blind yourself) to introduce a fault into the network simulator.</li>
+      <li>Find it strictly using the "bottom-up" method, recording each step.</li>
+      <li>Write up a mini-report: what you checked, where the break was, what you fixed.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent study assignments</h2>
+    <ul>
+      <li>Write a "6 steps of network diagnostics" reference sheet.</li>
+      <li>Describe a real-life case when the internet went out, and how you'd fix it step by step.</li>
+      <li>Explain what the situation "8.8.8.8 responds to ping, but sites don't open by name" tells you.</li>
+      <li>Explain why it's important to change one parameter at a time.</li>
+      <li>Work out what you can tell from a traceroute if the break is at the first hop, versus at the tenth.</li>
+      <li>Find out what the <code>ping -t</code> command (continuous ping) is, and when it's useful.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>Write out what the four types of ping replies mean.</li>
+      <li>Give one example each of a break at the first hop and at the tenth hop.</li>
+      <li>Build a diagnostic decision tree in your own words.</li>
+      <li>Find out what <code>pathping</code> (Windows) shows, and how it's useful.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>Which four commands make up the basic diagnostic toolkit?</li>
+      <li>In what order is diagnostics carried out using the "bottom-up" method?</li>
+      <li>What does the address 169.254.x.x indicate?</li>
+      <li>What does it mean when 8.8.8.8 responds to ping, but a site doesn't open by name?</li>
+      <li>Why can't you change several things at the same time?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Cisco Packet Tracer — diagnostics practice</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connection to the course.</strong> Diagnostics is a skill you'll use every day on the job. The final module will add the skill of defending to the skill of fixing — and bring everything together in the capstone project.</p>
+    </blockquote>
+  </section>
+</div>

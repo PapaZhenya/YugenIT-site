@@ -1,0 +1,254 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module explains how DHCP automatically hands devices their network settings, and how NAT lets many devices share a single public address when going out to the internet.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand why devices configure themselves on a network "on their own"</li>
+      <li>Break down how DHCP works step by step</li>
+      <li>Understand what an address lease is</li>
+      <li>Work through in detail how NAT operates</li>
+      <li>Understand what problems are associated with DHCP and NAT</li>
+      <li>Learn to configure automatic address assignment in the simulator</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>Have you ever wondered why a new phone gets online at a cafe by itself, even though you never entered an address, a mask, or a gateway? Or why a dozen devices at home share a single address from the provider? Behind this are two quiet but essential mechanisms — DHCP and NAT. Let's work out how they turn complicated setup into "it just works".</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>The DHCP exchange (DORA):</p>
+    <pre><code>Device                           DHCP server (router)
+    |----- Discover (need settings!) -------->|
+    |&lt;---- Offer (here's 10.0.0.57) ----------|
+    |----- Request (I'll take it) ------------>|
+    |&lt;---- Acknowledge (locked in) ------------|</code></pre>
+    <p>NAT — many private addresses behind one public one:</p>
+    <pre><code>[PC 192.168.1.10]\
+[PC 192.168.1.11]-[ Router ]== public 203.0.113.5 ==&gt; Internet
+[TV 192.168.1.12]/    (swaps the address and remembers who to send the reply back to)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Notes</h2>
+
+    <h3>The problem DHCP solves</h3>
+    <p>For a device to work on a network, it needs at least four parameters: <strong>an IP address, a subnet mask, a default gateway, and a DNS server address</strong>. Entering these by hand on every phone, laptop, and smart light bulb is a nightmare: it's easy to make a mistake, hand two devices the same address, or forget the gateway.</p>
+    <p>The solution is to automate handing out these settings. That's the job of <strong>DHCP (Dynamic Host Configuration Protocol)</strong>. Thanks to it, you connect to a network and are up and running a second later, without ever needing to know the words "mask" or "gateway".</p>
+
+    <h3>How DHCP works: four steps</h3>
+    <p>The DHCP exchange is classically described in four steps (easy to remember as DORA):</p>
+    <ol>
+      <li><strong>Discover</strong> — the device has just connected and "shouts" onto the network: "Is there a DHCP server here? I need settings!"</li>
+      <li><strong>Offer</strong> — the DHCP server (usually the router) answers: "There is! Here's the address and parameters I'm offering you."</li>
+      <li><strong>Request</strong> — the device says: "Agreed, I'll take this address."</li>
+      <li><strong>Acknowledge</strong> — the server confirms: "Locked in for you," and hands over the full set of settings.</li>
+    </ol>
+    <p>This whole exchange takes a fraction of a second and happens unnoticed every time you connect to a network.</p>
+
+    <h3>Address lease</h3>
+    <p>DHCP doesn't hand out an address forever — it's given <strong>on lease</strong>, for a set amount of time (hours or days). While the lease is active, the address stays assigned to the device. If the device has left the network and didn't renew the lease, once the term expires the address goes back into the shared <strong>pool</strong> and is given to someone else.</p>
+    <p>This approach saves addresses: there's no need to keep an address reserved for a phone that left the cafe long ago. Devices that stay on the network periodically renew their lease automatically.</p>
+
+    <h3>NAT: one public address for everyone</h3>
+    <p>Now for the second bit of "magic". Inside your network, devices have private addresses, while the public address from your provider is usually just one. <strong>NAT (Network Address Translation)</strong> lets everyone get online through that single address.</p>
+    <p>The mechanism works like this: when a device sends a packet to the internet, the router <strong>swaps</strong> its private address for its own public one and writes down in a special table who to send the response back to and on which port. When the response arrives, the router checks the table and forwards it to the right device. From the outside, it all looks like a single address is going online, even though a hundred devices might be hiding behind it.</p>
+
+    <h3>Why NAT exists, beyond saving addresses</h3>
+    <p>The main reason for NAT is a shortage of public IPv4 addresses: there simply aren't enough for everyone, and NAT lets a single address serve an entire network. There's also a nice side effect: from the outside, the internal structure of your network isn't visible — how many devices you have or what addresses they use. That's not full protection (a firewall is a separate topic), but it is a small barrier.</p>
+    <p>The flip side: NAT sometimes complicates certain scenarios — for example, when you need something outside your network to connect to your device (games, servers). In that case you set up "port forwarding" — but that's beyond the basic course.</p>
+
+    <h3>What commonly breaks with DHCP and NAT</h3>
+    <p>Understanding these mechanisms immediately explains half of everyday network problems. If two devices ended up with the <strong>same address</strong> (a conflict), their connections will keep dropping. If the DHCP server is unreachable, the device won't get any settings and will assign itself a strange "self-invented" address (usually from the <code>169.254.x.x</code> range) — a sure sign that DHCP didn't work. And if something is wrong with NAT or port forwarding, external connections to your device won't get through. Knowing this lets you narrow down the cause quickly.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>Address reservation (DHCP reservation)</h3>
+    <p>Sometimes a specific device needs to always get the <strong>same</strong> address — a network printer or server, for example. For this, DHCP offers <strong>reservation</strong>: the address is tied to the device's MAC address. The device still gets its settings automatically, but its address stays fixed. Convenient: both automation and predictability.</p>
+
+    <h3>Port forwarding</h3>
+    <p>NAT hides your devices, and nothing from outside can reach them directly — usually that's a good thing. But if you've set up a game server at home and want your friends to connect, you configure <strong>port forwarding</strong>: you tell the router "send requests on this port to this specific internal device." It's a manual "window" through NAT.</p>
+
+    <h3>DHCP and DNS together</h3>
+    <p>Note that DHCP also hands out the device's <strong>DNS server address</strong>. So if DHCP is misconfigured and hands out a broken DNS address, you'll see a strange picture — the network is there, IPs respond to pings, but websites won't open by name. "DHCP handed out a bad DNS" is a common source of mysterious problems.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: a phone connects to cafe Wi-Fi</h2>
+    <p>You walked into a cafe and connected to their Wi-Fi. What happened in that one second?</p>
+    <p>Your phone shouted onto the network: "I need settings!" (<strong>Discover</strong>). The cafe's router answered: "Here, take address <code>10.0.0.57</code>, a mask, gateway <code>10.0.0.1</code>, and DNS" (<strong>Offer</strong>). The phone agreed (<strong>Request</strong>), and the router locked the address to it on lease for a couple of hours (<strong>Acknowledge</strong>). Done — the phone is configured and ready to work, and you never even noticed.</p>
+    <p>Now you open a website. The phone sends a packet with its private address <code>10.0.0.57</code>, and the cafe's router uses <strong>NAT</strong> to swap it for its single public address, remembering that the reply needs to go back to your phone specifically. From the outside, the whole cafe goes online under a single address — and everything works.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: an address conflict</h2>
+    <p>An admin manually assigned <code>192.168.1.50</code> to a server without excluding that address from the DHCP pool. Later, DHCP handed out <code>192.168.1.50</code> to a laptop. Now two devices share the same address — the connection for both keeps dropping, and packets go "to the wrong place." The fix: either move static addresses outside the pool, or use DHCP reservation. Hence the rule: <strong>never manually assign addresses from the DHCP range</strong>.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: a device loses and renews its lease</h2>
+    <ol>
+      <li>The device connects and gets an address through DORA on a lease (say, 24 hours).</li>
+      <li>Roughly halfway through the term, it quietly asks to renew the lease.</li>
+      <li>The server confirms — the address stays assigned to the device.</li>
+      <li>If the device left the network and didn't renew, once the term expires the address returns to the pool.</li>
+      <li>The freed-up address later goes to a new device.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: an auto-configured network with a printer on a fixed address</h2>
+    <p>In Packet Tracer:</p>
+    <ul>
+      <li>set up DHCP for the computers;</li>
+      <li>add a "printer" and set up DHCP reservation for it (a fixed address by MAC);</li>
+      <li>verify that the PCs get their addresses automatically, while the printer always gets the same one;</li>
+      <li>describe in your report why this is done.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>DHCP</strong> — a protocol for automatically handing out network settings to devices</li>
+      <li><strong>DORA</strong> — the four steps of DHCP: Discover, Offer, Request, Acknowledge</li>
+      <li><strong>Lease</strong> — the period of time for which DHCP assigns an address to a device</li>
+      <li><strong>Address pool</strong> — the range of addresses that DHCP hands out to devices</li>
+      <li><strong>NAT</strong> — swapping private addresses for a public one when going out to the internet</li>
+      <li><strong>Address conflict</strong> — a situation where two devices end up with the same IP</li>
+      <li><strong>169.254.x.x</strong> — an address a device assigns to itself if DHCP didn't respond</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: thinking an address is handed out forever.</strong> DHCP hands it out on a temporary lease.</li>
+      <li><strong>Myth: NAT is a firewall.</strong> NAT solves address shortages; protection is a separate task.</li>
+      <li><strong>Mistake: ignoring an address like 169.254.x.x.</strong> It means DHCP didn't work.</li>
+      <li><strong>Myth: with NAT, every device needs a public address.</strong> The opposite is true — one for everyone is enough.</li>
+      <li><strong>Mistake: manually assigning an address from the DHCP pool.</strong> This can cause a conflict with an address that gets handed out.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Why does my phone work right away at a cafe?</strong> DHCP handed it its settings automatically.</li>
+      <li><strong>Can a device get a permanent address, but still through DHCP?</strong> Yes — that's reservation by MAC address.</li>
+      <li><strong>Is NAT a security feature?</strong> It hides the network a bit, but it's no substitute for a firewall.</li>
+      <li><strong>Why don't websites load even though IPs respond to pings?</strong> DHCP may have handed out a broken DNS address.</li>
+      <li><strong>What is port forwarding?</strong> A manual rule that lets external connections reach your device.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>DHCP</strong> hands out: IP, mask, gateway, DNS. Steps — <strong>DORA</strong>.</li>
+      <li><strong>Lease</strong> — the address is handed out for a set time, then returned to the pool.</li>
+      <li><strong>NAT</strong> — private addresses behind one public one; remembers who to send the reply back to.</li>
+      <li><strong>169.254.x.x</strong> = DHCP didn't respond.</li>
+      <li>Don't set static addresses from the DHCP pool → conflict.</li>
+      <li><strong>Port forwarding</strong> — a "window" from outside to inside through NAT.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Catch DHCP in action</h3>
+    <ol>
+      <li>Check your own settings (<code>ipconfig /all</code> or <code>ip addr</code>) and find the IP, mask, gateway, and DNS.</li>
+      <li>Determine whether they were handed out automatically (DHCP) or set manually.</li>
+      <li>Determine which node on your network acts as the DHCP server (usually the router).</li>
+    </ol>
+
+    <h3>Part B. Set up DHCP in the simulator</h3>
+    <ol>
+      <li>In Packet Tracer, configure a router or server to hand out addresses via DHCP (set the pool and parameters).</li>
+      <li>Switch the computers to automatic address assignment.</li>
+      <li>Confirm that they received addresses from the configured pool, and check connectivity with <code>ping</code>.</li>
+    </ol>
+
+    <h3>Part C. Trigger a DHCP problem</h3>
+    <ol>
+      <li>Disable the DHCP server in the simulator and reconnect a computer.</li>
+      <li>Watch what address it assigns itself (pay attention to 169.254.x.x).</li>
+      <li>Draw a conclusion about how to recognize from the address that DHCP didn't work.</li>
+    </ol>
+
+    <h3>Part D. Break down NAT</h3>
+    <ol>
+      <li>Draw a diagram: three devices with private addresses → a router with a single public address → the internet.</li>
+      <li>Label exactly what the router swaps and what it remembers in order to send the response back to the right device.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. Address lease</h3>
+    <ol>
+      <li>Find the DHCP lease term in your router's settings.</li>
+      <li>Look at the list of assigned addresses (DHCP leases), if available.</li>
+      <li>Explain what will happen to the address of a device that has left the network.</li>
+    </ol>
+
+    <h3>Part F. Simulate a conflict</h3>
+    <ol>
+      <li>In the simulator, manually assign a device an address from the DHCP pool.</li>
+      <li>Observe the connectivity problem and explain the cause.</li>
+      <li>Fix it by moving the address outside the pool.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Self-study assignments</h2>
+    <ul>
+      <li>Explain in your own words what DHCP does and why it's needed.</li>
+      <li>List the four steps of DHCP (DORA) and briefly describe each one.</li>
+      <li>Explain what an address lease is and why it's needed.</li>
+      <li>Describe in your own words how NAT works.</li>
+      <li>Describe what happens if two devices end up with the same address.</li>
+      <li>Look up what "port forwarding" is, and explain in two sentences why it's needed.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>What is DHCP reservation, and when is it needed?</li>
+      <li>Explain why port forwarding is needed, and give an example.</li>
+      <li>Describe the chain of events: "bad DNS from DHCP → websites won't open."</li>
+      <li>Find out how a static address differs from DHCP reservation.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>What four parameters does DHCP usually hand out?</li>
+      <li>What do the letters DORA stand for?</li>
+      <li>What is an address lease?</li>
+      <li>What does NAT do and why is it needed?</li>
+      <li>What does an address like 169.254.x.x tell you?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer — DHCP and NAT</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — network services</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Course connection.</strong> With auto-configuration, the network became convenient. What's left is to free it from wires (Wi-Fi) and learn to troubleshoot and secure it — that's Part III.</p>
+    </blockquote>
+  </section>
+</div>

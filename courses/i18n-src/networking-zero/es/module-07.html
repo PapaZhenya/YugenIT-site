@@ -1,0 +1,251 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Cómo funciona el Wi-Fi: frecuencias, estándares, qué afecta a la señal y cómo configurar una red inalámbrica de forma segura.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender cómo funciona la transmisión de datos inalámbrica</li>
+      <li>Comprender las frecuencias de Wi-Fi (2,4, 5 y 6 GHz)</li>
+      <li>Conocer los estándares de Wi-Fi y su evolución</li>
+      <li>Entender qué afecta a la calidad de la señal</li>
+      <li>Aprender los fundamentos de una configuración segura de Wi-Fi</li>
+      <li>Diferenciar entre router y punto de acceso</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Los cables son fiables, pero incómodos: no vas a tender un cable hasta cada teléfono. El Wi-Fi los sustituye por ondas de radio: eso da libertad de movimiento, pero trae consigo todo un conjunto de nuevos matices: la velocidad depende de la distancia y de las paredes, y la seguridad exige una atención aparte. Veamos cómo funciona todo esto y cómo configurar correctamente una red doméstica.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>El router como «tres en uno» y la cobertura de Wi-Fi:</p>
+    <pre><code>        [ Router doméstico ]
+        +-----------------------+
+        | Enrutador (WAN)       |---> Proveedor / Internet
+        | Conmutador (LAN)      |---> dispositivos por cable
+        | Punto de acceso (Wi-Fi)|~~~ señal de radio ~~~
+        +-----------------------+
+   la señal se debilita: [fuerte]===pared===[media]===pared===[débil]</code></pre>
+    <p>Bandas:</p>
+    <pre><code>2,4 GHz:  llega más lejos, atraviesa paredes, pero es más lenta y con más «ruido»
+5 GHz:    más rápida y limpia, pero con menor alcance
+6 GHz:    aún más rápida (requiere dispositivos nuevos)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>Cómo funciona el Wi-Fi en general</h3>
+    <p><strong>El Wi-Fi</strong> es la transmisión de datos por ondas de radio en lugar de por cable. La señal la emite un <strong>punto de acceso (access point)</strong>; los dispositivos se conectan a él por el nombre de la red: el <strong>SSID</strong>. En un router doméstico el punto de acceso viene integrado, por lo que en el día a día «router» y «Wi-Fi» suelen considerarse lo mismo, aunque son funciones distintas: el enrutamiento y la difusión inalámbrica.</p>
+    <p>Los datos se transmiten por el aire con los mismos principios que por cable (tramas, direcciones MAC); solo cambia el medio, que ahora es el radio. Por eso aparecen complicaciones propias: la señal se debilita con la distancia, se refleja, se ve interferida y, en principio, cualquiera cercano puede «escucharla»; de ahí la atención especial al cifrado.</p>
+
+    <h3>Frecuencias: 2,4, 5 y 6 GHz</h3>
+    <p>El Wi-Fi funciona en varias bandas de frecuencia, y cada una tiene su propio carácter:</p>
+    <ul>
+      <li><strong>2,4 GHz</strong>: llega más lejos y atraviesa mejor las paredes, pero es más lenta y está más «cargada de ruido» (en esta frecuencia funcionan Bluetooth, microondas y redes vecinas).</li>
+      <li><strong>5 GHz</strong>: notablemente más rápida y limpia, pero con menor alcance, y las paredes la «absorben» con más fuerza.</li>
+      <li><strong>6 GHz</strong>: la banda más nueva (Wi-Fi 6E/7): aún más rápida y despejada, pero requiere dispositivos recientes.</li>
+    </ul>
+    <p>La regla para elegir es simple: si necesitas cobertura de largo alcance, usa 2,4 GHz; si necesitas velocidad cerca del router, usa 5 o 6 GHz. Muchos routers transmiten en varias bandas a la vez.</p>
+
+    <h3>Estándares de Wi-Fi y su evolución</h3>
+    <p>Los estándares se denominan <strong>Wi-Fi 4/5/6/6E/7</strong> (detrás están los nombres técnicos como 802.11n/ac/ax). Cuanto más nuevo es el estándar, mayor es la velocidad, mejor el funcionamiento con muchos dispositivos conectados a la vez y más eficiente el uso del aire.</p>
+    <p>El sentido práctico para ti: la velocidad de la red está limitada por el eslabón más débil. Si el router es moderno pero el dispositivo es antiguo (o al revés), acordarán trabajar según las posibilidades del más antiguo. Por eso la actualización tiene sentido en ambos lados.</p>
+
+    <h3>Qué afecta a la calidad de la señal</h3>
+    <p>La señal de radio es caprichosa. La debilitan las <strong>paredes y los techos/suelos</strong> (sobre todo el hormigón y el metal), la <strong>distancia</strong> y las <strong>interferencias</strong> de otras redes y aparatos domésticos. De ahí conclusiones prácticas: el punto de acceso conviene colocarlo en el centro y en alto, lejos del metal y de los microondas; en casas grandes se usan varios puntos (mesh); y si hay muchas redes vecinas, ayuda cambiar a un canal menos saturado.</p>
+    <p>Entender estos factores explica de inmediato por qué «en la habitación del fondo el Wi-Fi apenas llega» y qué se puede hacer al respecto.</p>
+
+    <h3>Seguridad de Wi-Fi: el mínimo obligatorio</h3>
+    <p>Como la señal la puede oír cualquiera alrededor, <strong>el cifrado es obligatorio</strong>. Una red abierta sin contraseña es como una conversación a gritos en el patio: cualquiera puede interceptar el tráfico. Usa un cifrado moderno, <strong>WPA2</strong> o, mejor todavía, <strong>WPA3</strong>, con una contraseña larga y fiable.</p>
+    <p>El segundo punto crítico: cambia la <strong>contraseña de administrador del router</strong>. Los pares de fábrica «admin/admin» los conoce todo el mundo, y si no se cambian, cualquiera puede entrar en la configuración de tu red. También conviene actualizar el firmware del router: en las actualizaciones se cierran vulnerabilidades.</p>
+
+    <h3>Amenazas típicas de las redes inalámbricas</h3>
+    <p>Para que la protección tenga sentido, conviene saber de qué te proteges. Las principales amenazas inalámbricas son: la <strong>interceptación</strong> del tráfico sin cifrar en una red abierta; el <strong>punto de acceso falso</strong>, cuando un atacante levanta un Wi-Fi con el mismo nombre que una red conocida y tú te conectas a él, entregando tu tráfico; y la <strong>adivinación de contraseñas débiles</strong>. Las tres se cierran con las mismas medidas: cifrado, contraseña fiable, cautela con las redes abiertas y atención al nombre de la red a la que te conectas.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Canales e interferencias</h3>
+    <p>Cada banda se divide en <strong>canales</strong>. Si las redes vecinas usan el mismo canal que tú, se interfieren entre sí y la velocidad baja. En la banda de 2,4 GHz hay pocos canales y se solapan (por eso ahí va más apretado), en la de 5 GHz hay más canales. Muchos routers eligen el canal de forma automática, pero a veces elegir a mano un canal menos saturado ayuda de forma notable.</p>
+
+    <h3>Mesh y repetidores: cómo ampliar la cobertura</h3>
+    <p>Si un solo punto no cubre toda la casa, hay dos enfoques. El <strong>repetidor</strong> retransmite la señal más lejos (pero normalmente pierde parte de la velocidad). El <strong>sistema mesh</strong> son varios puntos coordinados con un mismo nombre de red: te mueves por la casa y el dispositivo cambia de forma imperceptible al punto más cercano. El mesh es más caro, pero más cómodo y estable.</p>
+
+    <h3>Red de invitados</h3>
+    <p>Una buena práctica es activar el <strong>Wi-Fi de invitados</strong>: una red aparte para visitas y dispositivos «inteligentes», aislada de tus computadoras. Aunque un dispositivo de invitado esté infectado, no llegará a tus datos. Es la segmentación doméstica, de la que se habla en detalle en el módulo 9.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis de un ejemplo: por qué en la habitación del fondo el Wi-Fi va lento</h2>
+    <p>El router está en el recibidor y tú estás en la habitación del fondo, tras dos paredes de hormigón, quejándote de que el internet va lento. Vamos a analizarlo por partes.</p>
+    <p>Lo más probable es que estés conectado a la banda de 5 GHz (rápida, pero de poco alcance). Dos paredes de hormigón atenúan mucho precisamente los 5 GHz: la señal llega débil y los dispositivos «acuerdan» trabajar a baja velocidad. Soluciones: cambiar a 2,4 GHz (más alcance, aunque más lenta), acercar el router al centro del piso, colocar un segundo punto (mesh) o cambiar el canal si está saturado.</p>
+    <p>¿Ves? Sabiendo de frecuencias e interferencias, no adivinas, sino que actúas con criterio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: un vecino está «colgado» de tu Wi-Fi</h2>
+    <p>La velocidad desaparece sin explicación. Entras en la lista de dispositivos conectados del router y ves uno desconocido. Suele haber dos causas: una contraseña débil o que directamente es la de fábrica. Qué hacer: cambiar la contraseña del Wi-Fi por una larga, asegurarte de que está activado WPA2/WPA3, y cambiar la contraseña de administrador del router. Después de eso los dispositivos ajenos se desconectarán. La moraleja: la contraseña y el cifrado no son un formalismo.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: cómo se conecta un dispositivo al Wi-Fi</h2>
+    <ol>
+      <li>El dispositivo «escucha el aire» y ve las redes disponibles (SSID).</li>
+      <li>Eliges la red e introduces la contraseña.</li>
+      <li>El dispositivo y el punto de acceso verifican la contraseña y <strong>acuerdan el cifrado</strong> (WPA2/WPA3).</li>
+      <li>El punto deja pasar al dispositivo a la red.</li>
+      <li>A continuación entra en juego el DHCP, que entrega la dirección y la configuración.</li>
+      <li>El dispositivo queda listo para trabajar; el tráfico por el aire va cifrado.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: auditoría del Wi-Fi doméstico</h2>
+    <p>Realiza una miniauditoría y elabora un informe con:</p>
+    <ul>
+      <li>SSID, bandas, tipo de cifrado, versión del firmware;</li>
+      <li>lista de dispositivos conectados (¿son todos conocidos?);</li>
+      <li>nivel de señal en 3-4 puntos de la casa;</li>
+      <li>2-3 mejoras concretas (canal, ubicación, contraseña, red de invitados);</li>
+      <li>una lista de verificación final de seguridad del Wi-Fi.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Wi-Fi</strong>: transmisión de datos por ondas de radio en lugar de por cable</li>
+      <li><strong>Punto de acceso (access point)</strong>: dispositivo que emite la señal inalámbrica</li>
+      <li><strong>SSID</strong>: nombre de la red inalámbrica que ven los dispositivos</li>
+      <li><strong>Banda (2,4/5/6 GHz)</strong>: frecuencia en la que trabaja el Wi-Fi; afecta a la velocidad y al alcance</li>
+      <li><strong>Estándar de Wi-Fi</strong>: generación de la tecnología (Wi-Fi 4/5/6/6E/7)</li>
+      <li><strong>WPA2 / WPA3</strong>: protocolos de cifrado modernos para Wi-Fi</li>
+      <li><strong>Punto de acceso falso</strong>: Wi-Fi malicioso que imita una red conocida</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Error: usar Wi-Fi abierto sin precaución.</strong> Cualquiera puede interceptar el tráfico ahí.</li>
+      <li><strong>Mito: los 5 GHz siempre son mejores que los 2,4 GHz.</strong> Los 5 GHz son más rápidos, pero atraviesan peor las paredes.</li>
+      <li><strong>Error: no cambiar la contraseña de administrador del router.</strong> Los pares de fábrica son de conocimiento general.</li>
+      <li><strong>Mito: ocultar el SSID hace la red segura.</strong> Eso apenas dificulta al atacante; importan más el cifrado y la contraseña.</li>
+      <li><strong>Error: confiar en una red solo por su nombre.</strong> El nombre es fácil de falsificar (punto de acceso falso).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por qué en una habitación va rápido y en otra no?</strong> Las paredes y la distancia debilitan la señal (sobre todo los 5 GHz).</li>
+      <li><strong>¿Ocultar el SSID es una protección?</strong> Casi no; importan más el cifrado y la contraseña.</li>
+      <li><strong>¿Repetidor o mesh?</strong> El mesh es más cómodo y estable; el repetidor es más barato, pero pierde velocidad.</li>
+      <li><strong>¿Para qué sirve la red de invitados?</strong> Para aislar a los invitados y los dispositivos inteligentes de tus datos.</li>
+      <li><strong>¿En qué es mejor WPA3 que WPA2?</strong> Es más moderno y más resistente a los intentos de adivinar la contraseña.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>SSID</strong>: nombre de la red. <strong>Punto de acceso</strong>: emite la señal.</li>
+      <li><strong>2,4 GHz</strong>: más lejos/más lento; <strong>5/6 GHz</strong>: más rápido/más cerca.</li>
+      <li>Protección: <strong>WPA2/WPA3</strong> + contraseña larga + cambio de la contraseña de admin + actualizaciones.</li>
+      <li>La señal se debilita por <strong>paredes, distancia, interferencias, canales</strong>.</li>
+      <li><strong>Mesh</strong>: cobertura de una casa grande; <strong>red de invitados</strong>: aislamiento.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Estudia tu red Wi-Fi</h3>
+    <ol>
+      <li>Busca en la configuración del router tu SSID, la banda usada (2,4/5 GHz) y el tipo de cifrado.</li>
+      <li>Comprueba si se usa WPA2 o WPA3.</li>
+      <li>Mira cuántos dispositivos están conectados a la red en este momento.</li>
+    </ol>
+
+    <h3>Parte B. Evalúa la calidad de la señal</h3>
+    <ol>
+      <li>Mide el nivel de señal Wi-Fi en distintas habitaciones (con el indicador del teléfono/portátil).</li>
+      <li>Anota dónde la señal es más débil y por qué (paredes, distancia).</li>
+      <li>Propón cómo mejorar la cobertura en el punto más débil.</li>
+    </ol>
+
+    <h3>Parte C. Comprueba la seguridad</h3>
+    <ol>
+      <li>Asegúrate de que el router no tiene la contraseña de administrador por defecto.</li>
+      <li>Evalúa la fortaleza de la contraseña del Wi-Fi y, si hace falta, propón una mejor.</li>
+      <li>Comprueba si se ha actualizado el firmware del router.</li>
+    </ol>
+
+    <h3>Parte D. Elabora una lista de verificación</h3>
+    <ol>
+      <li>Reúne una lista de verificación de 5-7 puntos para una configuración segura del Wi-Fi doméstico.</li>
+      <li>Marca en ella qué está ya hecho y qué conviene mejorar.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Explora el aire</h3>
+    <ol>
+      <li>Con una aplicación analizadora de Wi-Fi (en el teléfono), mira cuántas redes hay alrededor y en qué canales.</li>
+      <li>Determina si tu canal está saturado y propón uno menos ocupado.</li>
+    </ol>
+
+    <h3>Parte F. Red de invitados</h3>
+    <ol>
+      <li>Si el router lo permite, activa una red de invitados con contraseña propia.</li>
+      <li>Comprueba que un dispositivo de invitado no ve los dispositivos de la red principal.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios para el trabajo autónomo</h2>
+    <ul>
+      <li>Explica en palabras sencillas la diferencia entre las bandas de 2,4 y 5 GHz.</li>
+      <li>Describe por qué una red Wi-Fi abierta en una cafetería es peligrosa.</li>
+      <li>Explica en qué se diferencia un punto de acceso de un router.</li>
+      <li>Nombra tres factores que empeoran la señal de Wi-Fi y cómo combatirlos.</li>
+      <li>Explica qué es un punto de acceso falso y cómo no caer en él.</li>
+      <li>Averigua qué significa Wi-Fi 6 y describe su ventaja en dos frases.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejercicios adicionales</h2>
+    <ul>
+      <li>Explica qué son los canales de Wi-Fi y por qué hacen que baje la velocidad.</li>
+      <li>Compara el repetidor y el mesh: ventajas e inconvenientes.</li>
+      <li>¿Para qué sirve una red de invitados? Da un ejemplo.</li>
+      <li>Averigua la diferencia entre WPA2 y WPA3 y descríbela en dos frases.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿Qué es el SSID?</li>
+      <li>¿Qué banda es más rápida, pero con menor alcance?</li>
+      <li>¿Qué cifrado de Wi-Fi se considera seguro?</li>
+      <li>¿Por qué hay que cambiar la contraseña de administrador del router?</li>
+      <li>¿Qué es un punto de acceso falso?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — redes inalámbricas</a></li>
+    </ul>
+    <blockquote><strong>Conexión con el curso.</strong> La conexión inalámbrica sumó comodidad y también nuevos riesgos. El siguiente paso lógico es aprender a encontrar averías y, después, a proteger la red por completo.</blockquote>
+  </section>
+</div>

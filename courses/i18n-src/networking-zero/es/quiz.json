@@ -1,0 +1,1533 @@
+{
+  "module-01": [
+    {
+      "id": "1.1",
+      "type": "mc",
+      "text": "¿Cómo se llama la pequeña porción de datos en la que se divide un mensaje?",
+      "options": {
+        "A": "Trama",
+        "B": "Paquete",
+        "C": "Byte",
+        "D": "Clúster"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.2",
+      "type": "mc",
+      "text": "¿Qué son los 'hosts' en una red?",
+      "options": {
+        "A": "Solo los servidores",
+        "B": "Los dispositivos emisores y receptores",
+        "C": "Los cables",
+        "D": "Los protocolos"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.3",
+      "type": "mc",
+      "text": "¿Cuál de estos es un medio de transmisión de datos?",
+      "options": {
+        "A": "Protocolo",
+        "B": "Fibra óptica",
+        "C": "Paquete",
+        "D": "Encabezado"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.4",
+      "type": "mc",
+      "text": "¿Para qué se necesitan los protocolos en una red?",
+      "options": {
+        "A": "Para acelerar el cable",
+        "B": "Para establecer reglas comunes de intercambio",
+        "C": "Para almacenar contraseñas",
+        "D": "Para asignar nombres"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.5",
+      "type": "mc",
+      "text": "¿De qué dos partes consta un paquete?",
+      "options": {
+        "A": "Cable y señal",
+        "B": "Datos y encabezado",
+        "C": "IP y MAC",
+        "D": "Puerto y dirección"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.6",
+      "type": "tf",
+      "text": "Los datos se dividen en paquetes para que la red sea más confiable.",
+      "correct": "Верно"
+    },
+    {
+      "id": "1.7",
+      "type": "tf",
+      "text": "Los protocolos son marcas de cables de red.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "1.8",
+      "type": "tf",
+      "text": "Distintos paquetes de un mismo mensaje pueden seguir rutas diferentes.",
+      "correct": "Верно"
+    },
+    {
+      "id": "1.9",
+      "type": "tf",
+      "text": "Internet es una sola máquina grande.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "1.10",
+      "type": "open",
+      "text": "Con tus propias palabras: ¿qué sucede desde que presionas Enter hasta que aparece la página?"
+    },
+    {
+      "id": "1.11",
+      "type": "open",
+      "text": "¿Por qué es conveniente dividir los datos en paquetes?"
+    },
+    {
+      "id": "1.12",
+      "type": "open",
+      "text": "¿Qué es un protocolo en una sola frase?"
+    },
+    {
+      "id": "1.13",
+      "type": "mc",
+      "text": "¿Qué es el ancho de banda?",
+      "options": {
+        "A": "El tiempo de respuesta",
+        "B": "Cuántos datos pasan por segundo",
+        "C": "El número de dispositivos",
+        "D": "El tipo de cable"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.14",
+      "type": "mc",
+      "text": "¿Qué es la latencia?",
+      "options": {
+        "A": "El ancho del canal",
+        "B": "El tiempo de ida y vuelta de la señal",
+        "C": "La pérdida de paquetes",
+        "D": "La dirección"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.15",
+      "type": "mc",
+      "text": "En el esquema 'cliente-servidor', el navegador es:",
+      "options": {
+        "A": "El servidor",
+        "B": "El cliente",
+        "C": "El router",
+        "D": "El protocolo"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "1.16",
+      "type": "tf",
+      "text": "Para los juegos en línea, la latencia es más importante que la velocidad de descarga.",
+      "correct": "Верно"
+    },
+    {
+      "id": "1.17",
+      "type": "tf",
+      "text": "El ancho de banda y la latencia son lo mismo.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "1.18",
+      "type": "open",
+      "text": "¿En qué se diferencia el ancho de banda de la latencia?"
+    },
+    {
+      "id": "1.19",
+      "type": "open",
+      "text": "¿Qué es localhost y cuál es su dirección?"
+    },
+    {
+      "id": "1.20",
+      "type": "open",
+      "text": "Da un ejemplo de un dispositivo servidor en una red doméstica."
+    }
+  ],
+  "module-02": [
+    {
+      "id": "2.1",
+      "type": "mc",
+      "text": "¿Qué indica la dirección IP?",
+      "options": {
+        "A": "Un programa",
+        "B": "Un dispositivo en la red",
+        "C": "La velocidad",
+        "D": "El tipo de cable"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.2",
+      "type": "mc",
+      "text": "¿Qué hace el DNS?",
+      "options": {
+        "A": "Entrega configuraciones",
+        "B": "Convierte un nombre en una dirección IP",
+        "C": "Cifra el tráfico",
+        "D": "Conecta redes"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.3",
+      "type": "mc",
+      "text": "¿A qué lleva un puerto?",
+      "options": {
+        "A": "A un dispositivo",
+        "B": "A un programa específico dentro del dispositivo",
+        "C": "A una red",
+        "D": "A un cable"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.4",
+      "type": "mc",
+      "text": "¿Qué indica la máscara /24?",
+      "options": {
+        "A": "La velocidad",
+        "B": "Los primeros 3 números son la red y el último es el dispositivo",
+        "C": "La contraseña",
+        "D": "El puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.5",
+      "type": "mc",
+      "text": "¿Cuántas direcciones hay disponibles para dispositivos en una red /24?",
+      "options": {
+        "A": "254",
+        "B": "256",
+        "C": "128",
+        "D": "64"
+      },
+      "correct": "A"
+    },
+    {
+      "id": "2.6",
+      "type": "mc",
+      "text": "¿Cuál dirección es privada?",
+      "options": {
+        "A": "8.8.8.8",
+        "B": "192.168.1.10",
+        "C": "93.184.216.34",
+        "D": "1.1.1.1"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.7",
+      "type": "mc",
+      "text": "¿Cuál es el puerto predeterminado de HTTPS?",
+      "options": {
+        "A": "80",
+        "B": "443",
+        "C": "53",
+        "D": "22"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.8",
+      "type": "tf",
+      "text": "La máscara de subred define el límite entre la parte de red y la parte de host de la dirección.",
+      "correct": "Верно"
+    },
+    {
+      "id": "2.9",
+      "type": "tf",
+      "text": "Las direcciones privadas son visibles directamente en internet.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "2.10",
+      "type": "tf",
+      "text": "IPv6 se creó debido a la escasez de direcciones IPv4.",
+      "correct": "Верно"
+    },
+    {
+      "id": "2.11",
+      "type": "open",
+      "text": "¿Para qué se necesita el DNS?"
+    },
+    {
+      "id": "2.12",
+      "type": "open",
+      "text": "Da una analogía para la combinación 'IP + puerto'."
+    },
+    {
+      "id": "2.13",
+      "type": "mc",
+      "text": "¿Qué dirección significa 'a sí mismo' (localhost)?",
+      "options": {
+        "A": "0.0.0.0",
+        "B": "127.0.0.1",
+        "C": "192.168.1.1",
+        "D": "255.255.255.255"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.14",
+      "type": "mc",
+      "text": "¿Cuál es la dirección de difusión (broadcast) de la red 192.168.1.0/24?",
+      "options": {
+        "A": "192.168.1.0",
+        "B": "192.168.1.1",
+        "C": "192.168.1.255",
+        "D": "192.168.1.254"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "2.15",
+      "type": "mc",
+      "text": "¿Por qué se almacenan en caché las respuestas del DNS?",
+      "options": {
+        "A": "Para cifrar",
+        "B": "Para no tener que preguntar cada vez y así ganar velocidad",
+        "C": "Por seguridad",
+        "D": "Al azar"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "2.16",
+      "type": "tf",
+      "text": "La dirección de red (por ejemplo, 192.168.1.0) no se asigna a ningún dispositivo.",
+      "correct": "Верно"
+    },
+    {
+      "id": "2.17",
+      "type": "tf",
+      "text": "Una dirección estática cambia por sí sola.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "2.18",
+      "type": "open",
+      "text": "¿Cuántos dispositivos caben en una red /26?"
+    },
+    {
+      "id": "2.19",
+      "type": "open",
+      "text": "¿Cuándo conviene más una dirección estática y cuándo una dinámica?"
+    },
+    {
+      "id": "2.20",
+      "type": "open",
+      "text": "¿Qué ocurre al acceder a 127.0.0.1?"
+    }
+  ],
+  "module-03": [
+    {
+      "id": "3.1",
+      "type": "mc",
+      "text": "¿Cuántas capas tiene el modelo TCP/IP?",
+      "options": {
+        "A": "4",
+        "B": "5",
+        "C": "7",
+        "D": "3"
+      },
+      "correct": "A"
+    },
+    {
+      "id": "3.2",
+      "type": "mc",
+      "text": "¿En qué capa de TCP/IP funcionan las direcciones IP?",
+      "options": {
+        "A": "De enlace",
+        "B": "De red",
+        "C": "De transporte",
+        "D": "De aplicación"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.3",
+      "type": "mc",
+      "text": "¿Cuántas capas tiene el modelo OSI?",
+      "options": {
+        "A": "4",
+        "B": "5",
+        "C": "7",
+        "D": "6"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "3.4",
+      "type": "mc",
+      "text": "¿Cómo se llama el proceso de añadir encabezados en cada capa?",
+      "options": {
+        "A": "Enrutamiento",
+        "B": "Encapsulación",
+        "C": "Conmutación",
+        "D": "Traducción"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.5",
+      "type": "mc",
+      "text": "¿Cómo se llaman los datos con el encabezado de transporte añadido?",
+      "options": {
+        "A": "Trama",
+        "B": "Paquete",
+        "C": "Segmento",
+        "D": "Bit"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "3.6",
+      "type": "mc",
+      "text": "¿En qué capa funcionan las direcciones MAC?",
+      "options": {
+        "A": "De enlace",
+        "B": "De red",
+        "C": "De transporte",
+        "D": "De aplicación"
+      },
+      "correct": "A"
+    },
+    {
+      "id": "3.7",
+      "type": "tf",
+      "text": "TCP es confiable y confirma la entrega; UDP es rápido y sin garantías.",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.8",
+      "type": "tf",
+      "text": "OSI y TCP/IP son modelos rivales e incompatibles entre sí.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "3.9",
+      "type": "tf",
+      "text": "Dividir la red en capas ayuda a encontrar fallas más rápido.",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.10",
+      "type": "open",
+      "text": "¿Por qué se divide la red en capas?"
+    },
+    {
+      "id": "3.11",
+      "type": "open",
+      "text": "¿En qué se diferencia un segmento de una trama?"
+    },
+    {
+      "id": "3.12",
+      "type": "open",
+      "text": "Da un ejemplo en el que UDP sea mejor que TCP."
+    },
+    {
+      "id": "3.13",
+      "type": "mc",
+      "text": "¿Qué elige un router cuando hay varias rutas posibles?",
+      "options": {
+        "A": "La primera que encuentra",
+        "B": "La más específica (longest prefix)",
+        "C": "Una al azar",
+        "D": "La de nombre más corto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.14",
+      "type": "mc",
+      "text": "¿Cuál es la unidad de datos en la capa de enlace?",
+      "options": {
+        "A": "Segmento",
+        "B": "Paquete",
+        "C": "Trama",
+        "D": "Bit"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "3.15",
+      "type": "mc",
+      "text": "¿Para qué es más adecuado UDP?",
+      "options": {
+        "A": "Descargar un archivo",
+        "B": "Video en línea y videojuegos",
+        "C": "Cargar un sitio web",
+        "D": "Correo electrónico"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "3.16",
+      "type": "tf",
+      "text": "TCP numera los segmentos para poder reordenarlos correctamente.",
+      "correct": "Верно"
+    },
+    {
+      "id": "3.17",
+      "type": "tf",
+      "text": "La capa física es una de las cuatro capas independientes de TCP/IP.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "3.18",
+      "type": "open",
+      "text": "Nombra las unidades de datos de las capas de transporte, red y enlace."
+    },
+    {
+      "id": "3.19",
+      "type": "open",
+      "text": "¿Por qué se considera confiable a TCP?"
+    },
+    {
+      "id": "3.20",
+      "type": "open",
+      "text": "¿En qué capa funciona principalmente el Wi-Fi?"
+    }
+  ],
+  "module-04": [
+    {
+      "id": "4.1",
+      "type": "mc",
+      "text": "¿Qué es una dirección MAC?",
+      "options": {
+        "A": "El nombre de la red",
+        "B": "La dirección física de la tarjeta de red",
+        "C": "Una dirección IP",
+        "D": "Un puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.2",
+      "type": "mc",
+      "text": "¿Según qué direcciones entrega las tramas un switch?",
+      "options": {
+        "A": "IP",
+        "B": "MAC",
+        "C": "DNS",
+        "D": "SSID"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.3",
+      "type": "mc",
+      "text": "¿Qué almacena el switch en su tabla?",
+      "options": {
+        "A": "Contraseñas",
+        "B": "Dirección MAC → puerto",
+        "C": "Rutas hacia el exterior",
+        "D": "Nombres de sitios web"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.4",
+      "type": "mc",
+      "text": "¿Cómo se llama el 'sobre' de los datos en una red local?",
+      "options": {
+        "A": "Paquete",
+        "B": "Trama",
+        "C": "Segmento",
+        "D": "Bit"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.5",
+      "type": "mc",
+      "text": "¿Qué desventaja tenía el antiguo hub frente al switch?",
+      "options": {
+        "A": "Era demasiado rápido",
+        "B": "Reenviaba a todos y generaba colisiones",
+        "C": "Era caro",
+        "D": "Cifraba el tráfico"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.6",
+      "type": "mc",
+      "text": "¿Qué permite dividir lógicamente un switch en varias redes?",
+      "options": {
+        "A": "NAT",
+        "B": "VLAN",
+        "C": "DNS",
+        "D": "DHCP"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.7",
+      "type": "tf",
+      "text": "El switch envía la trama solo al puerto necesario, no a todos a la vez.",
+      "correct": "Верно"
+    },
+    {
+      "id": "4.8",
+      "type": "tf",
+      "text": "La dirección MAC y la dirección IP son lo mismo.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "4.9",
+      "type": "tf",
+      "text": "Dentro de una LAN, los dispositivos se localizan entre sí mediante direcciones MAC.",
+      "correct": "Верно"
+    },
+    {
+      "id": "4.10",
+      "type": "open",
+      "text": "¿En qué se diferencia la MAC de la IP?"
+    },
+    {
+      "id": "4.11",
+      "type": "open",
+      "text": "¿Para qué se necesitan las VLAN?"
+    },
+    {
+      "id": "4.12",
+      "type": "open",
+      "text": "¿Cómo sabe el switch qué dispositivo está detrás de cada puerto?"
+    },
+    {
+      "id": "4.13",
+      "type": "mc",
+      "text": "¿Cómo averigua el switch dónde está cada dispositivo?",
+      "options": {
+        "A": "Mediante configuración manual",
+        "B": "Memoriza la MAC de origen de las tramas",
+        "C": "A través del DNS",
+        "D": "A través del DHCP"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.14",
+      "type": "mc",
+      "text": "¿Qué es el modo dúplex completo?",
+      "options": {
+        "A": "Solo recepción",
+        "B": "Recepción y transmisión simultáneas",
+        "C": "Solo transmisión",
+        "D": "Difusión a todos"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.15",
+      "type": "mc",
+      "text": "¿Qué hace el protocolo ARP?",
+      "options": {
+        "A": "Cifra",
+        "B": "Encuentra la MAC a partir de la IP",
+        "C": "Asigna direcciones",
+        "D": "Mantiene las rutas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "4.16",
+      "type": "tf",
+      "text": "Las tramas broadcast se propagan por todo el dominio de difusión.",
+      "correct": "Верно"
+    },
+    {
+      "id": "4.17",
+      "type": "tf",
+      "text": "El modo semidúplex no genera colisiones.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "4.18",
+      "type": "open",
+      "text": "Describe en dos frases el autoaprendizaje del switch."
+    },
+    {
+      "id": "4.19",
+      "type": "open",
+      "text": "¿Para qué se necesita el protocolo ARP?"
+    },
+    {
+      "id": "4.20",
+      "type": "open",
+      "text": "¿Cómo se reduce el dominio de difusión?"
+    }
+  ],
+  "module-05": [
+    {
+      "id": "5.1",
+      "type": "mc",
+      "text": "¿Qué hace un router?",
+      "options": {
+        "A": "Conecta nodos de una misma LAN",
+        "B": "Conecta redes distintas y dirige los paquetes",
+        "C": "Distribuye Wi-Fi",
+        "D": "Almacena contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.2",
+      "type": "mc",
+      "text": "¿Qué es la puerta de enlace predeterminada?",
+      "options": {
+        "A": "Un servidor DNS",
+        "B": "La dirección del router para salir de la red",
+        "C": "El nombre de la red",
+        "D": "Un puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.3",
+      "type": "mc",
+      "text": "¿Según qué direcciones dirige los paquetes un router?",
+      "options": {
+        "A": "MAC",
+        "B": "IP",
+        "C": "SSID",
+        "D": "Puerto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.4",
+      "type": "mc",
+      "text": "¿Cómo se llama cada paso de un paquete entre routers?",
+      "options": {
+        "A": "Trama",
+        "B": "Salto (hop)",
+        "C": "Puerto",
+        "D": "Segmento"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.5",
+      "type": "mc",
+      "text": "¿Qué hace el NAT?",
+      "options": {
+        "A": "Acelera el disco",
+        "B": "Sustituye direcciones privadas por una pública",
+        "C": "Asigna nombres",
+        "D": "Cifra contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.6",
+      "type": "mc",
+      "text": "¿Qué sabe el router sobre la ruta del paquete?",
+      "options": {
+        "A": "Todo el trayecto hasta el destino",
+        "B": "Solo el siguiente paso",
+        "C": "Nada",
+        "D": "Solo la MAC del destino"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.7",
+      "type": "tf",
+      "text": "traceroute muestra el trayecto del paquete a través de los routers.",
+      "correct": "Верно"
+    },
+    {
+      "id": "5.8",
+      "type": "tf",
+      "text": "El switch y el router hacen lo mismo.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "5.9",
+      "type": "tf",
+      "text": "Sin puerta de enlace predeterminada, un dispositivo no puede salir de su propia red.",
+      "correct": "Верно"
+    },
+    {
+      "id": "5.10",
+      "type": "open",
+      "text": "¿Cuál es la diferencia entre un switch y un router?"
+    },
+    {
+      "id": "5.11",
+      "type": "open",
+      "text": "¿Qué función cumple la puerta de enlace predeterminada?"
+    },
+    {
+      "id": "5.12",
+      "type": "open",
+      "text": "¿Por qué le basta al router con conocer solo el siguiente paso?"
+    },
+    {
+      "id": "5.13",
+      "type": "mc",
+      "text": "¿Qué es la ruta predeterminada?",
+      "options": {
+        "A": "La ruta más rápida",
+        "B": "Adónde enviar las direcciones desconocidas",
+        "C": "La dirección del DNS",
+        "D": "La MAC del router"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.14",
+      "type": "mc",
+      "text": "¿Cómo se llama el principio de selección de ruta?",
+      "options": {
+        "A": "shortest name",
+        "B": "longest prefix match",
+        "C": "first match",
+        "D": "random"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.15",
+      "type": "mc",
+      "text": "¿Por qué traceroute muestra el trayecto en un solo sentido?",
+      "options": {
+        "A": "Por un error del comando",
+        "B": "La respuesta puede seguir otro camino",
+        "C": "Para ser más rápido",
+        "D": "Debido al NAT"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "5.16",
+      "type": "tf",
+      "text": "El router doméstico combina las funciones de router, switch y punto de acceso.",
+      "correct": "Верно"
+    },
+    {
+      "id": "5.17",
+      "type": "tf",
+      "text": "El intercambio local entre dispositivos requiere una puerta de enlace.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "5.18",
+      "type": "open",
+      "text": "¿Qué es la ruta predeterminada y para qué se necesita?"
+    },
+    {
+      "id": "5.19",
+      "type": "open",
+      "text": "¿Por qué 'funciona localmente, pero no hay internet'?"
+    },
+    {
+      "id": "5.20",
+      "type": "open",
+      "text": "¿Qué ocurre si no existe ninguna ruta para una dirección?"
+    }
+  ],
+  "module-06": [
+    {
+      "id": "6.1",
+      "type": "mc",
+      "text": "¿Qué hace el DHCP?",
+      "options": {
+        "A": "Encuentra un sitio web",
+        "B": "Asigna automáticamente la configuración de red",
+        "C": "Cifra el Wi-Fi",
+        "D": "Dirige los paquetes"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.2",
+      "type": "mc",
+      "text": "¿Qué hace el NAT en un router doméstico?",
+      "options": {
+        "A": "Acelera el disco",
+        "B": "Sustituye las direcciones privadas por una sola pública",
+        "C": "Asigna nombres",
+        "D": "Cifra contraseñas"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.3",
+      "type": "mc",
+      "text": "¿Qué le asigna el DHCP a un dispositivo?",
+      "options": {
+        "A": "Solo un nombre",
+        "B": "IP, máscara, puerta de enlace y DNS",
+        "C": "Solo la contraseña de Wi-Fi",
+        "D": "Solo la MAC"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.4",
+      "type": "mc",
+      "text": "¿Qué significan las siglas DORA?",
+      "options": {
+        "A": "Nombres de puertos",
+        "B": "Los pasos del DHCP: Discover, Offer, Request, Acknowledge",
+        "C": "Tipos de cable",
+        "D": "Capas del modelo OSI"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.5",
+      "type": "mc",
+      "text": "¿Qué indica una dirección 169.254.x.x?",
+      "options": {
+        "A": "Que todo está bien",
+        "B": "Que el DHCP no respondió",
+        "C": "Que es una dirección pública",
+        "D": "Que es la dirección del router"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.6",
+      "type": "mc",
+      "text": "¿Por qué un teléfono funciona de inmediato en una nueva red Wi-Fi?",
+      "options": {
+        "A": "Por el NAT",
+        "B": "El DHCP le asignó la configuración",
+        "C": "Por el DNS",
+        "D": "Por las VLAN"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.7",
+      "type": "tf",
+      "text": "El DHCP asigna la dirección en calidad de préstamo temporal, no de forma permanente.",
+      "correct": "Верно"
+    },
+    {
+      "id": "6.8",
+      "type": "tf",
+      "text": "Con NAT, cada dispositivo necesita su propia dirección pública.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "6.9",
+      "type": "tf",
+      "text": "El NAT es un firewall completo.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "6.10",
+      "type": "open",
+      "text": "¿Qué hace el DHCP y para qué se necesita?"
+    },
+    {
+      "id": "6.11",
+      "type": "open",
+      "text": "¿Qué pasa si el DHCP asigna la misma dirección a dos dispositivos?"
+    },
+    {
+      "id": "6.12",
+      "type": "open",
+      "text": "Con tus propias palabras: ¿cómo funciona el NAT?"
+    },
+    {
+      "id": "6.13",
+      "type": "mc",
+      "text": "¿Qué es una reserva DHCP?",
+      "options": {
+        "A": "Deshabilitar el DHCP",
+        "B": "Una dirección fija asociada a la MAC del dispositivo",
+        "C": "Un tipo de cifrado",
+        "D": "Una ruta"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.14",
+      "type": "mc",
+      "text": "¿Qué es el reenvío de puertos (port forwarding)?",
+      "options": {
+        "A": "Una forma de aceleración",
+        "B": "Una regla que permite el paso de conexiones externas hacia adentro",
+        "C": "Cifrado",
+        "D": "Asignación de nombres"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.15",
+      "type": "mc",
+      "text": "Además de la IP, la máscara y la puerta de enlace, ¿qué más entrega el DHCP?",
+      "options": {
+        "A": "La contraseña",
+        "B": "La dirección del DNS",
+        "C": "La MAC",
+        "D": "El SSID"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "6.16",
+      "type": "tf",
+      "text": "No se deben asignar manualmente direcciones dentro del rango del DHCP; habrá un conflicto.",
+      "correct": "Верно"
+    },
+    {
+      "id": "6.17",
+      "type": "tf",
+      "text": "El NAT sustituye al firewall.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "6.18",
+      "type": "open",
+      "text": "¿Para qué se necesita la reserva DHCP?"
+    },
+    {
+      "id": "6.19",
+      "type": "open",
+      "text": "Describe la cadena 'DNS incorrecto entregado por DHCP → problema'."
+    },
+    {
+      "id": "6.20",
+      "type": "open",
+      "text": "¿Qué sucede con la dirección de un dispositivo que se desconecta?"
+    }
+  ],
+  "module-07": [
+    {
+      "id": "7.1",
+      "type": "mc",
+      "text": "¿Qué es el SSID?",
+      "options": {
+        "A": "La contraseña",
+        "B": "El nombre de la red inalámbrica",
+        "C": "El tipo de cifrado",
+        "D": "La frecuencia"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.2",
+      "type": "mc",
+      "text": "¿Qué banda es más rápida pero tiene menor alcance?",
+      "options": {
+        "A": "2.4 GHz",
+        "B": "5 GHz",
+        "C": "Ambas igual",
+        "D": "Ninguna"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.3",
+      "type": "mc",
+      "text": "¿Qué opción de protección Wi-Fi es segura?",
+      "options": {
+        "A": "Red abierta",
+        "B": "WEP",
+        "C": "WPA2/WPA3",
+        "D": "Sin contraseña"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "7.4",
+      "type": "mc",
+      "text": "¿Qué dispositivo emite la señal inalámbrica?",
+      "options": {
+        "A": "El switch",
+        "B": "El punto de acceso",
+        "C": "El servidor DNS",
+        "D": "La ruta"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.5",
+      "type": "mc",
+      "text": "¿Qué debilita más la señal de 5 GHz?",
+      "options": {
+        "A": "La velocidad",
+        "B": "Las paredes y la distancia",
+        "C": "La contraseña",
+        "D": "El SSID"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.6",
+      "type": "mc",
+      "text": "Un punto de acceso falso es:",
+      "options": {
+        "A": "Wi-Fi rápido",
+        "B": "Un Wi-Fi malicioso que imita una red conocida",
+        "C": "Un tipo de cifrado",
+        "D": "Un nuevo estándar"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.7",
+      "type": "tf",
+      "text": "Una red Wi-Fi abierta puede ser interceptada.",
+      "correct": "Верно"
+    },
+    {
+      "id": "7.8",
+      "type": "tf",
+      "text": "No es necesario cambiar la contraseña de administrador predeterminada del router.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "7.9",
+      "type": "tf",
+      "text": "La banda de 2.4 GHz atraviesa mejor las paredes que la de 5 GHz.",
+      "correct": "Верно"
+    },
+    {
+      "id": "7.10",
+      "type": "open",
+      "text": "¿Cuál es la diferencia entre las bandas de 2.4 y 5 GHz?"
+    },
+    {
+      "id": "7.11",
+      "type": "open",
+      "text": "Nombra dos medidas de protección para el Wi-Fi doméstico."
+    },
+    {
+      "id": "7.12",
+      "type": "open",
+      "text": "¿En qué se diferencia un punto de acceso de un router?"
+    },
+    {
+      "id": "7.13",
+      "type": "mc",
+      "text": "¿Qué son los canales de Wi-Fi?",
+      "options": {
+        "A": "Contraseñas",
+        "B": "Subbandas de frecuencia; en el mismo canal las redes se interfieren entre sí",
+        "C": "Cables",
+        "D": "Puertos"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.14",
+      "type": "mc",
+      "text": "¿Qué es más conveniente para cubrir una casa grande?",
+      "options": {
+        "A": "Un solo repetidor",
+        "B": "Un sistema mesh",
+        "C": "Desactivar el 5 GHz",
+        "D": "Ocultar el SSID"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.15",
+      "type": "mc",
+      "text": "¿Para qué se necesita una red de invitados?",
+      "options": {
+        "A": "Para acelerar el Wi-Fi",
+        "B": "Para aislar a los invitados y los dispositivos inteligentes",
+        "C": "Para cambiar el SSID",
+        "D": "Para asignar direcciones"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "7.16",
+      "type": "tf",
+      "text": "Ocultar el SSID hace que la red sea realmente segura.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "7.17",
+      "type": "tf",
+      "text": "WPA3 es más moderno y más resistente a los ataques de fuerza bruta que WPA2.",
+      "correct": "Верно"
+    },
+    {
+      "id": "7.18",
+      "type": "open",
+      "text": "¿Por qué la velocidad puede bajar a causa de los canales?"
+    },
+    {
+      "id": "7.19",
+      "type": "open",
+      "text": "¿En qué se diferencia un sistema mesh de un repetidor?"
+    },
+    {
+      "id": "7.20",
+      "type": "open",
+      "text": "¿Cómo saber si alguien ajeno se conectó a tu Wi-Fi?"
+    }
+  ],
+  "module-08": [
+    {
+      "id": "8.1",
+      "type": "mc",
+      "text": "¿Qué hace el comando ping?",
+      "options": {
+        "A": "Muestra la ruta",
+        "B": "Comprueba la disponibilidad de un nodo",
+        "C": "Muestra la IP",
+        "D": "Cifra"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.2",
+      "type": "mc",
+      "text": "¿Qué muestra traceroute?",
+      "options": {
+        "A": "La velocidad del disco",
+        "B": "La ruta hasta el nodo y dónde se interrumpe",
+        "C": "La contraseña",
+        "D": "El nombre de la red"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.3",
+      "type": "mc",
+      "text": "¿Con qué se comprueba el funcionamiento del DNS?",
+      "options": {
+        "A": "ping",
+        "B": "nslookup",
+        "C": "ipconfig",
+        "D": "tracert"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.4",
+      "type": "mc",
+      "text": "¿Con qué se consulta la configuración de red propia?",
+      "options": {
+        "A": "nslookup",
+        "B": "ipconfig / ip",
+        "C": "ping",
+        "D": "tracert"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.5",
+      "type": "mc",
+      "text": "¿Con qué se empieza el diagnóstico siguiendo el método 'de abajo hacia arriba'?",
+      "options": {
+        "A": "Con el DNS",
+        "B": "Con la conexión física",
+        "C": "Con el sitio web",
+        "D": "Con traceroute"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.6",
+      "type": "mc",
+      "text": "¿Cuál de estos es una causa frecuente de 'no hay internet'?",
+      "options": {
+        "A": "Un monitor nuevo",
+        "B": "Una puerta de enlace incorrecta o un DNS que no funciona",
+        "C": "El brillo de la pantalla",
+        "D": "El fondo de pantalla"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.7",
+      "type": "tf",
+      "text": "Es conveniente hacer el diagnóstico por capas, de abajo hacia arriba.",
+      "correct": "Верно"
+    },
+    {
+      "id": "8.8",
+      "type": "tf",
+      "text": "Si 8.8.8.8 responde al ping pero los sitios no abren por nombre, lo más probable es que el problema sea el DNS.",
+      "correct": "Верно"
+    },
+    {
+      "id": "8.9",
+      "type": "tf",
+      "text": "Es correcto cambiar varias configuraciones a la vez.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "8.10",
+      "type": "open",
+      "text": "Describe el orden del diagnóstico si un sitio web no abre."
+    },
+    {
+      "id": "8.11",
+      "type": "open",
+      "text": "¿Por qué conviene cambiar un solo parámetro a la vez?"
+    },
+    {
+      "id": "8.12",
+      "type": "open",
+      "text": "¿Qué indica la dirección 169.254.x.x durante el diagnóstico?"
+    },
+    {
+      "id": "8.13",
+      "type": "mc",
+      "text": "¿Qué significa 'se agotó el tiempo de espera' en el ping?",
+      "options": {
+        "A": "Que todo está bien",
+        "B": "No hay respuesta: el nodo no está disponible o bloquea el ping",
+        "C": "Que el DNS está roto",
+        "D": "Que el cable está intacto"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.14",
+      "type": "mc",
+      "text": "¿Para qué sirve el ping continuo (ping -t)?",
+      "options": {
+        "A": "Para acelerar la red",
+        "B": "Para detectar cortes intermitentes",
+        "C": "Para cambiar la dirección",
+        "D": "Para comprobar el DNS"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.15",
+      "type": "mc",
+      "text": "Si traceroute se interrumpe en el primer salto, el problema está:",
+      "options": {
+        "A": "En el proveedor de internet",
+        "B": "En ti / tu router",
+        "C": "En el sitio web",
+        "D": "En el DNS"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "8.16",
+      "type": "tf",
+      "text": "Las luces del router y de la tarjeta de red ayudan en el diagnóstico.",
+      "correct": "Верно"
+    },
+    {
+      "id": "8.17",
+      "type": "tf",
+      "text": "Si un nodo no responde al ping, siempre está averiado.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "8.18",
+      "type": "open",
+      "text": "¿Qué indica la dirección 169.254.x.x durante el diagnóstico?"
+    },
+    {
+      "id": "8.19",
+      "type": "open",
+      "text": "¿Cómo saber si conviene solucionarlo uno mismo o llamar al proveedor?"
+    },
+    {
+      "id": "8.20",
+      "type": "open",
+      "text": "¿Por qué es importante cambiar un solo parámetro a la vez?"
+    }
+  ],
+  "module-09": [
+    {
+      "id": "9.1",
+      "type": "mc",
+      "text": "¿Cuál de las siguientes es una medida de protección?",
+      "options": {
+        "A": "Wi-Fi abierto",
+        "B": "Contraseñas predeterminadas",
+        "C": "Firewall y cifrado",
+        "D": "Desactivar las actualizaciones"
+      },
+      "correct": "C"
+    },
+    {
+      "id": "9.2",
+      "type": "mc",
+      "text": "¿Qué hace el cifrado del tráfico?",
+      "options": {
+        "A": "Acelera la red",
+        "B": "Hace inútiles los datos interceptados",
+        "C": "Asigna direcciones",
+        "D": "Busca sitios web"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.3",
+      "type": "mc",
+      "text": "¿Qué es la segmentación de red?",
+      "options": {
+        "A": "Acelerar el Wi-Fi",
+        "B": "Dividir la red en zonas aisladas",
+        "C": "Cambiar el nombre de la red",
+        "D": "Un tipo de cable"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.4",
+      "type": "mc",
+      "text": "¿Qué hace un firewall?",
+      "options": {
+        "A": "Asigna direcciones",
+        "B": "Filtra el tráfico según reglas",
+        "C": "Acelera el Wi-Fi",
+        "D": "Busca sitios web"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.5",
+      "type": "mc",
+      "text": "¿Por qué son peligrosas las contraseñas predeterminadas?",
+      "options": {
+        "A": "Son lentas",
+        "B": "Son de conocimiento público y fáciles de adivinar",
+        "C": "Ocupan memoria",
+        "D": "No se pueden cambiar"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.6",
+      "type": "mc",
+      "text": "¿Qué ayuda a limitar la propagación de un ataque por la red?",
+      "options": {
+        "A": "Los puertos abiertos",
+        "B": "La segmentación (VLAN)",
+        "C": "Una contraseña común",
+        "D": "Desactivar los registros"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.7",
+      "type": "tf",
+      "text": "Un punto de acceso falso es una amenaza real.",
+      "correct": "Верно"
+    },
+    {
+      "id": "9.8",
+      "type": "tf",
+      "text": "Las actualizaciones de los dispositivos no influyen en la seguridad.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "9.9",
+      "type": "tf",
+      "text": "El NAT sustituye por completo al firewall.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "9.10",
+      "type": "open",
+      "text": "¿Por qué es peligroso el tráfico sin cifrar y cómo ayuda el cifrado?"
+    },
+    {
+      "id": "9.11",
+      "type": "open",
+      "text": "¿Cómo limita la segmentación el daño en caso de un ataque?"
+    },
+    {
+      "id": "9.12",
+      "type": "open",
+      "text": "Nombra dos pasos sencillos pero importantes para proteger una red doméstica."
+    },
+    {
+      "id": "9.13",
+      "type": "mc",
+      "text": "El principio de privilegio mínimo consiste en:",
+      "options": {
+        "A": "Dar a todos el máximo de permisos",
+        "B": "Dar exactamente los permisos necesarios",
+        "C": "Desactivar las contraseñas",
+        "D": "Un único acceso compartido"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.14",
+      "type": "mc",
+      "text": "La defensa en profundidad consiste en:",
+      "options": {
+        "A": "Una sola medida fuerte",
+        "B": "Varias barreras a la vez",
+        "C": "Solo el cifrado",
+        "D": "Solo la contraseña"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.15",
+      "type": "mc",
+      "text": "¿Para qué se necesitan las copias de seguridad?",
+      "options": {
+        "A": "Para acelerar la red",
+        "B": "Para recuperar los datos si la protección falla",
+        "C": "Para asignar direcciones",
+        "D": "Para cifrar el Wi-Fi"
+      },
+      "correct": "B"
+    },
+    {
+      "id": "9.16",
+      "type": "tf",
+      "text": "La mayoría de los ataques son automáticos y no eligen un objetivo específico.",
+      "correct": "Верно"
+    },
+    {
+      "id": "9.17",
+      "type": "tf",
+      "text": "A una red doméstica nunca la va a atacar nadie.",
+      "correct": "Неверно"
+    },
+    {
+      "id": "9.18",
+      "type": "open",
+      "text": "Explica el principio de privilegio mínimo con un ejemplo cotidiano."
+    },
+    {
+      "id": "9.19",
+      "type": "open",
+      "text": "¿Por qué no basta con una sola medida de protección?"
+    },
+    {
+      "id": "9.20",
+      "type": "open",
+      "text": "Describe los primeros tres pasos ante la sospecha de un ataque."
+    }
+  ]
+}

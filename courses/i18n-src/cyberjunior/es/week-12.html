@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">El módulo final del bloque «Especialización» guía al estudiante a través del ciclo completo del proyecto final — desde el reconocimiento y la explotación en el laboratorio hasta la evaluación de riesgos y la defensa de un informe profesional.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Aplicar todas las habilidades en una tarea integral</li>
+      <li>Completar el ciclo reconocimiento → explotación → recomendaciones → informe</li>
+      <li>Preparar y defender un informe profesional</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Ciclo completo de la auditoría:</p>
+    <pre><code>Reconocimiento -> Explotación (en el laboratorio) -> Evaluación de riesgo -> Recomendaciones -> INFORME
+                                                                       ^
+                                          artefacto principal para el empleador</code></pre>
+    <p>Estructura del informe:</p>
+    <pre><code>Objetivo/alcance | Metodología | Hallazgos+evidencias | Riesgo | Recomendaciones | Conclusión</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>El proyecto final imita una tarea real y sirve como la pieza principal del portafolio. Verifica la capacidad de conectar habilidades en un trabajo coherente.</p>
+    <p><strong>Dos formatos a elegir</strong></p>
+    <ul>
+      <li><strong>Competencia CTF</strong> — una serie de retos en una plataforma (picoCTF, HackTheBox), pone a prueba la amplitud de habilidades.</li>
+      <li><strong>Auditoría completa de una máquina vulnerable</strong> — VulnHub/HackTheBox: reconocimiento → explotación → evaluación de riesgo → recomendaciones → informe.</li>
+    </ul>
+    <p><strong>El informe — artefacto clave.</strong> Es precisamente él quien muestra el nivel de razonamiento, no el mero hecho del compromiso de la máquina. Contiene: objetivo y alcance, metodología, hallazgos con evidencias, evaluación de riesgo de cada hallazgo, recomendaciones, conclusión. El orden en la auditoría es estricto: reconocimiento → explotación → recomendaciones → redacción.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Por qué el informe es más importante que el compromiso de la máquina</h3>
+    <p>El empleador no evalúa el simple hecho de «comprometer la máquina», sino <strong>cómo pensaste</strong>: cómo actuaste, cómo evaluaste el riesgo, cómo formulaste las recomendaciones. El informe es la prueba del razonamiento. Un mal informe desvaloriza un buen trabajo; uno bueno muestra a un profesional incluso en una máquina sencilla.</p>
+    <h3>Evaluación de riesgo de los hallazgos</h3>
+    <p>Cada hallazgo se evalúa por su criticidad (baja/media/alta/crítica) — según la probabilidad de explotación y el daño. Esto permite al cliente corregir primero lo más importante. Saber priorizar es señal de un especialista maduro, no de alguien que «encontró de todo».</p>
+    <h3>Dos formatos de proyecto final</h3>
+    <p><strong>CTF</strong> (picoCTF, HTB) — pone a prueba la amplitud de habilidades prácticas mediante retos. <strong>Auditoría de una máquina vulnerable</strong> (VulnHub/HTB) — ciclo completo desde el reconocimiento hasta el informe. Elige según tu objetivo: CTF — más rápido y variado; auditoría — más cercana al trabajo real y mejor para el portafolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: una máquina — dos informes</h2>
+    <p>Dos estudiantes comprometieron la misma máquina. El primero entregó una lista de comandos sin estructura. El segundo — un informe: objetivo, metodología, hallazgos con evidencias, riesgo, recomendaciones, conclusión. Técnicamente el resultado es el mismo, pero el segundo parece el trabajo de un profesional, y el primero, unas notas. En la entrevista, la diferencia se nota de inmediato. El informe es tu carta de presentación.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: auditoría de una máquina (en el laboratorio)</h2>
+    <ol>
+      <li>Elige una máquina vulnerable (VulnHub/HTB) y define el alcance.</li>
+      <li>Reconocimiento: escaneo, mapa de servicios y versiones.</li>
+      <li>Búsqueda y explotación de vulnerabilidades (en el laboratorio), documenta cada paso.</li>
+      <li>Evalúa el riesgo de cada hallazgo.</li>
+      <li>Formula recomendaciones de corrección.</li>
+      <li>Elabora un informe profesional y prepara la defensa.</li>
+    </ol>
+    <blockquote>⚠️ Solo máquinas/plataformas especialmente destinadas para ello.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: y este es el propio proyecto final</h2>
+    <p>El proyecto final es la culminación del curso. Realízalo por completo:</p>
+    <ul>
+      <li>elige el formato (CTF o auditoría de máquina);</li>
+      <li>recorre todo el ciclo documentando cada paso;</li>
+      <li>redacta el informe según la plantilla de la sección de evaluación;</li>
+      <li>prepara una defensa oral de 5 minutos de las decisiones clave;</li>
+      <li>añade el trabajo a tu portafolio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Auditoría / pentest</strong> — evaluación de la seguridad con un informe.</li>
+      <li><strong>CTF</strong> — competencia de retos prácticos.</li>
+      <li><strong>Alcance (scope)</strong> — qué se incluye en las pruebas.</li>
+      <li><strong>Evaluación de riesgo</strong> — priorización de hallazgos según su criticidad.</li>
+      <li><strong>Informe</strong> — el artefacto principal (estructura arriba).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: lo principal es comprometer la máquina.</strong> Lo principal es un informe bien elaborado y el razonamiento.</li>
+      <li><strong>Error: no priorizar los hallazgos.</strong> El cliente necesita saber qué corregir primero.</li>
+      <li><strong>Mito: las recomendaciones no son necesarias, «ya se entiende».</strong> Las recomendaciones son parte del valor del trabajo.</li>
+      <li><strong>Error: probar fuera del alcance permitido.</strong> Solo las máquinas destinadas para ello.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Elegir CTF o auditoría?</strong> CTF — para amplitud de habilidades; auditoría — más cercana al trabajo real y al portafolio.</li>
+      <li><strong>¿Qué pasa si no llegué a comprometer la máquina por completo?</strong> Documenta lo realizado y las conclusiones — también tiene valor.</li>
+      <li><strong>¿Qué tan importante es el informe?</strong> Crítico: a menudo más importante que el propio compromiso.</li>
+      <li><strong>¿Hacia dónde seguir creciendo?</strong> Especialización según el track de la semana 11.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Ciclo: reconocimiento → explotación (en el laboratorio) → riesgo → recomendaciones → <strong>informe</strong>.</li>
+      <li>Informe: objetivo/alcance, metodología, hallazgos+evidencias, riesgo, recomendaciones, conclusión.</li>
+      <li><strong>El informe es más importante que el hecho del compromiso.</strong></li>
+      <li>Prioriza los hallazgos según su criticidad.</li>
+      <li>Solo máquinas vulnerables autorizadas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <blockquote>⚠️ <strong>Marco legal.</strong> Todas las acciones — solo en un laboratorio aislado o en plataformas explícitamente autorizadas. Atacar sistemas ajenos sin permiso es ilegal.</blockquote>
+    <h3>Parte A. Planificación</h3>
+    <ol>
+      <li>Elige el formato (CTF o auditoría) y el objetivo.</li>
+      <li>Define el alcance y las reglas (área de las pruebas).</li>
+    </ol>
+    <h3>Parte B. Ejecución</h3>
+    <ol>
+      <li>Recorre el ciclo completo documentando cada paso.</li>
+      <li>Evalúa las vulnerabilidades según su criticidad.</li>
+      <li>Formula recomendaciones de corrección.</li>
+    </ol>
+    <h3>Parte C. Informe y defensa</h3>
+    <ol>
+      <li>Redacta un informe profesional según la plantilla.</li>
+      <li>Prepara una breve defensa de las decisiones clave.</li>
+      <li>Realiza una autorreflexión.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Entrenamiento en CTF</h3>
+    <ol>
+      <li>Resuelve 2–3 retos en picoCTF o HTB Starting Point.</li>
+      <li>Anota brevemente el enfoque de cada uno.</li>
+    </ol>
+    <h3>Parte E. Borrador del informe</h3>
+    <ol>
+      <li>Para un reto resuelto, elabora un mini-informe con la estructura completa.</li>
+      <li>Verifica que haya evidencias y recomendaciones.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Entrega el informe final y prepara una defensa oral de 5 minutos.</li>
+      <li>Elabora una lista de tres habilidades a desarrollar después del curso.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Describe la estructura de un informe profesional de auditoría.</li>
+      <li>Explica por qué el informe es más importante que el propio hecho del compromiso.</li>
+      <li>Evalúa 3 hallazgos hipotéticos según su criticidad y justifícalo.</li>
+      <li>Elabora un plan del proyecto final (formato, alcance, pasos).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Cuál es el artefacto clave del proyecto final para el empleador?</li>
+      <li>¿De qué secciones consta un informe de auditoría?</li>
+      <li>¿Por qué se priorizan los hallazgos según su criticidad?</li>
+      <li>¿Cuál es el orden correcto de trabajo en una auditoría?</li>
+      <li>¿En qué máquinas se puede realizar la auditoría final?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://picoctf.org/" target="_blank" rel="noopener">picoCTF (retos CTF gratuitos)</a></li>
+      <li><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box — Starting Point</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Conexión con la espiral del curso.</strong> El proyecto final reúne todos los bloques: reconocimiento, explotación, defensa, respuesta y comunicación a través del informe.</blockquote>
+  </section>
+</div>

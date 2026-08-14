@@ -1,0 +1,201 @@
+<div class="lesson-content">
+  <p class="lesson-intro">The first week of the "Foundations" block introduces the basic terminology of information security, the CIA triad, and teaches you to build a simple threat model with a risk matrix.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Master the basic terminology of infosec and the CIA triad</li>
+      <li>Distinguish attacker types by motive and skill</li>
+      <li>Build a simple threat model with a risk matrix</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>The CIA triad — three pillars of security:</p>
+    <pre><code>        SECURITY
+      /      |       \
+Confiden-  Integ-  Availa-
+tiality     rity    bility
+(who sees)(not altered)(works)</code></pre>
+    <p>How an attack breaks these properties:</p>
+    <pre><code>Data breach       -> Confidentiality violated
+File tampering    -> Integrity violated
+DDoS / ransomware -> Availability violated</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Information security is a set of practices and technologies that protect data and systems from unauthorized access, modification, and destruction. The entire subject rests on three properties — the CIA triad.</p>
+    <p><strong>The CIA triad</strong></p>
+    <ul>
+      <li><strong>Confidentiality</strong> — data is accessible only to those who are supposed to see it. Violated by leaks, traffic interception, credential theft.</li>
+      <li><strong>Integrity</strong> — data is not altered without detection. Violated by file tampering, injections, man-in-the-middle attacks.</li>
+      <li><strong>Availability</strong> — the system is available when needed. Violated by DDoS, ransomware, outages.</li>
+    </ul>
+    <p>Any attack can be described by which of these properties it violates — this is the first thinking tool of a security specialist.</p>
+    <p><strong>Who attackers are.</strong> Motive and skill determine the vector: script kiddies (ready-made tools, low skill), hacktivists (ideology), cybercriminals (money, medium-to-high skill), insiders (legitimate access, hard to detect), APT groups (state-sponsored, highest skill).</p>
+    <p><strong>Threat modeling and STRIDE.</strong> A threat model answers four questions: what are we protecting, from whom, what are the consequences, and with what measures. STRIDE is a convenient methodology for systematizing this: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege. The result is a risk matrix, where each threat is scored by likelihood and impact.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+    <h3>Authentication, authorization, accounting (AAA)</h3>
+    <p>Three related but distinct concepts. <strong>Authentication</strong> — who you are (identity verification: password, key, fingerprint). <strong>Authorization</strong> — what you're allowed to do (which actions and resources are permitted). <strong>Accounting</strong> — what you did (logs, audit). They're often confused, but protection is built on all three: first identify, then restrict rights, then record actions.</p>
+    <h3>Vulnerability, threat, risk, exploit</h3>
+    <p>Let's break it down. <strong>Vulnerability</strong> — a weak point (an unlocked window). <strong>Threat</strong> — a potential event that exploits it (a thief nearby). <strong>Exploit</strong> — a specific way to take advantage of a vulnerability. <strong>Risk</strong> — likelihood of occurrence multiplied by impact. A defender reduces risk by closing vulnerabilities, lowering likelihood, and limiting impact.</p>
+    <h3>Least privilege and defense in depth</h3>
+    <p>Two fundamental principles that will recur throughout the course. <strong>Least privilege</strong> — everyone gets exactly as much access as they need. <strong>Defense in depth</strong> — multiple layers, so that one failure doesn't expose everything. Good security isn't a single "silver bullet" — it's layers.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: a threat model for an online store</h2>
+    <p>The asset is the customer payments database. <strong>Confidentiality</strong> is critical (a leak means a hit to customers and reputation). Threats by STRIDE: disclosure (database leak), tampering (price manipulation), denial (DDoS during a sale). Risk of a database leak is high (likely + major impact) → priority #1: encryption, access control, monitoring. DDoS is medium → overload protection. This is how an abstract "fear" turns into a concrete plan.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: build a threat model in 5 steps</h2>
+    <ol>
+      <li><strong>Describe the system</strong> — what are we protecting (assets: data, services, devices).</li>
+      <li><strong>Determine value</strong> — which part of the CIA triad is critical for each asset.</li>
+      <li><strong>Find threats</strong> — using STRIDE (spoofing, tampering, repudiation, disclosure, DoS, elevation of privilege).</li>
+      <li><strong>Assess risk</strong> — likelihood × impact for each threat.</li>
+      <li><strong>Plan measures</strong> — what to do about priority risks (mitigate, accept, transfer, avoid).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a threat map of your own system</h2>
+    <p>Take a system you know well (your website, app, or home network) and build a mini threat model:</p>
+    <ul>
+      <li>a table of assets and their CIA value;</li>
+      <li>5–6 threats mapped with STRIDE;</li>
+      <li>a 3×3 risk matrix (likelihood × impact);</li>
+      <li>3 priority protective measures.</li>
+    </ul>
+    <p>This makes a great first item in a security portfolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>CIA</strong> — confidentiality, integrity, availability.</li>
+      <li><strong>STRIDE</strong> — a threat-finding methodology (6 categories).</li>
+      <li><strong>Vulnerability / threat / risk / exploit</strong> — see "Going deeper".</li>
+      <li><strong>AAA</strong> — authentication, authorization, accounting.</li>
+      <li><strong>APT</strong> — a sophisticated, targeted, long-term attack (usually state-sponsored).</li>
+      <li><strong>Least privilege</strong> — the minimum access necessary.</li>
+      <li><strong>Defense in depth</strong> — multiple layers of defense.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: security is about "hackers in hoodies."</strong> In reality, it's about processes, risk, and hygiene.</li>
+      <li><strong>Mistake: confusing threat and vulnerability.</strong> A vulnerability is a weak point; a threat is the event that exploits it.</li>
+      <li><strong>Myth: "no one is attacking us."</strong> Most attacks are automated and don't pick a specific target.</li>
+      <li><strong>Mistake: chasing a "silver bullet."</strong> Defense in depth works — not a single measure.</li>
+      <li><strong>Myth: security gets in the way of work.</strong> Good security is proportional to risk and nearly invisible.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Where do I start in infosec?</strong> With the fundamentals: networks, OS, threat modeling — which is exactly what this course provides.</li>
+      <li><strong>Do I need to know programming?</strong> Basic scripting is useful, but early on, understanding systems matters more.</li>
+      <li><strong>What does a SOC analyst do?</strong> Monitors events and investigates incidents — the goal of this course.</li>
+      <li><strong>What matters more — attack or defense?</strong> For a junior, understanding both sides matters; most people enter through defense (Blue Team).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Triad: <strong>CIA</strong>. Threat method: <strong>STRIDE</strong>. Risk = likelihood × impact.</li>
+      <li>Distinguish: vulnerability / threat / exploit / risk.</li>
+      <li>Principles: <strong>least privilege</strong>, <strong>defense in depth</strong>.</li>
+      <li>Attackers: script kiddie → insider → cybercriminal → APT.</li>
+      <li>The output of threat modeling is a risk matrix and an action plan.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <h3>Part A. Asset inventory</h3>
+    <ol>
+      <li>Invent a fictional company and build an asset table: website, customer database, payment data, email, accounting.</li>
+      <li>For each asset, determine which part of the CIA triad is most critical, and justify it.</li>
+    </ol>
+    <h3>Part B. Finding threats with STRIDE</h3>
+    <ol>
+      <li>For 3–4 key assets, come up with 1–2 threats per STRIDE category.</li>
+      <li>Formulate each threat concretely: who gains access, how, and to what.</li>
+    </ol>
+    <h3>Part C. Risk matrix</h3>
+    <ol>
+      <li>Rate the threats by "likelihood" and "impact" (low/medium/high).</li>
+      <li>Build a 3×3 matrix and highlight the priority threats.</li>
+      <li>For two priority threats, propose a risk-reduction measure.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Analyzing real-world breaches</h3>
+    <ol>
+      <li>Find 2 public incidents (data breaches) in the news.</li>
+      <li>For each, determine which CIA property was violated.</li>
+      <li>Hypothesize which vulnerability and threat were involved.</li>
+    </ol>
+    <h3>Part E. STRIDE analysis of an app</h3>
+    <ol>
+      <li>Pick any app you're familiar with (a messenger, a banking app).</li>
+      <li>Go through the 6 STRIDE categories and come up with one threat for each.</li>
+      <li>Note which threat is most dangerous for this app and why.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Analyze two real public incidents and determine which CIA property was violated.</li>
+      <li>Compile a personal glossary of 15 terms from the week in your own words.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain the CIA triad using three everyday examples (one per property).</li>
+      <li>Walk through "vulnerability → threat → exploit → risk" using a single scenario.</li>
+      <li>Describe the principle of least privilege using a real-life example.</li>
+      <li>List 5 types of attackers and their motives.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>What does each letter in the CIA triad stand for?</li>
+      <li>How does a threat differ from a vulnerability?</li>
+      <li>Name three STRIDE categories.</li>
+      <li>What is risk, as a formula?</li>
+      <li>What is the point of the principle of least privilege?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Intro to Cyber Security</a></li>
+      <li><a href="https://www.professormesser.com/" target="_blank" rel="noopener">Professor Messer — Security+ (free videos)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Connection to the course spiral</h2>
+    <blockquote><p><strong>Connection to the course spiral.</strong> This is the foundation of the entire course: the language of threats and risk is used in every subsequent module.</p></blockquote>
+  </section>
+</div>

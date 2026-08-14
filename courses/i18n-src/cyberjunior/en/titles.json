@@ -1,0 +1,24 @@
+{
+  "title": "Cybersecurity from Zero to Junior",
+  "cardText": "A hands-on course from scratch: networking, attacks, defense, incident response — 12 weeks to junior SOC analyst level.",
+  "modules": {
+    "overview": "About the Course",
+    "program-map": "Program Map",
+    "week-01": "Week 1. Introduction and Threat Modeling",
+    "week-02": "Week 2. Networking",
+    "week-03": "Week 3. Operating Systems and the Command Line",
+    "week-04": "Week 4. Reconnaissance and Scanning",
+    "week-05": "Week 5. Web Application Vulnerabilities and Exploitation (OWASP Top 10)",
+    "week-06": "Week 6. Passwords and Social Engineering",
+    "week-07": "Week 7. Hardening and Cryptography",
+    "week-08": "Week 8. Network Monitoring and Defense",
+    "week-09": "Week 9. Incident Response and Forensics Basics",
+    "week-10": "Week 10. Attack Analysis and Blue Team",
+    "week-11": "Week 11. Career Tracks and Preparation",
+    "week-12": "Week 12. Final Project",
+    "resources": "Free Resources and Platforms",
+    "assessment": "Grading System",
+    "lab-setup": "Building a Lab Environment",
+    "test-bank": "Test Question Bank"
+  }
+}

@@ -1,0 +1,202 @@
+<div class="lesson-content">
+  <p class="lesson-intro">The second week of the "Foundations" block covers the TCP/IP model, IP addressing, ports and protocols, and teaches you to read traffic in Wireshark while understanding the difference between HTTP and HTTPS.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand the TCP/IP model and a packet's journey</li>
+      <li>Get comfortable with IP addressing, ports, and protocols</li>
+      <li>Read traffic in Wireshark and see the difference between HTTP/HTTPS</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>A packet's path and where it can be listened to:</p>
+    <pre><code>[ An attacker can listen here ]
+        |
+[ You ] --HTTP (in the clear!)--> [ Wi-Fi ] --> [ Router ] --> [ Server ]
+[ You ] --HTTPS (encrypted)------> ...same path, but interception is useless...</code></pre>
+    <p>Ports = doors on a device:</p>
+    <pre><code>Device 10.0.0.5
+  :22  SSH      :80  HTTP
+  :443 HTTPS    :53  DNS
+  (an open port = a potential entry point)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Almost every attack passes through the network, so understanding the network stack is essential groundwork. Data is transmitted through layers; each layer adds its own header.</p>
+    <p><strong>The TCP/IP stack (simplified)</strong></p>
+    <ul>
+      <li><strong>Link layer</strong> — transmission within a local segment (MAC addresses).</li>
+      <li><strong>Network layer (IP)</strong> — routing between networks by IP address.</li>
+      <li><strong>Transport layer (TCP/UDP)</strong> — delivery to a service. TCP is reliable and connection-oriented; UDP is fast and offers no guarantees.</li>
+      <li><strong>Application layer</strong> — HTTP, DNS, SMTP.</li>
+    </ul>
+    <p><strong>Ports and the TCP handshake.</strong> An IP address points to a host, a port points to a service. TCP connections open via a three-way handshake: SYN → SYN-ACK → ACK.</p>
+    <p><strong>DNS, and HTTP vs. HTTPS.</strong> DNS turns a name into an IP address; phishing and cache poisoning are built around it. HTTP transmits data in plaintext (including logins), while HTTPS adds TLS encryption.</p>
+    <p><strong>Ports to know by heart:</strong> HTTP 80, HTTPS 443, SSH 22, FTP 21, SMTP 25, DNS 53, RDP 3389.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+    <h3>Traffic interception and why HTTPS matters for security</h3>
+    <p>On a shared network (open Wi-Fi), an attacker can "listen" to someone else's traffic. If a site runs on HTTP, logins and data are visible in plaintext. <strong>HTTPS</strong> encrypts them, making anything intercepted useless. For a security specialist, this is fundamental: unencrypted protocols are a priority target for both attack and defense.</p>
+    <h3>TCP flags and what "port scanning" is</h3>
+    <p>A TCP connection opens with a handshake (SYN → SYN-ACK → ACK). Scanning tools (Nmap) manipulate these steps to determine which ports are open without completing a full connection. Understanding the handshake helps you read logs and recognize scanning — a typical first sign that an attack is being prepared.</p>
+    <h3>The OSI model through a defender's eyes</h3>
+    <p>Each layer has its own class of threats: at the link layer — MAC/ARP spoofing, at the network layer — IP spoofing, at the transport layer — scanning, at the application layer — web attacks. Knowing the layer tells you both the attack vector and where to place defenses. The OSI model isn't just theory — it's a threat map.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: the danger of open Wi-Fi</h2>
+    <p>You're at a cafe, you visit a site over HTTP, and you type in a password. Anyone else on that network with a simple sniffer sees it in plaintext. If the site were on HTTPS, an interceptor would only see encrypted garbage. Takeaway for defense: use HTTPS and a VPN on public networks; for offense, this scenario shows why open protocols are easy prey.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: what's visible when you log into a site</h2>
+    <ol>
+      <li>The device resolves the site's IP via DNS.</li>
+      <li>It opens a TCP connection (handshake) on port 443.</li>
+      <li>TLS encryption is negotiated (for HTTPS).</li>
+      <li>Encrypted data exchange takes place.</li>
+      <li>On open Wi-Fi, an outsider sees which IP you connected to, but not the content (for HTTPS).</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: a map of ports and risks</h2>
+    <p>For a lab machine (or your own PC), build a table:</p>
+    <ul>
+      <li>which ports are open (you'll learn to find out with Nmap in module 4 — for now, use known ones);</li>
+      <li>which service sits behind each one;</li>
+      <li>why the open port is risky;</li>
+      <li>whether it's even needed (close anything unnecessary).</li>
+    </ul>
+    <p>This is the first step toward reducing the attack surface.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>TCP/UDP</strong> — reliable / fast transport.</li>
+      <li><strong>Port</strong> — a "door" to a service (22 SSH, 80 HTTP, 443 HTTPS, 53 DNS).</li>
+      <li><strong>DNS</strong> — name → IP.</li>
+      <li><strong>HTTP vs. HTTPS</strong> — in the clear / encrypted.</li>
+      <li><strong>TCP handshake</strong> — SYN → SYN-ACK → ACK.</li>
+      <li><strong>Sniffer</strong> — a traffic interception tool (e.g. Wireshark).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: encryption isn't needed on a private network.</strong> An insider threat is still a threat.</li>
+      <li><strong>Mistake: ignoring open ports.</strong> Every unnecessary port is a potential entry point.</li>
+      <li><strong>Myth: HTTPS = the site is fully secure.</strong> HTTPS protects the channel, not the site itself from vulnerabilities.</li>
+      <li><strong>Mistake: confusing IP and port.</strong> IP is the device, port is the service.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Is Wireshark a "hacking" tool?</strong> No, it's a standard analyzer for diagnostics and defense.</li>
+      <li><strong>Why is HTTPS so important?</strong> It encrypts data, making interception worthless.</li>
+      <li><strong>What is port scanning?</strong> Checking which services are reachable on a device.</li>
+      <li><strong>Does a VPN protect you on open Wi-Fi?</strong> Yes, it encrypts your traffic on top of the network.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Ports: 22/80/443/53/21/25/3389 — know them by heart.</li>
+      <li><strong>HTTP is open, HTTPS is encrypted.</strong> On public networks — use HTTPS/VPN.</li>
+      <li>Handshake: SYN → SYN-ACK → ACK.</li>
+      <li>Each OSI layer = its own class of threats.</li>
+      <li>An open port = a potential entry point.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <h3>Part A. Setting up the lab</h3>
+    <ol>
+      <li>Install VirtualBox and create a Kali Linux VM.</li>
+      <li>Configure two adapters: NAT (internet) and Host-Only/Internal (isolated network).</li>
+      <li>Verify connectivity with ping inside the lab network.</li>
+    </ol>
+    <h3>Part B. Capturing HTTP traffic</h3>
+    <ol>
+      <li>Start Wireshark on the lab network interface.</li>
+      <li>Open an HTTP resource with an input form.</li>
+      <li>Find the three-way handshake (SYN, SYN-ACK, ACK).</li>
+      <li>Filter for HTTP and find the form data in plaintext.</li>
+    </ol>
+    <h3>Part C. Comparing with HTTPS</h3>
+    <ol>
+      <li>Repeat the capture while opening an HTTPS resource.</li>
+      <li>Confirm the content is encrypted.</li>
+      <li>Record your conclusion: what's visible over HTTP and hidden over HTTPS.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Compare HTTP and HTTPS in Wireshark</h3>
+    <ol>
+      <li>Capture traffic while logging into an HTTP page with a form — find the data in plaintext.</li>
+      <li>Repeat with HTTPS — confirm the content is encrypted.</li>
+      <li>Conclude why this is critical for security.</li>
+    </ol>
+    <h3>Part E. Port inventory</h3>
+    <ol>
+      <li>Compile a list of standard ports and services.</li>
+      <li>For three of them, describe why exposing them to the internet is dangerous.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent work assignments</h2>
+    <ul>
+      <li>Draw a diagram of a packet's path, labeling each layer and header.</li>
+      <li>Explain why logging in over HTTP on public Wi-Fi is dangerous and what HTTPS changes.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Explain why open Wi-Fi without HTTPS is dangerous.</li>
+      <li>Draw a packet's path and mark where an attacker could intercept it.</li>
+      <li>Match 3 OSI layers with the attacks typical of each.</li>
+      <li>Explain the difference between TCP and UDP from a security specialist's point of view.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>What port does HTTPS use, and how does it differ from HTTP in terms of security?</li>
+      <li>What is the TCP handshake?</li>
+      <li>Why is open Wi-Fi dangerous?</li>
+      <li>What does Wireshark do?</li>
+      <li>Why is an unnecessary open port dangerous?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Network Fundamentals</a></li>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark (free)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Connection to the course spiral</h2>
+    <blockquote><p><strong>Connection to the course spiral.</strong> The lab you set up (Kali + isolated network) will be your workbench for all future practice.</p></blockquote>
+  </section>
+</div>

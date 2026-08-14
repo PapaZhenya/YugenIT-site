@@ -1,0 +1,258 @@
+<div class="lesson-content">
+  <p class="lesson-intro">El módulo analiza el sistema de direccionamiento de internet: las direcciones IP y las máscaras de subred, las direcciones privadas y públicas, el DNS como «guía telefónica» de nombres y los puertos que determinan qué programa necesita el dispositivo.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender cómo se localizan los dispositivos entre sí en la red</li>
+      <li>Aprender a leer una dirección IPv4, una máscara y determinar la subred</li>
+      <li>Comprender las direcciones privadas y públicas</li>
+      <li>Entender el papel del DNS como «guía telefónica» de internet</li>
+      <li>Entender qué es un puerto y para qué sirve</li>
+      <li>Conocer IPv6 a nivel de idea general</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Para que un paquete llegue a su destino, la red debe responder a tres preguntas: a qué dispositivo dirigirse, a qué programa dentro de él, y bajo qué nombre comprensible se oculta todo esto para una persona. Estas tres cosas —dirección, puerto y nombre— forman el «sistema de direccionamiento» de internet. Vamos a analizarlo en detalle: sobre él se sostiene todo el trabajo posterior con redes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve esto (esquema)</h2>
+    <p>Dirección, máscara y división en red/dispositivo:</p>
+    <pre><code>IP:    192 . 168 . 1 . 10
+маска: 255 . 255 . 255 . 0   (/24)
+        \_____ сеть _____/ \дом/
+        192.168.1   —  это СЕТЬ
+                10  —  это УСТРОЙСТВО в ней</code></pre>
+    <p>Cómo se convierte un nombre en dirección (DNS):</p>
+    <pre><code>[ Ты ] --"какой IP у example.com?"--> [ DNS-сервер ]
+[ Ты ] &lt;--"93.184.216.34"------------ [ DNS-сервер ]
+[ Ты ] --запрос на 93.184.216.34:443--> [ Сайт ]</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen</h2>
+
+    <h3>Dirección IP: hacia dónde ir</h3>
+    <p>Una <strong>dirección IP</strong> es un número único que identifica un dispositivo en la red, el equivalente a la dirección de una casa. En el formato más habitual, IPv4, se ve como cuatro números del 0 al 255 separados por puntos: <code>192.168.1.10</code>. Detrás de estos cuatro números se esconden 32 bits, ceros y unos, con los que trabaja el hardware.</p>
+    <p>La idea clave es que la dirección se divide lógicamente en <strong>dos partes</strong>. Una indica «en qué red» está el dispositivo, la otra «qué dispositivo exactamente» dentro de esa red. Es como la «calle» y el «número de casa»: por la calle el cartero encuentra el barrio, por el número, la casa concreta. Dónde está la frontera entre estas dos partes lo determina la máscara (de la que hablamos a continuación).</p>
+
+    <h3>Máscara de subred: dónde está la frontera</h3>
+    <p>La <strong>máscara de subred</strong> muestra qué parte de la dirección corresponde a la «red» y cuál al «dispositivo». Se anota de dos formas: como cuatro números (<code>255.255.255.0</code>) o de forma más breve, mediante un prefijo (<code>/24</code>). Ambas formas significan lo mismo: los primeros 24 bits son la red, los 8 restantes son los dispositivos.</p>
+    <p>¿Para qué sirve esto en la práctica? Al modificar la longitud del prefijo, los ingenieros <strong>dividen</strong> una red grande en subredes más pequeñas. Por ejemplo, <code>/24</code> da una red de 254 dispositivos, mientras que dos <code>/25</code> dan dos redes de 126 dispositivos cada una. Dividir en subredes simplifica la gestión (cada departamento tiene su propia subred), mejora la seguridad (las subredes se pueden aislar) y ayuda a no desperdiciar direcciones.</p>
+
+    <h3>Direcciones privadas y públicas</h3>
+    <p>No todas las direcciones son iguales. Existen rangos <strong>privados</strong> que se usan dentro de redes domésticas y de oficina: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code> y el más conocido, <code>192.168.0.0/16</code>. Estas direcciones no se enrutan directamente hacia internet: son «locales» y pueden repetirse en distintas casas.</p>
+    <p>Las direcciones <strong>públicas</strong>, en cambio, son únicas en todo el mundo, y son las que permiten que te localicen desde internet. Estos dos mundos los conecta tu router mediante la tecnología NAT (la veremos en detalle en el módulo 6): sustituye las direcciones privadas de tus dispositivos por una única dirección pública al salir hacia el exterior.</p>
+
+    <h3>DNS: un nombre en vez de números</h3>
+    <p>Nadie recuerda los sitios web mediante números como <code>93.184.216.34</code>. Por eso existe el <strong>DNS (Domain Name System)</strong>, la guía telefónica de internet. Escribes el nombre comprensible <code>example.com</code>, y el DNS encuentra la dirección IP correspondiente; solo después el navegador se conecta con el servidor.</p>
+    <p>Esto funciona de forma imperceptible y muy rápida. Cuando abres un sitio, tu dispositivo primero le pregunta discretamente al servidor DNS: «¿qué IP tiene este nombre?»; recibe la respuesta y solo entonces envía la solicitud al sitio en sí. Si el DNS falla, internet parece «desaparecer»: las direcciones funcionan, pero los nombres dejan de abrirse. Esta, por cierto, es una de las causas más frecuentes de que «los sitios no cargan».</p>
+
+    <h3>Puerto: a qué programa</h3>
+    <p>La IP lleva el paquete hasta el dispositivo correcto, pero en el dispositivo funcionan decenas de programas a la vez: el navegador, el correo, la mensajería. ¿Cómo saber a cuál de ellos va destinado el paquete? Para eso está el <strong>puerto</strong>: un identificador numérico del «apartamento» dentro de la «casa».</p>
+    <p>Algunos puertos son estándar y conviene conocerlos: 80, web (HTTP); 443, web segura (HTTPS); 53, DNS; 25, envío de correo (SMTP); 22, acceso remoto (SSH). La combinación «IP + puerto» señala con precisión tanto el dispositivo como el programa: por ejemplo, <code>93.184.216.34:443</code> es el servidor web de una máquina concreta.</p>
+
+    <h3>IPv6: unas palabras sobre el futuro</h3>
+    <p>Las direcciones IPv4 son en total unos 4 mil millones, y hace tiempo que no alcanzan para todos los dispositivos del planeta. Por eso se creó <strong>IPv6</strong>, con direcciones mucho más largas, suficientes literalmente para todo (<code>2001:db8::1</code> es un ejemplo de esa dirección). Se ve poco familiar y se escribe en formato hexadecimal separado por dos puntos.</p>
+    <p>En esta etapa te basta con saber que IPv6 existe, resuelve el problema de la escasez de direcciones y va desplazando poco a poco a IPv4. Muchas redes hoy funcionan con ambos a la vez.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Direcciones especiales que conviene reconocer</h3>
+    <p>En cada subred hay direcciones de servicio. La <strong>dirección de red</strong> (por ejemplo, <code>192.168.1.0</code>) designa a la propia red y no se asigna a ningún dispositivo. La <strong>dirección de difusión</strong> (broadcast) (<code>192.168.1.255</code>) sirve para dirigirse a todos a la vez. También hay direcciones especiales: <code>127.0.0.1</code> es «uno mismo» (localhost), el dispositivo se dirige a sí mismo; <code>0.0.0.0</code> suele significar «cualquier dirección». Conviene reconocerlas: al ver <code>127.0.0.1</code> sabes de inmediato que se trata de la máquina local.</p>
+
+    <h3>Dirección estática y dinámica</h3>
+    <p>Una dirección se puede asignar <strong>manualmente</strong> (de forma estática), en cuyo caso no cambia, lo cual es útil para servidores e impresoras. O se puede obtener <strong>automáticamente</strong> de DHCP (de forma dinámica), así funcionan los teléfonos y los portátiles. Cada enfoque tiene sus ventajas: la estática es predecible, la dinámica no requiere configuración manual. La asignación automática se detalla en el módulo 6.</p>
+
+    <h3>El DNS por dentro: un poco sobre su jerarquía</h3>
+    <p>El DNS no es un solo servidor, sino toda una jerarquía. Cuando preguntas por la dirección de un sitio, la consulta puede pasar por varios niveles: servidores raíz → servidores de la zona de dominio (.com) → servidor del dominio concreto. Para no preguntar cada vez, las respuestas se <strong>almacenan en caché</strong> (se recuerdan durante un tiempo); por eso la segunda visita a un sitio es más rápida. Si la caché está «caducada» o dañada, ayuda vaciarla.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ejemplo práctico: analicemos la dirección 192.168.1.10 / 24</h2>
+    <p>Tomemos una dirección concreta, <code>192.168.1.10</code> con máscara <code>/24</code> (es decir, <code>255.255.255.0</code>), y desglosémosla.</p>
+    <p>El prefijo <code>/24</code> significa: los primeros tres números (<code>192.168.1</code>) son la <strong>red</strong>, el último (<code>10</code>) es el <strong>dispositivo</strong> dentro de ella. Por lo tanto, la dirección de red es <code>192.168.1.0</code>, y los dispositivos pueden tener direcciones de <code>192.168.1.1</code> a <code>192.168.1.254</code> (254 en total). La dirección <code>192.168.1.255</code> es especial, de difusión (para dirigirse a todos a la vez).</p>
+    <p>El rango <code>192.168.x.x</code> es privado, lo que significa que esta dirección vive dentro de una red doméstica u de oficina y no es visible directamente desde internet. Lo más probable es que <code>192.168.1.10</code> sea el portátil de alguien, y <code>192.168.1.1</code> el router (la puerta de enlace). Con solo un par de números, ¡cuánta información ya puedes extraer de ellos!</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: subred de una oficina con 2 departamentos</h2>
+    <p>A una oficina se le asignó la red <code>192.168.50.0/24</code> (254 direcciones). Hay que separar contabilidad y almacén para que no se estorben entre sí. Se divide en dos subredes <code>/25</code>:</p>
+    <ul>
+      <li><strong>Contabilidad:</strong> <code>192.168.50.0/25</code>: direcciones <code>.1</code>–<code>.126</code>.</li>
+      <li><strong>Almacén:</strong> <code>192.168.50.128/25</code>: direcciones <code>.129</code>–<code>.254</code>.</li>
+    </ul>
+    <p>Ahora cada departamento tiene su propia subred de 126 dispositivos, que se pueden aislar y configurar por separado. Así es como se aplica en la práctica la división en subredes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: del nombre a la carga de la página</h2>
+    <ol>
+      <li>Escribes <code>example.com</code>.</li>
+      <li>El dispositivo comprueba la caché: si no se ha preguntado por esta dirección recientemente.</li>
+      <li>Si no está en caché, envía una solicitud al servidor DNS (cuya dirección le dio el DHCP).</li>
+      <li>El DNS responde con la dirección IP del sitio.</li>
+      <li>El dispositivo se conecta con esa IP en el puerto correspondiente (443 para HTTPS).</li>
+      <li>Se produce el intercambio de datos y la página se carga.</li>
+      <li>La respuesta del DNS se guarda en caché para saltarse los pasos 3 y 4 la próxima vez.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: el pasaporte de tu red</h2>
+    <p>Elabora un «pasaporte» de tu red en una sola página:</p>
+    <ul>
+      <li>tu IP, máscara, puerta de enlace, DNS (obtenidos con <code>ipconfig</code>/<code>ip</code>);</li>
+      <li>a qué subred perteneces (dirección de red y rango de dispositivos);</li>
+      <li>si tu dirección es privada o pública;</li>
+      <li>la IP de tres sitios favoritos (mediante <code>nslookup</code>);</li>
+      <li>una conclusión: cuántos dispositivos caben en tu subred.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>Dirección IP</strong>: número único de un dispositivo en la red (IPv4: cuatro números separados por puntos)</li>
+      <li><strong>Máscara de subred</strong>: indica la frontera entre la parte de red y la parte de host de la dirección (p. ej. /24)</li>
+      <li><strong>Subred</strong>: parte de una red, delimitada mediante la máscara</li>
+      <li><strong>Dirección privada</strong>: dirección de los rangos 10/8, 172.16/12, 192.168/16 para redes internas</li>
+      <li><strong>Dirección pública</strong>: dirección única en el mundo, mediante la cual el dispositivo es accesible desde internet</li>
+      <li><strong>DNS</strong>: sistema que convierte nombres (example.com) en direcciones IP</li>
+      <li><strong>Puerto</strong>: identificador numérico que señala un programa concreto en el dispositivo</li>
+      <li><strong>IPv6</strong>: nuevo formato de direcciones con un espacio de direccionamiento enorme</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Error: creer que una IP queda asignada al dispositivo para siempre.</strong> A menudo se asigna de forma temporal (véase DHCP).</li>
+      <li><strong>Mito: el DNS «carga el sitio».</strong> El DNS solo encuentra la IP a partir del nombre; el sitio en sí se carga después.</li>
+      <li><strong>Error: confundir IP y puerto.</strong> La IP lleva al dispositivo, el puerto lleva al programa dentro de él.</li>
+      <li><strong>Mito: una dirección privada es visible desde internet.</strong> No, es local; se sale al exterior mediante NAT.</li>
+      <li><strong>Error: pensar que la máscara es una «contraseña».</strong> La máscara solo define la frontera entre red y dispositivo.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Por qué yo y mi vecino tenemos la misma dirección <code>192.168.1.10</code>?</strong> Porque es una dirección privada: es local y se repite en redes distintas. Hacia afuera salís con direcciones públicas diferentes.</li>
+      <li><strong>¿Qué es <code>127.0.0.1</code>?</strong> «Uno mismo» (localhost): el dispositivo se dirige a sí mismo.</li>
+      <li><strong>¿Para qué hace falta el puerto si ya hay IP?</strong> La IP lleva al dispositivo, y en él hay decenas de programas; el puerto indica el correcto.</li>
+      <li><strong>¿El DNS guarda contraseñas?</strong> No, el DNS solo relaciona nombres con direcciones IP.</li>
+      <li><strong>¿Qué es más rápido, por nombre o por IP?</strong> Por IP es algo más rápido (no hace falta consultar al DNS), pero la gente usa nombres por comodidad; la caché del DNS casi elimina esa diferencia.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Resumen rápido del módulo</h2>
+    <ul>
+      <li><strong>IP</strong> = red + dispositivo. La <strong>máscara/prefijo</strong> define la frontera (<code>/24</code> = 254 dispositivos).</li>
+      <li>Rangos privados: <code>10/8</code>, <code>172.16/12</code>, <code>192.168/16</code>.</li>
+      <li><strong>DNS</strong> = nombre → IP. <strong>Puerto</strong> = qué programa (80/443/53/25/22).</li>
+      <li>Especiales: <code>192.168.1.0</code>, dirección de red; <code>...255</code>, broadcast; <code>127.0.0.1</code>, uno mismo.</li>
+      <li><code>/25</code> = 126 dispositivos, <code>/26</code> = 62 dispositivos.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Tus propias direcciones</h3>
+    <ol>
+      <li>Ejecuta <code>ipconfig</code> (Windows) o <code>ip addr</code> (Linux/Mac) y encuentra tu dirección IP y tu máscara.</li>
+      <li>Determina qué parte de la dirección es la red y cuál es el dispositivo.</li>
+      <li>Determina, según el rango, si tu dirección es privada o pública.</li>
+      <li>Encuentra la dirección de la puerta de enlace: normalmente es el router, y suele ser <code>.1</code> en tu subred.</li>
+    </ol>
+
+    <h3>Parte B. Juega con los nombres (DNS)</h3>
+    <ol>
+      <li>Ejecuta <code>nslookup example.com</code> y anota la IP encontrada.</li>
+      <li>Repite el proceso con otros 2 o 3 sitios y compara las direcciones.</li>
+      <li>Ejecuta <code>nslookup</code> para un sitio que no exista y observa la respuesta.</li>
+      <li>Explica qué pasaría si el DNS no funcionara.</li>
+    </ol>
+
+    <h3>Parte C. Puertos y la combinación «IP + puerto»</h3>
+    <ol>
+      <li>Relaciona al menos 5 servicios con sus puertos (web, web segura, DNS, correo, SSH).</li>
+      <li>Explica por qué <code>93.184.216.34:443</code> es más preciso que solo <code>93.184.216.34</code>.</li>
+    </ol>
+
+    <h3>Parte D. Calcula subredes</h3>
+    <ol>
+      <li>Se da la red <code>192.168.10.0/24</code>. ¿Cuántas direcciones están disponibles para dispositivos?</li>
+      <li>Divídela en dos subredes <code>/25</code> y anota el rango de direcciones de cada una.</li>
+      <li>Para una de las subredes, indica la dirección de red y la dirección de difusión.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Direcciones especiales</h3>
+    <ol>
+      <li>Haz ping a <code>127.0.0.1</code> y explica por qué la respuesta llega al instante.</li>
+      <li>Encuentra la dirección de red y la dirección de difusión de tu subred.</li>
+    </ol>
+
+    <h3>Parte F. La caché de DNS</h3>
+    <ol>
+      <li>Abre un sitio y luego ábrelo de nuevo: ¿notas alguna diferencia de velocidad respecto al primer acceso?</li>
+      <li>Averigua cómo vaciar la caché de DNS en tu sistema y describe el comando.</li>
+      <li>Explica para qué se almacenan en caché las respuestas del DNS.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Explica con un ejemplo qué hace la máscara de subred.</li>
+      <li>Describe con tus propias palabras el papel del DNS y aporta una analogía.</li>
+      <li>Inventa una analogía para la combinación «IP + puerto» (por ejemplo, casa y apartamento) y desarróllala.</li>
+      <li>Averigua por qué surgió IPv6 y descríbelo en dos frases.</li>
+      <li>Determina a qué tipo (privada/pública) pertenecen las direcciones: 10.0.0.5, 8.8.8.8, 192.168.0.1, 172.16.5.4.</li>
+      <li>Calcula cuántos dispositivos caben en una red con máscara /26.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Calcula cuántos dispositivos caben en redes <code>/26</code>, <code>/27</code>, <code>/28</code>.</li>
+      <li>Determina la dirección de red y el broadcast para <code>10.0.5.73/24</code>.</li>
+      <li>Explica la diferencia entre una dirección estática y una dinámica, y cuándo conviene usar cada una.</li>
+      <li>Dibuja la jerarquía de una consulta DNS desde la raíz hasta el dominio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿En qué dos partes se divide lógicamente una dirección IP?</li>
+      <li>¿Qué indica el prefijo /24?</li>
+      <li>¿Qué hace el DNS y qué pasaría sin él?</li>
+      <li>¿En qué se diferencia un puerto de una dirección IP?</li>
+      <li>Nombra tres rangos de direcciones privadas.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer (simulador)</a></li>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark: análisis de DNS</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> Las direcciones, los nombres y los puertos son el abecedario con el que operan todos los dispositivos a partir de ahora: conmutadores, enrutadores y servicios de red. Sin este módulo, el resto no encajará.</p>
+    </blockquote>
+  </section>
+</div>

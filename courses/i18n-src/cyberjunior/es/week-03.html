@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">La tercera semana del bloque «Fundamento» enseña a trabajar con confianza en la línea de comandos de Linux, a comprender el modelo de permisos y a encontrar rastros de eventos en los logs del sistema de Linux y Windows.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Navegar con confianza en Linux desde la línea de comandos</li>
+      <li>Comprender el modelo de permisos y el principio del mínimo privilegio</li>
+      <li>Encontrar y leer los logs del sistema de Linux y Windows</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>Permisos de acceso en Linux (rwx):</p>
+    <pre><code>-rwxr-x---   propietario: rwx   grupo: r-x   otros: ---
+ ^ archivo    (lectura/escritura/ejecución)
+777 = rwx para TODOS = peligroso</code></pre>
+    <p>Dónde buscar rastros (logs):</p>
+    <pre><code>Linux:   /var/log/auth.log  (inicios de sesión, sudo)
+         /var/log/syslog    (sistema)
+Windows: Event Viewer -> Security (4624 inicio de sesión, 4625 fallo)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+    <p>Las herramientas de seguridad de la información viven en la línea de comandos, y toda investigación empieza por los logs.</p>
+    <p><strong>Sistema de archivos y permisos de Linux.</strong> Un árbol desde la raíz <code>/</code>, todo es un archivo. Los permisos son tres conjuntos (propietario/grupo/otros) en forma de <code>rwx</code>. <code>chmod</code> cambia los permisos, <code>chown</code> cambia el propietario, <code>sudo</code> otorga privilegios temporales de root. Los permisos excesivos (777) son una causa frecuente de compromiso.</p>
+    <p><strong>Los logs como fuente de la verdad.</strong> En Linux — <code>/var/log</code> (<code>auth.log</code> — inicios de sesión, <code>syslog</code> — sistema). En Windows — Event Viewer: Security (inicios de sesión <strong>4624</strong> exitoso, <strong>4625</strong> fallido), System, Application.</p>
+    <p><strong>Active Directory en pocas palabras.</strong> En un entorno corporativo, las máquinas Windows están en un dominio gestionado por Active Directory — un directorio de usuarios, grupos y políticas. Comprender AD es fundamental para el Blue Team, porque es precisamente lo que se ataca para tomar el control de toda la red.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+    <h3>Usuarios, grupos y root</h3>
+    <p>En Linux, cada proceso tiene un propietario. <strong>root</strong> es el superusuario, puede hacer cualquier cosa. Los usuarios normales están limitados; <code>sudo</code> otorga una elevación temporal a root. Los atacantes buscan precisamente llegar a root («elevación de privilegios»), y la defensa consiste en mantener a los usuarios con el mínimo de permisos. Comprender este modelo es la base tanto del ataque como de la defensa.</p>
+    <h3>Elevación de privilegios (en pocas palabras)</h3>
+    <p>A menudo, el atacante primero obtiene acceso como usuario normal y luego busca la forma de convertirse en root: permisos incorrectos en archivos, programas vulnerables con un flag de elevación, configuraciones débiles de sudo. La tarea del defensor es no dejar esos huecos. En este curso lo vemos de forma conceptual y solo en el laboratorio.</p>
+    <h3>Procesos, servicios y arranque automático</h3>
+    <p>Un sistema es un conjunto de <strong>procesos</strong> y <strong>servicios</strong> en ejecución. El malware a menudo se disfraza de proceso del sistema y se inscribe en el <strong>arranque automático</strong> para sobrevivir a un reinicio. Por eso saber revisar la lista de procesos y el arranque automático es una habilidad básica de investigación (útil en las semanas 9–10).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: el peligro de los permisos 777</h2>
+    <p>Un desarrollador le puso permisos <code>777</code> a un archivo de configuración «para que funcionara». Ahora cualquier usuario del sistema puede leerlo y modificarlo, incluidos los secretos que contiene. Un atacante que obtiene incluso permisos bajos puede sustituir el archivo y elevar privilegios. Conclusión: los permisos no son un formalismo, sino una superficie de ataque. Lo correcto son los permisos mínimos necesarios.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: encontrar inicios de sesión fallidos en el log</h2>
+    <ol>
+      <li>Abre <code>/var/log/auth.log</code>.</li>
+      <li>Filtra las líneas con las palabras <code>Failed password</code>: <code>grep "Failed password" auth.log</code>.</li>
+      <li>Cuéntalas: añade <code>| wc -l</code>.</li>
+      <li>Encuentra desde qué IP vinieron los intentos: <code>grep "Failed password" auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn</code>.</li>
+      <li>Muchos intentos desde una misma IP → probable ataque de fuerza bruta de contraseñas.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: chuleta de comandos + auditoría de permisos</h2>
+    <p>Arma tu propia herramienta de trabajo:</p>
+    <ul>
+      <li>una chuleta de 20 comandos de Linux con descripción;</li>
+      <li>en la VM de práctica, encuentra archivos con permisos excesivos (por ejemplo, con escritura habilitada para todos);</li>
+      <li>propón cómo corregirlos;</li>
+      <li>redacta un informe breve de «auditoría de permisos».</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>root</strong> — superusuario de Linux.</li>
+      <li><strong>sudo</strong> — elevación temporal de permisos.</li>
+      <li><strong>rwx / chmod</strong> — permisos de acceso y su modificación.</li>
+      <li><strong>auth.log / syslog</strong> — logs de Linux.</li>
+      <li><strong>Event ID 4624/4625</strong> — inicio de sesión/fallo en Windows.</li>
+      <li><strong>Elevación de privilegios</strong> — obtención de permisos más altos.</li>
+      <li><strong>Arranque automático</strong> — mecanismo de ejecución al iniciar el sistema (lugar frecuente de persistencia).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores y mitos frecuentes</h2>
+    <ul>
+      <li><strong>Mito: nadie lee los logs, así que no son necesarios.</strong> Los logs son la principal fuente de la verdad en una investigación.</li>
+      <li><strong>Error: poner 777 «para que funcione».</strong> Es una puerta abierta.</li>
+      <li><strong>Mito: se necesita root para todo.</strong> Al contrario, trabaja con el mínimo de permisos.</li>
+      <li><strong>Error: confiar en <code>history -c</code>.</strong> Los rastros a menudo quedan en otros logs.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Es obligatorio saber Linux?</strong> Sí, es la herramienta principal de un profesional de seguridad.</li>
+      <li><strong>¿Para qué leer los logs manualmente si existe SIEM?</strong> Comprender los logs es la base; el SIEM solo lo automatiza.</li>
+      <li><strong>¿Qué es más importante, Linux o Windows?</strong> Ambos: los servidores suelen ser Linux, el entorno corporativo es Windows/AD.</li>
+      <li><strong>¿Qué es la elevación de privilegios?</strong> Obtener permisos más altos que los otorgados inicialmente.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li>Navegación: <code>pwd ls -la cd cat less grep head tail</code>.</li>
+      <li>Permisos: <code>chmod</code>, modelo <code>rwx</code> (propietario/grupo/otros), 777 — peligroso.</li>
+      <li>Elevación: <code>sudo</code>; el objetivo del atacante es root.</li>
+      <li>Logs: <code>/var/log/auth.log</code>, <code>syslog</code>; Windows — Event Viewer (4624/4625).</li>
+      <li>Contar inicios de sesión fallidos: <code>grep "Failed password" auth.log | wc -l</code>.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorio</h2>
+    <h3>Parte A. Navegación y archivos</h3>
+    <ol>
+      <li>Domina: <code>pwd</code>, <code>ls -la</code>, <code>cd</code>, <code>cat</code>, <code>less</code>, <code>head</code>, <code>tail</code>, <code>grep</code>.</li>
+      <li>Crea un directorio y archivos, practica moverte y visualizarlos.</li>
+    </ol>
+    <h3>Parte B. Permisos de acceso</h3>
+    <ol>
+      <li>Crea un usuario y un archivo; cambia los permisos con <code>chmod</code>.</li>
+      <li>Comprueba qué puede y no puede hacer otro usuario.</li>
+      <li>Demuestra por qué los permisos 777 en un archivo con un secreto son peligrosos.</li>
+    </ol>
+    <h3>Parte C. Lectura de logs</h3>
+    <ol>
+      <li>Encuentra en <code>/var/log/auth.log</code> los inicios de sesión exitosos y fallidos con <code>grep</code>.</li>
+      <li>Escribe una línea de comando que cuente los inicios de sesión fallidos.</li>
+      <li>En la VM de Windows, encuentra los eventos 4624 y 4625 en el Event Viewer.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+    <h3>Parte D. Análisis de logs de Windows</h3>
+    <ol>
+      <li>En la VM de Windows, abre Event Viewer → Security.</li>
+      <li>Encuentra los eventos 4624 (inicio de sesión exitoso) y 4625 (fallo).</li>
+      <li>Determina cómo se vería un ataque de fuerza bruta de contraseñas en estos eventos.</li>
+    </ol>
+    <h3>Parte E. Procesos y arranque automático</h3>
+    <ol>
+      <li>Muestra la lista de procesos (<code>ps aux</code> en Linux).</li>
+      <li>Revisa qué se inicia automáticamente.</li>
+      <li>Explica por qué el malware busca colocarse en el arranque automático.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo independiente</h2>
+    <ul>
+      <li>Elabora una chuleta de 20 comandos de Linux con descripción.</li>
+      <li>Describe cómo el principio del mínimo privilegio reduce el daño en caso de compromiso.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Elabora una chuleta de 20 comandos de Linux con descripción.</li>
+      <li>Explica el modelo de permisos rwx usando un archivo concreto como ejemplo.</li>
+      <li>Describe por qué los permisos excesivos son peligrosos, con un escenario.</li>
+      <li>Escribe un comando que cuente los inicios de sesión fallidos en auth.log.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Pon a prueba tus conocimientos</h2>
+    <ol>
+      <li>¿Qué hace el comando <code>chmod</code> y qué significa 777?</li>
+      <li>¿Dónde se guardan en Linux los logs de inicio de sesión?</li>
+      <li>¿Qué significan los Event ID 4624 y 4625?</li>
+      <li>¿Qué es la elevación de privilegios?</li>
+      <li>¿Por qué es importante el arranque automático en una investigación?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://overthewire.org/wargames/bandit/" target="_blank" rel="noopener">OverTheWire — Bandit (Linux en forma de juego)</a></li>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Linux Fundamentals</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Conexión con la espiral del curso</h2>
+    <blockquote><p><strong>Conexión con la espiral del curso.</strong> La lectura de logs y la línea de comandos serán necesarias directamente en el bloque de respuesta (semanas 9–10).</p></blockquote>
+  </section>
+</div>

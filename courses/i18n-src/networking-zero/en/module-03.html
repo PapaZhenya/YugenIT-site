@@ -1,0 +1,323 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module explains why data transmission is described in layers, breaks down the TCP/IP and OSI models, and shows how the correspondence between them helps you quickly pinpoint where a network has broken.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand why networks are described in layers</li>
+      <li>Break down the TCP/IP model (4 layers) and how it works</li>
+      <li>Get familiar with the OSI model (7 layers)</li>
+      <li>Learn to map the layers of the two models to each other</li>
+      <li>Be able to identify at which layer a problem occurred</li>
+      <li>Understand the principle of data encapsulation</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>You've already seen live data exchange and worked through addressing. Now let's put things in order in your head.
+    Networks are described using layers — and this isn't dry theory for theory's sake, but a working tool
+    that saves hours when tracking down faults. When a specialist says "the problem is at layer three,"
+    they instantly narrow the search. Let's learn to do the same.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Encapsulation — data gets wrapped in headers from top to bottom:</p>
+    <pre><code>Application:                         [ DATA ]
+Transport:                 [ TCP | DATA ]            = segment
+Network:            [ IP | TCP | DATA ]              = packet
+Data Link:   [ ETH | IP | TCP | DATA | ETH-tail ]  = frame
+                        sent to the network --&gt;</code></pre>
+    <p>Correspondence between the models:</p>
+    <pre><code>   TCP/IP (4)            OSI (7)
++----------------+   +-------------------+
+|  Application   |   | Application       |
+|                |   | Presentation      |
+|                |   | Session           |
++----------------+   +-------------------+
+|  Transport     |   | Transport         |
++----------------+   +-------------------+
+|  Network       |   | Network           |
++----------------+   +-------------------+
+|  Data Link     |   | Data Link         |
+|                |   | Physical          |
++----------------+   +-------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+
+    <h3>Why networks are split into layers</h3>
+    <p>The task of "transmitting data" is enormous: you need to physically carry
+    a signal, find a path between networks, ensure reliability, and show a person a web page.
+    Dumping it all into one pile is impossible. So the task is <strong>split into layers</strong>, where each one is strictly
+    responsible for its own part and doesn't meddle with anyone else's.</p>
+    <p>It's like package delivery at a warehouse: one worker packs the box, another writes the address,
+    a third loads it onto the truck, a fourth drives it. Everyone handles their own job. If the package doesn't arrive —
+    it's immediately clear who to ask. Layers in a network work exactly the same way, simplifying both development (you can
+    improve one layer without breaking the others) and diagnostics (a problem is easy to localize).</p>
+
+    <h3>The TCP/IP model: four working layers</h3>
+    <p>This is the model the internet actually runs on. It has
+    four layers, from bottom to top:</p>
+    <ul>
+      <li><strong>Data Link</strong> — transmission within a single local segment of the network, using MAC addresses. Responsible for
+      delivery "to the next-door device" within a LAN.</li>
+      <li><strong>Network</strong> — delivery between different networks, using IP addresses. This is where
+      "across half the world" routing happens.</li>
+      <li><strong>Transport</strong> — getting data to the right program. This is home to TCP (reliable, with
+      acknowledgment of every piece) and UDP (fast, no guarantees — for video and games).</li>
+      <li><strong>Application</strong> — what you use directly: the web (HTTP/HTTPS), email, DNS.</li>
+    </ul>
+    <p>Each layer uses the services of the layer below and provides services to the layer above. You work at the
+    application layer, while everything else happens invisibly underneath.</p>
+
+    <h3>The OSI model: seven layers for study</h3>
+    <p><strong>OSI</strong> is a more detailed, "reference" model made up of seven
+    layers: physical, data link, network, transport, session, presentation, application.
+    In practice, networks run on TCP/IP, but OSI is kept as a <strong>shared language</strong>: it's more detailed and convenient
+    for discussing exactly where a problem occurred.</p>
+    <p>You don't need to memorize all seven by heart on day one. It's enough to understand the logic: at the bottom is "hardware and
+    signal," in the middle are "addresses and delivery," and at the top are "applications and data for a human." You'll come back to
+    the details of the upper layers (session, presentation) when you actually need them.</p>
+
+    <h3>How the two models correspond to each other</h3>
+    <p>The models aren't competitors — they're about the same thing, just
+    at a different level of detail. Roughly speaking: the TCP/IP application layer covers about the three
+    upper OSI layers (application, presentation, session); transport and network match up
+    almost one to one; and the TCP/IP data link layer covers the OSI data link and physical layers.</p>
+    <p>Practical takeaway: if you understand the four TCP/IP layers, you already have your bearings in the seven
+    OSI layers — the latter just spells out some layers in more detail.</p>
+
+    <h3>Encapsulation: how data gets wrapped in headers</h3>
+    <p>Remember the "data inside, labels on
+    the outside" image from module 1? Now it becomes precise. As data travels "down" through the layers, each
+    layer adds <strong>its own header</strong> — this is <strong>encapsulation</strong>. Application data is wrapped by the
+    transport header (becoming a segment), then by the network header (becoming a packet), then by the data link header
+    (becoming a frame). On the receiving side, everything is unwrapped in reverse order — headers are
+    stripped off layer by layer, until only the clean data remains.</p>
+    <p>Hence the different names for the same thing at different layers: at the transport layer — segment, at the
+    network layer — packet, at the data link layer — frame. This often confuses beginners, but now you know: it's just
+    data with a different number of "labels."</p>
+
+    <h3>How layers help when things break</h3>
+    <p>The main practical benefit of the model is the "bottom-up"
+    diagnostic method. When a network isn't working, you don't poke around at random — you go layer by layer: is there a
+    physical signal/cable (bottom) → is the IP address correct (network) → does it reach the right program
+    (transport/application). Wherever it breaks off — that's where the problem is.</p>
+    <p>We'll put this into real practice in module 8, which is dedicated to diagnostics. For now, just remember: the layer
+    model is a map that lets you find faults quickly and without panic.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Digging deeper</h2>
+
+    <h3>What each layer does (a bit more detail)</h3>
+    <ul>
+      <li><strong>Physical (OSI):</strong> the actual signals — voltage on a wire, light in fiber optics, radio waves.</li>
+      <li><strong>Data Link:</strong> frames and MAC addresses, delivery "to the next-door device" within a segment.</li>
+      <li><strong>Network:</strong> IP addresses and "across the world" routing.</li>
+      <li><strong>Transport:</strong> ports, reliability (TCP) or speed (UDP).</li>
+      <li><strong>Application:</strong> the protocols a person actually sees (HTTP, DNS, email).</li>
+    </ul>
+
+    <h3>TCP in more detail: why it's "reliable"</h3>
+    <p>TCP guarantees delivery using several techniques: it <strong>numbers</strong> pieces so they can be reassembled
+    in order; it waits for <strong>acknowledgment</strong> of receipt of each one; it <strong>resends</strong> anything lost; and it regulates
+    speed so as not to overload the connection. All of this comes at the cost of some overhead. That's why TCP is used
+    wherever integrity matters (websites, files, email).</p>
+
+    <h3>UDP in more detail: why it's "fast"</h3>
+    <p>UDP simply sends data without acknowledgments or resends. If a packet gets lost — oh well,
+    the next one matters more. This is ideal for live video, voice, and games: it's better to drop a frame than to wait
+    and stutter. The choice between TCP and UDP is a choice between "reliable, but cautious" and "fast, but no guarantees."</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: what happens at each layer when opening a website</h2>
+    <p>Let's take opening <code>example.com</code>
+    and walk through the TCP/IP layers top to bottom (how data is prepared for sending):</p>
+    <p><strong>Application:</strong> the browser forms an HTTP request, "give me the page." <strong>Transport:</strong> TCP splits the
+    request into segments and tags them so they can later be reassembled in order and checked that nothing
+    was lost; it adds the destination port (443). <strong>Network:</strong> IP adds addresses — where from and where to
+    (your IP and the server's IP); now it's a packet, which can be routed between networks. <strong>Data Link:</strong>
+    a frame with MAC addresses is added for delivery to the nearest device (the router).</p>
+    <p>On the server, everything is unwrapped in reverse order: frame → packet → segment → and at the top the server
+    reads the clean HTTP request and prepares a response. The response makes the same trip back to you.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: identify the layer of the fault</h2>
+    <ul>
+      <li>"Cable unplugged, no light on" → <strong>physical</strong>.</li>
+      <li>"No IP received / incorrect IP" → <strong>network</strong> (check DHCP).</li>
+      <li>"IP pings, but the site doesn't load by name" → <strong>application</strong> (DNS).</li>
+      <li>"Connection keeps dropping, speed fluctuates" → often <strong>transport/data link</strong>.</li>
+    </ul>
+    <p>Being able to name the layer immediately halves the search for the cause.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: a message passes through all the layers</h2>
+    <p>We send an HTTP request from top to bottom:</p>
+    <ol>
+      <li><strong>Application:</strong> the browser writes "GET /page."</li>
+      <li><strong>Transport:</strong> TCP adds a port (443), numbers the segment.</li>
+      <li><strong>Network:</strong> IP adds the sender's and recipient's addresses — it's now a packet.</li>
+      <li><strong>Data Link:</strong> a frame with a MAC address is added, addressed to the nearest router.</li>
+      <li>The frame goes out onto the network; at each router the data link header is updated, while the IP header stays the same.</li>
+      <li>On the server, everything is stripped away bottom to top, and the application reads the clean request.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: your own layer diagram</h2>
+    <p>Make a visual cheat-sheet poster:</p>
+    <ul>
+      <li>draw the 4 TCP/IP layers as a column;</li>
+      <li>next to each one, note: what it does, which addresses/concepts apply, an example protocol;</li>
+      <li>next to that, show what the unit of data is called at each layer (segment/packet/frame);</li>
+      <li>add an arrow labeled "encapsulation going down / decapsulation going up."</li>
+    </ul>
+    <p>Hang it where you can see it — it'll come in handy for the whole course.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Layer</strong> — a logical layer responsible for its part of the network's work</li>
+      <li><strong>TCP/IP model</strong> — the practical 4-layer model that the internet runs on</li>
+      <li><strong>OSI model</strong> — the reference 7-layer model, a shared language for describing networks</li>
+      <li><strong>Encapsulation</strong> — adding a header at each layer as data moves downward</li>
+      <li><strong>Segment</strong> — data with a transport header (TCP/UDP layer)</li>
+      <li><strong>Packet</strong> — data with a network (IP) header</li>
+      <li><strong>Frame</strong> — data with a data link header (MAC addresses)</li>
+      <li><strong>TCP / UDP</strong> — transport protocols: reliable with acknowledgment / fast with no guarantees</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: memorizing the 7 OSI layers on day one.</strong> First understand the logic and the 4 TCP/IP layers.</li>
+      <li><strong>Myth: OSI and TCP/IP are competitors.</strong> They're the same thing, at different levels of detail.</li>
+      <li><strong>Mistake: confusing segment/packet/frame.</strong> It's the same data with a different number of headers.</li>
+      <li><strong>Myth: layers are an abstraction with no practical use.</strong> On the contrary, they're the main diagnostic tool.</li>
+      <li><strong>Mistake: assuming TCP is always better than UDP.</strong> For video and games, UDP is actually preferable.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Why two models?</strong> OSI is a detailed "map for discussion," TCP/IP is the internet's working model.</li>
+      <li><strong>Do I need to memorize the 7 layers?</strong> No. Master the logic and the 4 TCP/IP layers — that's enough for a long time.</li>
+      <li><strong>Why is the same data called different things?</strong> Because of the number of headers: segment/packet/frame are
+      stages of the same encapsulation.</li>
+      <li><strong>Is TCP always better than UDP?</strong> No. For video/games, UDP is preferable.</li>
+      <li><strong>At which layer does Wi-Fi "live"?</strong> Mainly at the data link and physical layers — the medium is just radio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>TCP/IP = 4 layers:</strong> data link (MAC) → network (IP) → transport (ports) → application.</li>
+      <li><strong>OSI = 7 layers</strong> (more detailed, a shared language).</li>
+      <li><strong>Encapsulation:</strong> data → segment → packet → frame.</li>
+      <li><strong>TCP</strong> — reliable (acknowledgments, resending). <strong>UDP</strong> — fast (no guarantees).</li>
+      <li>Diagnostics are done <strong>bottom to top</strong>, layer by layer.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Break down opening a website by layer</h3>
+    <ol>
+      <li>Take the example of opening a website from module 1.</li>
+      <li>Write out what happens at each of the 4 TCP/IP layers when sending the request.</li>
+      <li>Map these 4 layers to the layers of the OSI model.</li>
+    </ol>
+
+    <h3>Part B. Find the layers in real traffic</h3>
+    <ol>
+      <li>In Wireshark, open a single captured packet and expand its structure.</li>
+      <li>Find the layers in it: Ethernet (data link), IP (network), TCP/UDP (transport), data (application).</li>
+      <li>Mark where in the packet the MAC addresses are, and where the IP addresses are.</li>
+    </ol>
+
+    <h3>Part C. Encapsulation on paper</h3>
+    <ol>
+      <li>Draw a diagram of encapsulation: how application data turns into a segment → packet → frame.</li>
+      <li>Label which header is added at each step.</li>
+    </ol>
+
+    <h3>Part D. Identify the layer of the problem</h3>
+    <ol>
+      <li>For three situations, determine the likely layer: (a) cable unplugged, (b) incorrect IP, (c) the site doesn't open by name but does open by IP.</li>
+      <li>Justify each answer.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. TCP vs UDP in traffic</h3>
+    <ol>
+      <li>In Wireshark, find TCP packets and UDP packets (for example, DNS is usually over UDP).</li>
+      <li>Compare whether TCP has acknowledgments (ACK) while UDP doesn't.</li>
+      <li>Draw a conclusion about why TCP is used for websites.</li>
+    </ol>
+
+    <h3>Part F. Build encapsulation by hand</h3>
+    <ol>
+      <li>Take a sheet of paper and "pack" a message layer by layer, labeling each added header.</li>
+      <li>Then "unpack" it on the receiving side, from bottom to top.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Self-study assignments</h2>
+    <ul>
+      <li>Explain in your own words why networks are split into layers.</li>
+      <li>List the 4 TCP/IP layers and briefly say what each one is responsible for.</li>
+      <li>Describe the difference between TCP and UDP and give one usage example for each.</li>
+      <li>Explain how a segment, a packet, and a frame differ.</li>
+      <li>Give an example of a network problem and state at which layer it occurs.</li>
+      <li>Describe in your own words what encapsulation is.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional assignments</h2>
+    <ul>
+      <li>Build a table: layer → what it does → address/concept → data unit → example.</li>
+      <li>Give two examples of services suited to TCP and two suited to UDP.</li>
+      <li>Explain why TCP numbers segments.</li>
+      <li>For five fault scenarios, state the likely layer.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>How many layers are in the TCP/IP model, and what are they called?</li>
+      <li>At which layer do IP addresses operate, and at which do MAC addresses operate?</li>
+      <li>What is encapsulation?</li>
+      <li>How does a segment differ from a frame?</li>
+      <li>Why is the layer model needed in practice?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics — network models</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connection to the course.</strong> Layers are the map we'll use to navigate parts II and III, especially in the diagnostics module. Next, we start building a real network.</p>
+    </blockquote>
+  </section>
+</div>

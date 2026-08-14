@@ -1,0 +1,258 @@
+<div class="lesson-content">
+  <p class="lesson-intro">This module covers the internet's addressing system: IP addresses and subnet masks, private and public addresses, DNS as the "phone book" of names, and ports, which identify the right program on a device.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand how devices find each other on a network</li>
+      <li>Learn to read an IPv4 address and mask and determine the subnet</li>
+      <li>Get a handle on private and public addresses</li>
+      <li>Understand the role of DNS as the internet's "phone book"</li>
+      <li>Understand what a port is and why it's needed</li>
+      <li>Get acquainted with IPv6 at the idea level</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introduction</h2>
+    <p>For a packet to reach its destination, the network has to answer three questions: which device to send it to, which program on that device it's for, and what human-friendly name all this hides behind. These three things — address, port, and name — form the internet's "addressing system." Let's dig into it in detail: everything else you do with networks rests on it.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>Address, mask, and the split into network/device:</p>
+    <pre><code>IP:    192 . 168 . 1 . 10
+mask:  255 . 255 . 255 . 0   (/24)
+        \_____ network ____/ \home/
+        192.168.1   —  this is the NETWORK
+                10  —  this is the DEVICE within it</code></pre>
+    <p>How a name turns into an address (DNS):</p>
+    <pre><code>[ You ] --"what's the IP for example.com?"--> [ DNS server ]
+[ You ] &lt;--"93.184.216.34"------------------- [ DNS server ]
+[ You ] --request to 93.184.216.34:443------> [ Site ]</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Notes</h2>
+
+    <h3>IP address: where to go</h3>
+    <p>An <strong>IP address</strong> is a unique number identifying a device on a network — the equivalent of a house's street address. In its most common form, IPv4, it looks like four numbers from 0 to 255 separated by dots: <code>192.168.1.10</code>. Behind these four numbers lie 32 bits — the zeros and ones that hardware actually works with.</p>
+    <p>The key idea: the address is logically split into <strong>two parts</strong>. One tells you "which network" the device is on, the other "which exact device" within that network. Think of it as a "street" and a "house number": the postal worker uses the street to find the neighborhood, and the number to find the specific house. Where the boundary between these two parts falls is determined by the mask (more on that below).</p>
+
+    <h3>Subnet mask: where the boundary lies</h3>
+    <p>The <strong>subnet mask</strong> shows how much of the address belongs to the "network" and how much to the "device." It's written in two ways: as four numbers (<code>255.255.255.0</code>) or, more compactly, as a prefix (<code>/24</code>). Both mean the same thing: the first 24 bits are the network, the remaining 8 are devices.</p>
+    <p>Why does this matter in practice? By changing the prefix length, engineers <strong>carve</strong> a large network into smaller subnets. For example, <code>/24</code> gives you one network of 254 devices, while two <code>/25</code>s give you two networks of 126 devices each. Splitting into subnets simplifies management (each department gets its own subnet), improves security (subnets can be isolated), and helps avoid wasting addresses.</p>
+
+    <h3>Private and public addresses</h3>
+    <p>Not all addresses are the same. There are <strong>private</strong> ranges used inside home and office networks: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, and the most familiar one, <code>192.168.0.0/16</code>. These addresses aren't routed directly onto the internet — they're "local," and they can repeat across different homes.</p>
+    <p><strong>Public</strong> addresses, by contrast, are unique across the whole world, and they're what the internet uses to find you. Your router bridges these two worlds using a technology called NAT (we'll cover it in detail in module 6): it swaps your devices' private addresses for a single public one on the way out.</p>
+
+    <h3>DNS: a name instead of numbers</h3>
+    <p>Nobody remembers websites by numbers like <code>93.184.216.34</code>. That's why <strong>DNS (Domain Name System)</strong> exists — the internet's phone book. You type in a human-friendly name like <code>example.com</code>, DNS finds the matching IP address, and only then does the browser connect to the server.</p>
+    <p>This happens quietly and very fast. When you open a website, your device first quietly asks a DNS server: "what's the IP for this name?" — gets an answer, and only then sends the request to the site itself. If DNS breaks, the internet seems to "disappear": the addresses still work, but names stop resolving. This, incidentally, is one of the most common causes of "sites won't load."</p>
+
+    <h3>Port: which program</h3>
+    <p>IP gets a packet to the right device, but a device runs dozens of programs at once: browser, mail, messenger. How do you know which one a packet is meant for? That's what a <strong>port</strong> is for — a numeric qualifier for the "apartment" within the "house."</p>
+    <p>Some ports are standardized and worth knowing: 80 — web (HTTP), 443 — secure web (HTTPS), 53 — DNS, 25 — sending mail (SMTP), 22 — remote access (SSH). The combination "IP + port" precisely identifies both the device and the program: for example, <code>93.184.216.34:443</code> is a web server on a specific machine.</p>
+
+    <h3>IPv6: a quick look at the future</h3>
+    <p>There are only about 4 billion IPv4 addresses, and they haven't been enough for every device on the planet for a long time. That's why <strong>IPv6</strong> was created — with far longer addresses, enough for literally everything (<code>2001:db8::1</code> is an example of one). It looks unfamiliar and is written in hexadecimal, separated by colons.</p>
+    <p>At this stage, it's enough to know that IPv6 exists, solves the address shortage problem, and is gradually displacing IPv4. Many networks today run both at once.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Going deeper</h2>
+
+    <h3>Special addresses worth recognizing</h3>
+    <p>Every subnet has service addresses. The <strong>network address</strong> (for example, <code>192.168.1.0</code>) denotes the network itself and is never assigned to a device. The <strong>broadcast address</strong> (<code>192.168.1.255</code>) addresses everyone at once. There are also special ones: <code>127.0.0.1</code> is "yourself" (localhost) — a device addressing itself; <code>0.0.0.0</code> often means "any address." It's useful to recognize these: seeing <code>127.0.0.1</code>, you immediately know it refers to the local machine.</p>
+
+    <h3>Static and dynamic addresses</h3>
+    <p>An address can be set <strong>manually</strong> (statically) — then it doesn't change, which is convenient for servers and printers. Or it can be obtained <strong>automatically</strong> from DHCP (dynamically) — this is how phones and laptops work. Each approach has its advantages: static is predictable, dynamic requires no manual setup. We'll cover automatic assignment in detail in module 6.</p>
+
+    <h3>DNS under the hood: a bit about hierarchy</h3>
+    <p>DNS isn't a single server but a whole hierarchy. When you ask for a site's address, the request may pass through several levels: root servers → domain zone servers (.com) → the specific domain's server. To avoid asking every time, answers are <strong>cached</strong> (remembered for a while) — that's why the second visit to a site is faster. If the cache goes "stale" or breaks, clearing it helps.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Worked example: breaking down the address 192.168.1.10 / 24</h2>
+    <p>Let's take a specific address, <code>192.168.1.10</code>, with the mask <code>/24</code> (that is, <code>255.255.255.0</code>), and break it down.</p>
+    <p>The prefix <code>/24</code> means: the first three numbers (<code>192.168.1</code>) are the <strong>network</strong>, and the last one (<code>10</code>) is the <strong>device</strong> within it. So the network address is <code>192.168.1.0</code>, and devices can have addresses from <code>192.168.1.1</code> to <code>192.168.1.254</code> (254 of them). The address <code>192.168.1.255</code> is special — it's the broadcast address (for addressing everyone at once).</p>
+    <p>The range <code>192.168.x.x</code> is private, meaning this address lives inside a home/office network and isn't visible directly on the internet. Most likely, <code>192.168.1.10</code> is someone's laptop, and <code>192.168.1.1</code> is the router (gateway). Just a couple of numbers, and yet look how much information you can already pull out of them!</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Another example: an office subnet for 2 departments</h2>
+    <p>An office was assigned the network <code>192.168.50.0/24</code> (254 addresses). Accounting and the warehouse need to be separated so they don't interfere with each other. We split it into two <code>/25</code> subnets:</p>
+    <ul>
+      <li><strong>Accounting:</strong> <code>192.168.50.0/25</code> — addresses <code>.1</code>–<code>.126</code>.</li>
+      <li><strong>Warehouse:</strong> <code>192.168.50.128/25</code> — addresses <code>.129</code>–<code>.254</code>.</li>
+    </ul>
+    <p>Now each department has its own subnet for 126 devices, which can be isolated and configured separately. This is exactly how subnetting is applied in practice.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: from name to page load</h2>
+    <ol>
+      <li>You type <code>example.com</code>.</li>
+      <li>The device checks its cache: has this address been asked for recently?</li>
+      <li>If not — it sends a request to the DNS server (its address was handed out by DHCP).</li>
+      <li>DNS responds with the site's IP address.</li>
+      <li>The device connects to that IP on the right port (443 for HTTPS).</li>
+      <li>Data is exchanged, and the page loads.</li>
+      <li>The DNS answer gets cached, so steps 3–4 can be skipped next time.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: your network's passport</h2>
+    <p>Put together a one-page "passport" for your network:</p>
+    <ul>
+      <li>your IP, mask, gateway, DNS (from <code>ipconfig</code>/<code>ip</code>);</li>
+      <li>which subnet you belong to (network address and device range);</li>
+      <li>whether your address is private or public;</li>
+      <li>the IP of three of your favorite sites (via <code>nslookup</code>);</li>
+      <li>a conclusion: how many devices fit in your subnet.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>IP address</strong> — a unique number identifying a device on a network (IPv4 — four numbers separated by dots)</li>
+      <li><strong>Subnet mask</strong> — shows the boundary between the network and host portions of an address (e.g. /24)</li>
+      <li><strong>Subnet</strong> — a part of a network carved out by the mask</li>
+      <li><strong>Private address</strong> — an address from the 10/8, 172.16/12, 192.168/16 ranges, used for internal networks</li>
+      <li><strong>Public address</strong> — an address unique worldwide, by which a device is reachable from the internet</li>
+      <li><strong>DNS</strong> — the system that turns names (example.com) into IP addresses</li>
+      <li><strong>Port</strong> — a numeric qualifier pointing to a specific program on a device</li>
+      <li><strong>IPv6</strong> — a new address format with a huge address space</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Mistake: assuming an IP address is permanently tied to a device.</strong> It's often assigned temporarily (see DHCP).</li>
+      <li><strong>Myth: DNS "loads the site."</strong> DNS only finds the IP for a name; the site itself loads afterward.</li>
+      <li><strong>Mistake: confusing IP and port.</strong> IP leads to the device, port leads to the program on it.</li>
+      <li><strong>Myth: a private address is visible from the internet.</strong> No, it's local; it reaches the outside world through NAT.</li>
+      <li><strong>Mistake: thinking of a mask as a "password."</strong> The mask only sets the network/device boundary.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Why do I and my neighbor both have <code>192.168.1.10</code>?</strong> Because it's a private address — it's local and repeats across different networks. You reach the outside world under different public addresses.</li>
+      <li><strong>What is <code>127.0.0.1</code>?</strong> "Yourself" (localhost) — a device addressing itself.</li>
+      <li><strong>Why do I need a port if I have an IP?</strong> IP leads to the device, and it has dozens of programs running — the port points to the right one.</li>
+      <li><strong>Does DNS store passwords?</strong> No, DNS only maps names to IP addresses.</li>
+      <li><strong>What's faster — by name or by IP?</strong> By IP is a bit faster (no need for a DNS lookup), but people use names for convenience; DNS caching nearly erases the difference.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li><strong>IP</strong> = network + device. <strong>Mask/prefix</strong> sets the boundary (<code>/24</code> = 254 devices).</li>
+      <li>Private ranges: <code>10/8</code>, <code>172.16/12</code>, <code>192.168/16</code>.</li>
+      <li><strong>DNS</strong> = name → IP. <strong>Port</strong> = which program (80/443/53/25/22).</li>
+      <li>Special: <code>192.168.1.0</code> — network, <code>...255</code> — broadcast, <code>127.0.0.1</code> — yourself.</li>
+      <li><code>/25</code> = 126 devices, <code>/26</code> = 62 devices.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+
+    <h3>Part A. Your own addresses</h3>
+    <ol>
+      <li>Run <code>ipconfig</code> (Windows) or <code>ip addr</code> (Linux/Mac) and find your IP address and mask.</li>
+      <li>Determine which part of the address is the network, and which is the device.</li>
+      <li>Determine from the range whether your address is private or public.</li>
+      <li>Find the gateway address — it's usually the router, and usually <code>.1</code> in your subnet.</li>
+    </ol>
+
+    <h3>Part B. Play around with names (DNS)</h3>
+    <ol>
+      <li>Run <code>nslookup example.com</code> and record the IP you found.</li>
+      <li>Repeat for 2–3 other sites and compare the addresses.</li>
+      <li>Run <code>nslookup</code> for a site that doesn't exist, and look at the response.</li>
+      <li>Explain what would happen if DNS stopped working.</li>
+    </ol>
+
+    <h3>Part C. Ports and the "IP + port" combination</h3>
+    <ol>
+      <li>Match at least 5 services to their ports (web, secure web, DNS, mail, SSH).</li>
+      <li>Explain why <code>93.184.216.34:443</code> is more precise than just <code>93.184.216.34</code>.</li>
+    </ol>
+
+    <h3>Part D. Do the subnet math</h3>
+    <ol>
+      <li>Given the network <code>192.168.10.0/24</code>. How many addresses are available for devices?</li>
+      <li>Split it into two <code>/25</code> subnets and write down the address range for each.</li>
+      <li>For one of the subnets, give the network address and the broadcast address.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional labs</h2>
+
+    <h3>Part E. Special addresses</h3>
+    <ol>
+      <li>Ping <code>127.0.0.1</code> and explain why the response arrives instantly.</li>
+      <li>Find the network address and broadcast address for your own subnet.</li>
+    </ol>
+
+    <h3>Part F. DNS cache</h3>
+    <ol>
+      <li>Open a site, then open it again — do you notice a difference in speed compared to the first visit?</li>
+      <li>Find out how to clear the DNS cache on your system, and describe the command.</li>
+      <li>Explain why DNS answers are cached.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent study assignments</h2>
+    <ul>
+      <li>Use an example to explain what a subnet mask does.</li>
+      <li>Describe the role of DNS in your own words and give an analogy.</li>
+      <li>Come up with an analogy for the "IP + port" pairing (for example, a house and an apartment) and spell it out.</li>
+      <li>Find out why IPv6 came about, and describe it in two sentences.</li>
+      <li>Determine which type (private/public) the following addresses belong to: 10.0.0.5, 8.8.8.8, 192.168.0.1, 172.16.5.4.</li>
+      <li>Calculate how many devices fit in a network with a /26 mask.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>Calculate how many devices fit in <code>/26</code>, <code>/27</code>, <code>/28</code> networks.</li>
+      <li>Determine the network address and broadcast for <code>10.0.5.73/24</code>.</li>
+      <li>Explain the difference between a static and a dynamic address, and when each is appropriate.</li>
+      <li>Draw the DNS query hierarchy from root to domain.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Test yourself</h2>
+    <ol>
+      <li>Into which two parts is an IP address logically split?</li>
+      <li>What does the prefix /24 indicate?</li>
+      <li>What does DNS do, and what would happen without it?</li>
+      <li>How does a port differ from an IP address?</li>
+      <li>Name three private address ranges.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer (simulator)</a></li>
+      <li><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark — analyzing DNS</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Connection to the course.</strong> Addresses, names, and ports are the ABCs that every device further down the line operates on: switches, routers, and network services. Without this module, the rest won't click into place.</p>
+    </blockquote>
+  </section>
+</div>

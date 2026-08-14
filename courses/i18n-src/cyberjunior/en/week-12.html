@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">The final module of the "Specialization" block walks the student through the full cycle of the capstone project — from reconnaissance and exploitation in the lab to risk assessment and defending a professional report.</p>
+
+  <section class="lesson-section">
+    <h2>Module Objectives</h2>
+    <ul>
+      <li>Apply all skills to a comprehensive task</li>
+      <li>Complete the cycle: reconnaissance → exploitation → recommendations → report</li>
+      <li>Prepare and defend a professional report</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What This Looks Like (diagram)</h2>
+    <p>The full audit cycle:</p>
+    <pre><code>Reconnaissance -> Exploitation (in the lab) -> Risk Assessment -> Recommendations -> REPORT
+                                                                       ^
+                                          the main artifact for an employer</code></pre>
+    <p>Report structure:</p>
+    <pre><code>Objective/Scope | Methodology | Findings+Evidence | Risk | Recommendations | Conclusion</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>The capstone simulates a real-world task and serves as the flagship piece of your portfolio. It tests your ability to combine skills into coherent work.</p>
+    <p><strong>Two Formats to Choose From</strong></p>
+    <ul>
+      <li><strong>CTF competition</strong> — a series of challenges on a platform (picoCTF, HackTheBox), tests the breadth of your skills.</li>
+      <li><strong>Full audit of a vulnerable machine</strong> — VulnHub/HackTheBox: reconnaissance → exploitation → risk assessment → recommendations → report.</li>
+    </ul>
+    <p><strong>The report is the key artifact.</strong> It's the report that shows the level of your thinking, not the mere fact of the breach. It contains: objective and scope, methodology, findings with evidence, a risk assessment for each finding, recommendations, and a conclusion. The order in an audit is strict: reconnaissance → exploitation → recommendations → write-up.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper Dive</h2>
+    <h3>Why the Report Matters More Than the Breach</h3>
+    <p>An employer doesn't evaluate the mere fact that you "broke into the machine" — they evaluate <strong>how you thought</strong>: how you acted, assessed risk, and formulated recommendations. The report is proof of your thinking. A poor report devalues good work; a good one makes you look like a professional even on a simple machine.</p>
+    <h3>Assessing the Risk of Findings</h3>
+    <p>Each finding is rated by severity (low/medium/high/critical) — based on likelihood of exploitation and impact. This lets the client fix the important things first. The ability to prioritize is a sign of a mature specialist, not someone who "found everything and left it at that".</p>
+    <h3>Two Capstone Formats</h3>
+    <p><strong>CTF</strong> (picoCTF, HTB) — tests the breadth of your practical skills through challenges. <strong>Vulnerable machine audit</strong> (VulnHub/HTB) — the full cycle from reconnaissance to report. Choose based on your goal: CTF is faster and more varied; an audit is closer to real work and better for a portfolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One More Example: One Machine — Two Reports</h2>
+    <p>Two students broke into the same machine. The first submitted a list of commands with no structure. The second submitted a report: objective, methodology, findings with evidence, risk, recommendations, conclusion. Technically the result is identical, but the second one looks like the work of a professional, while the first looks like notes. In an interview, the difference is obvious immediately. The report is your face.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-Step Walkthrough: Auditing a Machine (in the lab)</h2>
+    <ol>
+      <li>Choose a vulnerable machine (VulnHub/HTB) and define the scope.</li>
+      <li>Reconnaissance: scanning, mapping services and versions.</li>
+      <li>Search for and exploit vulnerabilities (in the lab), documenting every step.</li>
+      <li>Assess the risk of each finding.</li>
+      <li>Formulate remediation recommendations.</li>
+      <li>Put together a professional report and prepare a defense.</li>
+    </ol>
+    <blockquote>⚠️ Only use purpose-built vulnerable machines/platforms.</blockquote>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-Project: This Is the Capstone Project Itself</h2>
+    <p>The capstone project is the culmination of the course. Complete it in full:</p>
+    <ul>
+      <li>choose a format (CTF or machine audit);</li>
+      <li>go through the entire cycle with documentation;</li>
+      <li>write up the report using the template from the assessment section;</li>
+      <li>prepare a 5-minute oral defense of your key decisions;</li>
+      <li>add the work to your portfolio.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key Terms</h2>
+    <ul>
+      <li><strong>Audit / pentest</strong> — a security assessment with a report.</li>
+      <li><strong>CTF</strong> — a competition of practical challenges.</li>
+      <li><strong>Scope</strong> — what's included in the testing.</li>
+      <li><strong>Risk assessment</strong> — prioritizing findings by severity.</li>
+      <li><strong>Report</strong> — the main artifact (structure above).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common Mistakes and Myths</h2>
+    <ul>
+      <li><strong>Myth: the main thing is breaking into the machine.</strong> The main thing is a well-written report and clear thinking.</li>
+      <li><strong>Mistake: not prioritizing findings.</strong> The client needs to know what to fix first.</li>
+      <li><strong>Myth: recommendations aren't needed, "it's obvious anyway".</strong> Recommendations are part of the work's value.</li>
+      <li><strong>Mistake: testing outside the approved scope.</strong> Only use designated machines.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently Asked Questions (FAQ)</h2>
+    <ul>
+      <li><strong>Should I choose CTF or an audit?</strong> CTF — for breadth of skills; audit — closer to real work and to a portfolio.</li>
+      <li><strong>What if I didn't fully break into the machine?</strong> Document what you did and your conclusions — that's valuable too.</li>
+      <li><strong>How important is the report?</strong> Critical: often more important than the breach itself.</li>
+      <li><strong>Where do I grow from here?</strong> Specialize along the track from week 11.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module Cheat Sheet</h2>
+    <ul>
+      <li>Cycle: reconnaissance → exploitation (in the lab) → risk → recommendations → <strong>report</strong>.</li>
+      <li>Report: objective/scope, methodology, findings+evidence, risk, recommendations, conclusion.</li>
+      <li><strong>The report matters more than the fact of the breach.</strong></li>
+      <li>Prioritize findings by severity.</li>
+      <li>Only use approved vulnerable machines.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab Work</h2>
+    <blockquote>⚠️ <strong>Legal framework.</strong> All actions must take place only in an isolated lab or on explicitly authorized platforms. Attacking systems that aren't yours without permission is illegal.</blockquote>
+    <h3>Part A. Planning</h3>
+    <ol>
+      <li>Choose a format (CTF or audit) and a target.</li>
+      <li>Define the scope and rules (testing boundaries).</li>
+    </ol>
+    <h3>Part B. Execution</h3>
+    <ol>
+      <li>Go through the full cycle, documenting every step.</li>
+      <li>Rate the vulnerabilities by severity.</li>
+      <li>Formulate remediation recommendations.</li>
+    </ol>
+    <h3>Part C. Report and Defense</h3>
+    <ol>
+      <li>Write up a professional report using the template.</li>
+      <li>Prepare a brief defense of your key decisions.</li>
+      <li>Conduct a self-reflection.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Labs</h2>
+    <h3>Part D. CTF Practice</h3>
+    <ol>
+      <li>Solve 2–3 challenges on picoCTF or HTB Starting Point.</li>
+      <li>Briefly note your approach to each one.</li>
+    </ol>
+    <h3>Part E. Report Draft</h3>
+    <ol>
+      <li>For one solved challenge, put together a mini-report using the full structure.</li>
+      <li>Check that it includes evidence and recommendations.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Self-Study Assignments</h2>
+    <ul>
+      <li>Submit the final report and prepare a 5-minute oral defense.</li>
+      <li>List three skills to develop after the course.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Assignments</h2>
+    <ul>
+      <li>Describe the structure of a professional audit report.</li>
+      <li>Explain why the report matters more than the fact of the breach itself.</li>
+      <li>Rate 3 hypothetical findings by severity and justify your rating.</li>
+      <li>Draft a plan for the capstone project (format, scope, steps).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check Yourself</h2>
+    <ol>
+      <li>Which artifact of the capstone project matters most to an employer?</li>
+      <li>What sections make up an audit report?</li>
+      <li>Why are findings prioritized by severity?</li>
+      <li>What's the correct order of work in an audit?</li>
+      <li>On which machines can the final audit be performed?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional Practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://picoctf.org/" target="_blank" rel="noopener">picoCTF (free CTF challenges)</a></li>
+      <li><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box — Starting Point</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Connection to the course spiral.</strong> The capstone project brings all the blocks together: reconnaissance, exploitation, defense, response, and communication through the report.</blockquote>
+  </section>
+</div>

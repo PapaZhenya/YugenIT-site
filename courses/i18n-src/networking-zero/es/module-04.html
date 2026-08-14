@@ -1,0 +1,253 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Módulo sobre cómo está construida la red local por dentro: direcciones MAC, tramas Ethernet, el funcionamiento del conmutador y las tablas de direcciones MAC, además de la idea de las VLAN para dividir lógicamente una red en varias.</p>
+
+  <section class="lesson-section">
+    <h2>Objetivos del módulo</h2>
+    <ul>
+      <li>Entender cómo está construida una red local cableada (LAN)</li>
+      <li>Comprender las direcciones MAC y las tramas Ethernet</li>
+      <li>Entender qué hace el conmutador y cómo lo hace</li>
+      <li>Conocer qué es la tabla de direcciones MAC</li>
+      <li>Familiarizarse con las VLAN y la idea de la división lógica de la red</li>
+      <li>Distinguir a nivel básico entre el dominio de colisión y el dominio de difusión (broadcast)</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Introducción</h2>
+    <p>Bajemos de las alturas de «internet en general» a la tierra firme: la red local. Es tu apartamento, tu aula, tu oficina: un territorio pequeño donde los dispositivos se comunican directamente a través de un conmutador. Aquí rigen sus propias reglas y sus propias direcciones, y precisamente con la red local comienza toda «construcción» real.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Cómo se ve (esquema)</h2>
+    <p>El conmutador entrega la trama de forma dirigida (no a todos):</p>
+    <pre><code>                 [ Conmutador ]
+                  tabla MAC:
+                  puerto1 -> MAC-A
+                  puerto2 -> MAC-B
+                  puerto3 -> MAC-C
+   PC-A(puerto1) --trama "a MAC-C"--> [SW] --solo al puerto3--> PC-C(puerto3)
+   PC-B(puerto2)  ...no recibe nada...   PC-D(puerto4) ...tampoco...</code></pre>
+    <p>Trama Ethernet (simplificada):</p>
+    <pre><code>+----------+----------+---------------------+
+| MAC dest | MAC orig | DATOS (dentro de IP) |
++----------+----------+---------------------+</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Apuntes</h2>
+
+    <h3>Qué es una LAN y en qué es especial</h3>
+    <p><strong>LAN (Local Area Network)</strong> es una red local dentro de un territorio pequeño: una casa, un piso, una oficina. Se caracteriza por su alta velocidad, sus bajas latencias y por el hecho de que todos los dispositivos suelen pertenecer a una sola persona u organización. Dentro de la LAN, los dispositivos se comunican directamente, sin salir «al gran mundo», y lo hacen siguiendo sus propias reglas de nivel de enlace.</p>
+    <p>Es importante no confundir: la salida a internet ya es tarea del enrutador (siguiente módulo). Dentro de la LAN, quien manda es el conmutador y el direccionamiento por MAC.</p>
+
+    <h3>Dirección MAC: el pasaporte de fábrica del dispositivo</h3>
+    <p>Cada tarjeta de red tiene una <strong>dirección MAC</strong>: una dirección física «grabada» por el fabricante (por ejemplo, <code>00:1A:2B:3C:4D:5E</code>). Mientras que la dirección IP se puede cambiar y la asigna la red, la MAC es como el número de serie de fábrica del dispositivo: único y permanente.</p>
+    <p>Dentro de la red local, los dispositivos se encuentran entre sí precisamente <strong>por la dirección MAC</strong>, no por la IP. Los primeros seis caracteres de la MAC codifican al fabricante de la tarjeta, así que a partir de ellos se puede saber de quién es el equipo. Recuerda la diferencia: la IP es la dirección lógica de «dónde estás en las redes del mundo», la MAC es la dirección física de «quién eres en este segmento local».</p>
+
+    <h3>La trama Ethernet: el sobre de la red local</h3>
+    <p>Dentro de la LAN, los datos se transmiten en <strong>tramas</strong> (frames). La trama es el «sobre» de la capa de enlace: en ella se indican la dirección MAC del emisor, la dirección MAC del destinatario y los propios datos (dentro de los cuales, como una matrioska, va el paquete IP). La tecnología con la que funciona todo esto en las redes cableadas se llama <strong>Ethernet</strong>, el estándar de redes locales más extendido del mundo.</p>
+    <p>Cuando un dispositivo quiere enviar datos a otro dentro de la misma LAN, los empaqueta en una trama con la MAC del destinatario correspondiente y la envía a la red. Después entra en juego el conmutador.</p>
+
+    <h3>El conmutador: un distribuidor inteligente de tramas</h3>
+    <p>El <strong>conmutador (switch)</strong> es el dispositivo que conecta físicamente los nodos de la red local (en él se enchufan los cables de los ordenadores). Su gran truco es que <strong>no reenvía</strong> cada trama a todos por igual, sino que la entrega exclusivamente a quien corresponde.</p>
+    <p>¿Cómo lo hace? El conmutador memoriza qué dispositivo está detrás de cada uno de sus puertos (según la dirección MAC) y guarda esa información en la <strong>tabla de direcciones MAC</strong>. Al recibir una trama, consulta la MAC del destinatario, busca el puerto correspondiente en la tabla y envía la trama únicamente allí. Si la dirección todavía no se conoce, la trama se reenvía temporalmente a todos los puertos, y a partir de la respuesta el conmutador memoriza su ubicación. Gracias a esto, la LAN funciona rápido y sin «ruido» innecesario en el aire.</p>
+
+    <h3>Las colisiones y por qué los conmutadores son mejores que los hubs</h3>
+    <p>Antes, en lugar de conmutadores se usaban dispositivos simples: <strong>hubs</strong>, que simplemente repetían la señal en todos los puertos. Por eso los dispositivos se estorbaban entre sí: sus señales chocaban, se producían <strong>colisiones</strong> y había que retransmitir. Cuantos más dispositivos, peor funcionaba esa red.</p>
+    <p>El conmutador resolvió el problema: divide la red en segmentos independientes, y cada dispositivo tiene su propio «canal» hasta el conmutador. En las redes conmutadas modernas prácticamente no hay colisiones. Esta es una de las razones por las que las redes se volvieron rápidas y fiables.</p>
+
+    <h3>VLAN: un solo equipo, varias redes</h3>
+    <p>A veces es necesario que los dispositivos conectados a un mismo conmutador estén lógicamente en redes <strong>distintas</strong> y no se vean directamente entre sí. Para eso existen las <strong>VLAN (redes locales virtuales)</strong>: el conmutador se divide en varias redes lógicas independientes.</p>
+    <p>Ejemplo: en una oficina, el Wi-Fi de invitados y los ordenadores de trabajo pueden estar conectados al mismo conmutador, pero repartidos en distintas VLAN: los invitados no verán los recursos de trabajo. Es un recurso simple y potente para el orden y la seguridad; volveremos a la idea de la aislación en el módulo sobre protección.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Profundizando en el tema</h2>
+
+    <h3>Cómo «aprende» el conmutador (self-learning)</h3>
+    <p>El conmutador no nace sabiendo quién está dónde. <strong>Aprende sobre la marcha</strong>: cuando llega una trama, mira la MAC del emisor y memoriza «esta MAC está en este puerto». Si la MAC del destinatario todavía no se conoce, la trama se envía temporalmente a todos los puertos (esto se llama flooding), y a partir de la respuesta el conmutador memoriza lo que le faltaba. Tras un par de intercambios, la tabla queda completa y el envío «a todos» se detiene.</p>
+
+    <h3>Dúplex: hablar y escuchar al mismo tiempo</h3>
+    <p>Las conexiones modernas funcionan en <strong>dúplex completo</strong>: el dispositivo envía y recibe al mismo tiempo, como una conversación telefónica. Antes existía el <strong>semidúplex</strong> (como un walkie-talkie: o hablas o escuchas), lo que precisamente generaba colisiones. Dúplex completo + conmutadores = redes rápidas sin choques.</p>
+
+    <h3>El dominio de difusión (broadcast)</h3>
+    <p>El conmutador elimina las colisiones, pero las tramas de difusión (mensajes «para todos») igualmente las reenvía por toda la LAN: eso es el <strong>dominio de difusión</strong>. Cuando la red es grande, la difusión se vuelve excesiva, así que se divide con un enrutador o en VLAN. Esta es otra razón por la que hacen falta las VLAN y las subredes.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis con un ejemplo: cómo entrega una trama el conmutador</h2>
+    <p>Imagina un conmutador con cuatro ordenadores: PC-A en el puerto 1, PC-B en el puerto 2, PC-C en el puerto 3, PC-D en el puerto 4.</p>
+    <p>PC-A quiere enviar datos a PC-C. Forma una trama: «de MAC A a MAC C» y la envía al conmutador por el puerto 1. El conmutador consulta la tabla de direcciones MAC: «MAC C está en el puerto 3». Y envía la trama únicamente al puerto 3, hacia PC-C. PC-B y PC-D no reciben absolutamente nada; no les incumbe.</p>
+    <p>Si en lugar del conmutador hubiera un viejo hub, este habría enviado la trama a los tres, y PC-B y PC-D habrían tenido que descartarla, además de no poder transmitir lo suyo en ese momento. ¿Ves la diferencia? El conmutador es entrega dirigida; el hub es un grito a toda la sala.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Otro ejemplo: por qué «la red se ralentiza para todos a la vez»</h2>
+    <p>En una vieja red con hub, una persona descarga un archivo grande y a todos les baja la velocidad: el hub reenvía todo a todos, los dispositivos se estorban entre sí y aumentan las colisiones. Al sustituir el hub por un conmutador, el problema desaparece: ahora el tráfico de cada uno va por su propio «canal» hasta el conmutador, y la entrega dirigida no molesta a los vecinos. Esto muestra claramente la diferencia entre un hub y un conmutador.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Análisis paso a paso: el primer intercambio en una red nueva</h2>
+    <ol>
+      <li>PC-A quiere enviar datos a PC-C, pero solo conoce su IP.</li>
+      <li>Primero, A averigua la MAC a partir de la IP (mediante una solicitud de servicio ARP: «¿quién tiene la dirección X?»).</li>
+      <li>C responde con su MAC; A memoriza la correspondencia.</li>
+      <li>A forma una trama «a MAC-C» y la envía al conmutador.</li>
+      <li>El conmutador (si todavía no conoce a C) reenvía la trama a todos, C responde.</li>
+      <li>A partir de la respuesta, el conmutador memoriza el puerto de C; a partir de ahí envía las tramas de forma dirigida.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Miniproyecto: una LAN de 6 dispositivos</h2>
+    <p>En Packet Tracer, arma una red pequeña:</p>
+    <ul>
+      <li>un conmutador y 6 ordenadores de la misma subred;</li>
+      <li>comprueba la conectividad con <code>ping</code> entre varios pares;</li>
+      <li>revisa la tabla de direcciones MAC y explica cada entrada;</li>
+      <li>divide los dispositivos en 2 VLAN (por ejemplo, «trabajo» e «invitados») y comprueba que no haya conectividad directa entre las VLAN;</li>
+      <li>describe en el informe para qué sirve esa división.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Términos clave</h2>
+    <ul>
+      <li><strong>LAN</strong> — red local dentro de un territorio pequeño</li>
+      <li><strong>Dirección MAC</strong> — dirección física de la tarjeta de red, «grabada» por el fabricante</li>
+      <li><strong>Trama (frame)</strong> — unidad de datos de la capa de enlace con las direcciones MAC del emisor y del destinatario</li>
+      <li><strong>Ethernet</strong> — el estándar de redes locales cableadas más extendido</li>
+      <li><strong>Conmutador (switch)</strong> — dispositivo que entrega las tramas de forma dirigida por MAC dentro de la LAN</li>
+      <li><strong>Tabla de direcciones MAC</strong> — la memoria del conmutador sobre qué MAC está detrás de qué puerto</li>
+      <li><strong>Hub</strong> — dispositivo obsoleto que repite la señal en todos los puertos (genera colisiones)</li>
+      <li><strong>VLAN</strong> — división lógica de un conmutador en varias redes independientes</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Errores frecuentes y mitos</h2>
+    <ul>
+      <li><strong>Error: confundir la MAC con la IP.</strong> La MAC es la dirección física en la LAN; la IP es la dirección lógica para el enrutamiento.</li>
+      <li><strong>Mito: el conmutador reenvía las tramas a todos.</strong> No, las entrega de forma dirigida según la tabla MAC.</li>
+      <li><strong>Error: considerar que el hub y el conmutador son iguales.</strong> El hub genera colisiones, el conmutador no.</li>
+      <li><strong>Mito: las VLAN son redes físicas separadas.</strong> No, es una división lógica dentro de un mismo equipo.</li>
+      <li><strong>Error: pensar que la MAC se puede «asignar como una IP» fácilmente.</strong> La MAC está ligada a la tarjeta (aunque los usuarios avanzados pueden suplantarla).</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Preguntas frecuentes (FAQ)</h2>
+    <ul>
+      <li><strong>¿Cómo sabe el conmutador quién está dónde?</strong> Memoriza la MAC del emisor a partir de las tramas que llegan.</li>
+      <li><strong>¿Y si el destinatario es desconocido?</strong> La trama se reenvía temporalmente a todos, y a partir de la respuesta se memoriza el puerto.</li>
+      <li><strong>¿Las VLAN son cables distintos?</strong> No, es una división lógica dentro de un mismo equipo.</li>
+      <li><strong>¿Se puede cambiar la MAC?</strong> Técnicamente sí (spoofing), pero por defecto viene «grabada» en la tarjeta.</li>
+      <li><strong>¿Por qué en una red grande hay tanta «difusión»?</strong> Todas las tramas broadcast recorren todo el dominio; este se reduce mediante VLAN o subredes.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Chuleta del módulo</h2>
+    <ul>
+      <li><strong>MAC</strong> — dirección física de la tarjeta; <strong>IP</strong> — dirección lógica para el enrutamiento.</li>
+      <li><strong>Trama</strong> — unidad de datos en la LAN (con la MAC del emisor y del destinatario).</li>
+      <li><strong>El conmutador</strong> entrega de forma dirigida según la <strong>tabla MAC</strong> y «aprende» solo.</li>
+      <li><strong>El hub</strong> reenvía a todos → colisiones (obsoleto).</li>
+      <li><strong>VLAN</strong> — división lógica del conmutador en redes aisladas.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Trabajo de laboratorio</h2>
+
+    <h3>Parte A. Encuentra tu MAC</h3>
+    <ol>
+      <li>Ejecuta <code>ipconfig /all</code> (Windows) o <code>ip link</code> (Linux) y encuentra la dirección MAC de tu tarjeta de red.</li>
+      <li>Identifica al fabricante de la tarjeta a partir de los primeros caracteres de la MAC (puedes usar una búsqueda OUI en línea).</li>
+      <li>Formula en una frase en qué se diferencia la MAC de la IP.</li>
+    </ol>
+
+    <h3>Parte B. Arma una LAN en el simulador</h3>
+    <ol>
+      <li>En Packet Tracer, coloca un conmutador y 3 ordenadores, y conéctalos con cables.</li>
+      <li>Asigna a los ordenadores direcciones IP de la misma subred (por ejemplo, 192.168.1.0/24).</li>
+      <li>Haz ping entre los ordenadores y comprueba que el conmutador los conectó.</li>
+    </ol>
+
+    <h3>Parte C. Revisa la tabla MAC</h3>
+    <ol>
+      <li>En el simulador, después de varios ping, revisa la tabla de direcciones MAC del conmutador.</li>
+      <li>Relaciona qué MAC está asociada a qué puerto.</li>
+      <li>Explica cómo averiguó el conmutador esa correspondencia.</li>
+    </ol>
+
+    <h3>Parte D. Experimenta con VLAN (opcional)</h3>
+    <ol>
+      <li>Crea dos VLAN en el conmutador y reparte los ordenadores entre ellas.</li>
+      <li>Comprueba que los dispositivos de VLAN distintas NO se hacen ping directamente entre sí.</li>
+      <li>Explica para qué puede ser necesaria esa división.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Laboratorios adicionales</h2>
+
+    <h3>Parte E. Observa el ARP</h3>
+    <ol>
+      <li>Ejecuta <code>arp -a</code> y revisa la correspondencia IP ↔ MAC que memorizó tu ordenador.</li>
+      <li>Explica para qué sirve esta tabla.</li>
+    </ol>
+
+    <h3>Parte F. Compara el hub y el conmutador (simulador)</h3>
+    <ol>
+      <li>En Packet Tracer, arma una red con un hub y otra con un conmutador.</li>
+      <li>Activa el modo de simulación y observa y compara cómo se propagan las tramas en ambos casos.</li>
+      <li>Saca una conclusión sobre las colisiones.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas para trabajo autónomo</h2>
+    <ul>
+      <li>Describe con tus propias palabras cómo decide el conmutador a qué puerto enviar una trama.</li>
+      <li>Explica la diferencia entre un hub y un conmutador, y por qué las colisiones son malas.</li>
+      <li>Imagina una situación de oficina o de casa en la que serían útiles las VLAN.</li>
+      <li>Explica por qué dentro de la LAN los dispositivos se encuentran entre sí por la MAC y no por la IP.</li>
+      <li>Busca qué es una trama de difusión (broadcast) y descríbela en dos frases.</li>
+      <li>Dibuja un esquema de una LAN con un conmutador y 4 dispositivos, y marca en él las MAC y los puertos.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Tareas adicionales</h2>
+    <ul>
+      <li>Explica con tus propias palabras el proceso de autoaprendizaje del conmutador.</li>
+      <li>¿Cuál es la diferencia entre el dúplex completo y el semidúplex, y qué relación tiene con las colisiones?</li>
+      <li>¿Qué es un dominio de difusión y cómo se reduce?</li>
+      <li>Busca qué hace el protocolo ARP y descríbelo en dos frases.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ponte a prueba</h2>
+    <ol>
+      <li>¿En qué se diferencia la dirección MAC de la dirección IP?</li>
+      <li>¿Qué guarda el conmutador en la tabla de direcciones MAC?</li>
+      <li>¿Cómo se llama la unidad de datos de la capa de enlace?</li>
+      <li>¿Por qué el conmutador es mejor que el hub?</li>
+      <li>¿Para qué sirven las VLAN?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Práctica adicional (recursos externos gratuitos)</h2>
+    <ul>
+      <li><a href="https://skillsforall.com/course/getting-started-cisco-packet-tracer" target="_blank" rel="noopener">Packet Tracer: conmutación</a></li>
+      <li><a href="https://skillsforall.com/course/networking-basics" target="_blank" rel="noopener">Cisco Networking Basics: Ethernet y conmutadores</a></li>
+    </ul>
+    <blockquote>
+      <p><strong>Conexión con el curso.</strong> La LAN que armaste aquí se convertirá en una de las subredes que conectaremos con un enrutador en el siguiente módulo. La MAC y las tramas son el fundamento para entender en qué se diferencia un enrutador de un conmutador.</p>
+    </blockquote>
+  </section>
+</div>

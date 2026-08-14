@@ -1,0 +1,192 @@
+<div class="lesson-content">
+  <p class="lesson-intro">Week 6 of the "Attack" block shows how passwords are stored and cracked, teaches you to run dictionary attacks in a lab, and covers how to recognize phishing while explaining the role of multi-factor authentication.</p>
+
+  <section class="lesson-section">
+    <h2>Module goals</h2>
+    <ul>
+      <li>Understand how passwords are stored and "cracked"</li>
+      <li>Run dictionary attacks in a lab</li>
+      <li>Recognize phishing and explain the role of MFA</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>What it looks like (diagram)</h2>
+    <p>How a hash gets "cracked" (brute-forced, not decrypted):</p>
+    <pre><code>Stolen hash: 5f4dcc3b...
+Attacker: takes words -&gt; hashes them -&gt; compares
+  "123456" -&gt; hash? no
+  "password" -&gt; hash? YES -&gt; password found
+Defense: a long, unique password -&gt; brute-forcing becomes unrealistic</code></pre>
+    <p>Phishing — a chain of deception:</p>
+    <pre><code>"Urgent!" email -&gt; link to a fake page -&gt; you enter your password -&gt; attacker has it
+Defense: verify the sender + MFA (a stolen password alone isn't enough)</code></pre>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Summary</h2>
+    <p>Credentials are an attacker's most sought-after commodity. Most breaches start with a weak password or a single successful phishing email.</p>
+    <p><strong>Hashes and brute-forcing.</strong> Passwords are stored as hashes (a one-way function). An attacker doesn't "decrypt" a hash — they try candidates and compare. John the Ripper and Hashcat work offline against stolen hashes; Hydra brute-forces passwords against live services online.</p>
+    <p><strong>Reuse is deadly.</strong> A breach at one service opens every account that shares the same password (credential stuffing). The fix is a password manager and unique passwords.</p>
+    <p><strong>Social engineering and phishing.</strong> Bypasses technology through the human. Signs of phishing: a mismatched sender address, time pressure, suspicious links, unexpected attachments. MFA neutralizes a stolen password.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Deeper dive</h2>
+    <h3>Hashes, salt, and why you can't "decrypt" them</h3>
+    <p>Passwords are stored as <strong>hashes</strong> — the result of a one-way function. A hash can't be reversed; an attacker can only try candidates and compare. <strong>Salt</strong> is a random value added to the password before hashing — it makes identical passwords produce different hashes, so precomputed tables become useless. Defense: strong hashing algorithms + salt.</p>
+    <h3>Why password reuse is fatal</h3>
+    <p>One breach, and the attacker tries the same password everywhere (<strong>credential stuffing</strong>). That's why passwords must be <strong>unique</strong>. A password manager solves this: it generates and stores unique, complex passwords so you don't have to remember them.</p>
+    <h3>Multi-factor authentication (MFA)</h3>
+    <p>MFA adds a second factor (a code, an app, a key). Even after stealing a password, an attacker can't log in without the second factor. It's one of the most effective and cheapest defenses — it neutralizes most password attacks.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>One more example: an SSH brute-force attack (in the logs)</h2>
+    <p>In <code>auth.log</code>, dozens of <code>Failed password</code> lines from a single IP within a minute, followed by <code>Accepted password</code> — a classic brute-force that succeeded because of a weak password. Defense: long passwords, attempt limits (fail2ban), key-based login, MFA. You'll be hunting for this exact trace during the investigation in week 9.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Step-by-step walkthrough: how to recognize phishing</h2>
+    <ol>
+      <li><strong>Sender</strong> — does the address actually match the real one? (watch for subtle letter substitutions).</li>
+      <li><strong>Tone</strong> — pressure through urgency and threats? A red flag.</li>
+      <li><strong>Link</strong> — where does it actually lead (hover, don't click)?</li>
+      <li><strong>Attachment</strong> — unexpected? Don't open it.</li>
+      <li><strong>Request</strong> — asking for a password/code/payment? Legitimate services don't do that.</li>
+      <li>In doubt — go to the site directly, not through the link in the email.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Mini-project: password policy + phishing cheat sheet</h2>
+    <p>Put together two practical documents:</p>
+    <ul>
+      <li>A <strong>password policy</strong> for a fictional company: length, uniqueness, manager, MFA, rotation after a breach.</li>
+      <li>A <strong>"How to recognize phishing" cheat sheet</strong> with 8 points and examples.</li>
+    </ul>
+    <p>Both are useful in real work and look good in a portfolio.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Key terms</h2>
+    <ul>
+      <li><strong>Hash</strong> — a one-way function used to store passwords.</li>
+      <li><strong>Salt</strong> — a random addition that defeats precomputed tables.</li>
+      <li><strong>Credential stuffing</strong> — trying leaked passwords elsewhere.</li>
+      <li><strong>MFA</strong> — multi-factor authentication.</li>
+      <li><strong>Phishing</strong> — deception used to steal data.</li>
+      <li><strong>Password manager</strong> — a vault for unique passwords.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Common mistakes and myths</h2>
+    <ul>
+      <li><strong>Myth: a hash can be "decrypted".</strong> No — it can only be brute-forced and compared.</li>
+      <li><strong>Mistake: one password for everything.</strong> One breach = every account compromised.</li>
+      <li><strong>Myth: MFA is unnecessary hassle.</strong> It's one of the most effective defenses there is.</li>
+      <li><strong>Mistake: trusting an email based on the sender's display name.</strong> The address is easy to spoof.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Frequently asked questions (FAQ)</h2>
+    <ul>
+      <li><strong>Why can't a hash be decrypted?</strong> The function is one-way; only brute-forcing works.</li>
+      <li><strong>Are password managers safe?</strong> Yes — far more reliable than reusing passwords or storing them in notes.</li>
+      <li><strong>Does MFA protect against phishing?</strong> It sharply lowers the risk: a stolen password alone isn't enough.</li>
+      <li><strong>Where can I practice legally?</strong> On your own training VMs; brute-forcing someone else's service is illegal.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Module cheat sheet</h2>
+    <ul>
+      <li>Passwords are stored as <strong>hashes</strong> (+ <strong>salt</strong>). "Cracking" = brute-forcing, not decryption.</li>
+      <li>Defense: long <strong>unique</strong> passwords, a manager, <strong>MFA</strong>, attempt limits.</li>
+      <li>Phishing: urgency + a fake link. Check the sender and the link.</li>
+      <li>Tools (in the lab): John/Hashcat (offline), Hydra (online).</li>
+      <li>Your own training machines only.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Lab work</h2>
+    <blockquote>⚠️ <strong>Legal framework.</strong> All actions must take place only in an isolated lab or on explicitly authorized platforms. Attacking someone else's systems without permission is illegal.</blockquote>
+    <h3>Part A. Working with hashes</h3>
+    <ol>
+      <li>Generate several password hashes of varying complexity.</li>
+      <li>Crack the weak hashes with John the Ripper using a dictionary (rockyou).</li>
+      <li>Compare the time it takes to crack a simple versus a complex password.</li>
+    </ol>
+    <h3>Part B. Online brute-forcing (your own VM only)</h3>
+    <ol>
+      <li>Spin up an SSH service on a training machine.</li>
+      <li>Brute-force a weak password with Hydra.</li>
+      <li>Discuss how brute-force protection (fail2ban) would have stopped the attack.</li>
+    </ol>
+    <h3>Part C. Analyzing phishing</h3>
+    <ol>
+      <li>Study 3 examples of phishing emails (training sets).</li>
+      <li>For each one, write down the signs of deception.</li>
+      <li>Put together an 8-point "How to recognize phishing" cheat sheet.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Additional lab work</h2>
+    <h3>Part D. Analyzing phishing emails</h3>
+    <ol>
+      <li>Study 3 phishing examples (training sets).</li>
+      <li>For each one, write down the specific signs of deception.</li>
+      <li>Put together an 8-point cheat sheet.</li>
+    </ol>
+    <h3>Part E. Password strength</h3>
+    <ol>
+      <li>Compare the cracking time for a simple versus complex password (using training hashes in the lab).</li>
+      <li>Explain how length affects resistance to cracking.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Independent assignments</h2>
+    <ul>
+      <li>Explain why MFA neutralizes most password attacks.</li>
+      <li>Draft a password policy for a fictional company.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra assignments</h2>
+    <ul>
+      <li>Explain why password reuse is dangerous.</li>
+      <li>Explain how MFA neutralizes a stolen password.</li>
+      <li>Write a 6-point password policy.</li>
+      <li>Describe 8 signs of a phishing email.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Check yourself</h2>
+    <ol>
+      <li>Why can't a password hash be "decrypted"?</li>
+      <li>What is salt and why is it needed?</li>
+      <li>How does MFA protect you if your password is stolen?</li>
+      <li>Name three signs of phishing.</li>
+      <li>Why is password reuse dangerous?</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Extra practice (free external resources)</h2>
+    <ul>
+      <li><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe — Phishing / Password Attacks</a></li>
+      <li><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Have I Been Pwned — breach check</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <blockquote><strong>Connection to the course spiral.</strong> Understanding brute-forcing will explain what you see in auth.log when investigating a brute-force attack in week 9.</blockquote>
+  </section>
+</div>

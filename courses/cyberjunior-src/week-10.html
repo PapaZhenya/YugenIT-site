@@ -1,14 +1,24 @@
 <div class="lesson-content">
-  <p class="lesson-intro">Разбор атак и Blue Team: Cyber Kill Chain, MITRE ATT&amp;CK и проактивный threat hunting по гипотезе.</p>
+  <p class="lesson-intro">Модуль блока «Реагирование» показывает, как использовать Cyber Kill Chain и MITRE ATT&amp;CK для разбора кибератак и вести проактивный threat hunting в работе Blue Team.</p>
 
   <section class="lesson-section">
     <h2>Цели модуля</h2>
-    <p><strong>Блок:</strong> Блок 4. Реагирование</p>
     <ul>
       <li>Использовать Cyber Kill Chain для анализа атаки</li>
       <li>Сопоставлять действия с MITRE ATT&amp;CK</li>
       <li>Практиковать threat hunting по гипотезе</li>
     </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Как это выглядит (схема)</h2>
+    <p>Cyber Kill Chain — прерви любое звено:</p>
+    <pre><code>Разведка -> Доставка -> Эксплуатация -> Закрепление -> C2 -> Действия у цели
+   |           |            |              |           |         |
+   прерви ЛЮБОЙ этап -> вся атака сорвана</code></pre>
+    <p>MITRE ATT&amp;CK — тактики и техники:</p>
+    <pre><code>Тактика (зачем): Initial Access | Persistence | Exfiltration ...
+Техника (как):   T1566 фишинг   | T1547 автозапуск | T1041 выгрузка</code></pre>
   </section>
 
   <section class="lesson-section">
@@ -22,7 +32,7 @@
 
   <section class="lesson-section">
     <h2>Материалы для скачивания — Инцидент №2 (phish_hunt)</h2>
-    <p>Бриф сценария и CSV с событиями SIEM для картирования по MITRE ATT&amp;CK (часть B выше).</p>
+    <p>Бриф сценария и CSV с событиями SIEM для картирования по MITRE ATT&amp;CK.</p>
     <ul>
       <li><a href="courses/datasets/scenario2_phish_hunt/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a> — описание инцидента и задание</li>
       <li><a href="courses/datasets/scenario2_phish_hunt/siem_events.csv" download>siem_events.csv</a> — события SIEM для анализа</li>
@@ -31,7 +41,7 @@
 
   <section class="lesson-section">
     <h2>Дополнительная практика — ещё два сценария</h2>
-    <p>Необязательные, для дополнительной отработки навыков расследования и threat hunting за пределами основной лабораторной.</p>
+    <p>Необязательные, для дополнительной отработки навыков расследования и threat hunting.</p>
     <h3>Инцидент №3 — шифровальщик (double extortion)</h3>
     <ul>
       <li><a href="courses/datasets/scenario3_ransomware/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a></li>
@@ -43,6 +53,86 @@
       <li><a href="courses/datasets/scenario4_insider/SCENARIO_BRIEF.md" download>SCENARIO_BRIEF.md</a></li>
       <li><a href="courses/datasets/scenario4_insider/user_activity.csv" download>user_activity.csv</a></li>
       <li><a href="courses/datasets/scenario4_insider/HR_CONTEXT.md" download>HR_CONTEXT.md</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Глубже в тему</h2>
+    <h3>Cyber Kill Chain как инструмент защиты</h3>
+    <p>Модель описывает атаку по этапам: разведка → доставка → эксплуатация → закрепление → управление (C2) → действия у цели. Ценность — в том, что, <strong>прервав любое звено</strong>, защитник срывает всю атаку. Она помогает понять, где именно была замечена активность и что остановило бы её раньше.</p>
+    <h3>MITRE ATT&amp;CK — общий язык Blue Team</h3>
+    <p><strong>ATT&amp;CK</strong> — база реальных техник, сгруппированных по тактикам (зачем) и техникам (как, с ID вроде T1566). Это общий язык: аналитики описывают поведение атакующего одинаково, знают, что искать в логах и где ставить детекты. Умение картировать инцидент по ATT&amp;CK — ключевой навык.</p>
+    <h3>Threat hunting: искать, не дожидаясь алерта</h3>
+    <p><strong>Хантинг</strong> — проактивный поиск угроз, которые не поймали правила. Аналитик выдвигает гипотезу («если атакующий закрепился, будут следы в автозагрузке») и проверяет по данным. Это отличает зрелый SOC от реактивного «ждём алерт».</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ещё один пример: подозрительная цепочка процессов</h2>
+    <p>В логах WINWORD.EXE запускает powershell, тот лезет в сеть на неизвестный IP, затем кто-то обращается к lsass. По отдельности — «шум», вместе — классическая цепочка: фишинговый документ → запуск кода → C2 → кража учётных данных. Blue Team ловит именно такие связки, а ATT&amp;CK даёт им имена. Так разрозненные события складываются в понятную историю атаки.</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Пошаговый разбор: картируем инцидент по ATT&amp;CK</h2>
+    <ol>
+      <li>Возьми события инцидента (датасет <code>scenario2_phish_hunt</code>).</li>
+      <li>Для каждого шага определи тактику (зачем) и технику (как, ID).</li>
+      <li>Начни с очевидного: фишинг → T1566, автозапуск → T1547.</li>
+      <li>Отметь «неожиданных родителей» процессов (WINWORD → powershell) и доступ к lsass.</li>
+      <li>Собери карту: тактика → техника → доказательство в логах.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Мини-проект: карта ATT&amp;CK инцидента</h2>
+    <p>По датасету «Инцидент №2» собери:</p>
+    <ul>
+      <li>таблицу «шаг атаки → тактика → техника (ID) → доказательство»;</li>
+      <li>3 гипотезы для проактивного хантинга, которые поймали бы атаку раньше;</li>
+      <li>по одному правилу детекта на 3 ключевых шага.</li>
+    </ul>
+    <p>Сверься с тэггированной версией датасета (у преподавателя).</p>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Ключевые термины</h2>
+    <ul>
+      <li><strong>Cyber Kill Chain</strong> — этапы атаки (7 шагов).</li>
+      <li><strong>MITRE ATT&amp;CK</strong> — база тактик и техник.</li>
+      <li><strong>Тактика / техника</strong> — зачем / как (с ID).</li>
+      <li><strong>C2</strong> — канал управления атакующего.</li>
+      <li><strong>Threat hunting</strong> — проактивный поиск угроз.</li>
+      <li><strong>Персистенция</strong> — закрепление в системе.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Частые ошибки и мифы</h2>
+    <ul>
+      <li><strong>Миф: мониторинг = хантинг.</strong> Мониторинг ждёт алерт; хантинг идёт от гипотезы.</li>
+      <li><strong>Ошибка: смотреть события по отдельности.</strong> Сила — в связках (цепочках).</li>
+      <li><strong>Миф: ATT&amp;CK — для «элиты».</strong> Это рабочий инструмент даже для junior-аналитика.</li>
+      <li><strong>Ошибка: игнорировать «неожиданных родителей» процессов.</strong> Это яркий признак атаки.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Частые вопросы (FAQ)</h2>
+    <ul>
+      <li><strong>Чем kill chain отличается от ATT&amp;CK?</strong> Kill chain — крупные этапы; ATT&amp;CK — подробные техники.</li>
+      <li><strong>Нужно ли учить все техники ATT&amp;CK?</strong> Нет, освой логику и частые техники.</li>
+      <li><strong>Что такое C2?</strong> Канал, через который атакующий управляет заражённой машиной.</li>
+      <li><strong>Хантинг — это для junior?</strong> Базовые гипотезы — да, отличная тренировка мышления.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Шпаргалка модуля</h2>
+    <ul>
+      <li><strong>Kill Chain</strong>: разведка→доставка→эксплуатация→закрепление→C2→действия. Прерви любое звено.</li>
+      <li><strong>ATT&amp;CK</strong>: тактика (зачем) + техника (как, Txxxx).</li>
+      <li><strong>Хантинг</strong> = гипотеза → проверка по данным.</li>
+      <li>Красные флаги: WINWORD→powershell, доступ к lsass, автозапуск в реестре.</li>
+      <li>Итог — карта ATT&amp;CK + правила детекта.</li>
     </ul>
   </section>
 
@@ -68,11 +158,57 @@
   </section>
 
   <section class="lesson-section">
+    <h2>Дополнительные лабораторные</h2>
+    <h3>Часть D. Разложи по kill chain</h3>
+    <ol>
+      <li>Возьми Инцидент №1 (неделя 9) и разложи его по этапам Cyber Kill Chain.</li>
+      <li>Для каждого этапа укажи меру, которая прервала бы цепочку.</li>
+    </ol>
+    <h3>Часть E. Гипотезы хантинга</h3>
+    <ol>
+      <li>По датасету №2 сформулируй 3 гипотезы поиска.</li>
+      <li>Проверь их по данным и предложи правило детекта.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
     <h2>Задания для самостоятельной работы</h2>
     <ul>
       <li>Составьте таблицу «тактика → техника → как детектировать» для 5 техник ATT&amp;CK.</li>
       <li>Объясните на примере разницу между мониторингом и threat hunting.</li>
     </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Дополнительные задания</h2>
+    <ul>
+      <li>Объясни разницу между мониторингом и threat hunting.</li>
+      <li>Составь таблицу «тактика → техника → детект» для 5 техник.</li>
+      <li>Разложи любой инцидент по Cyber Kill Chain.</li>
+      <li>Объясни, почему связка WINWORD→powershell подозрительна.</li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Проверь себя</h2>
+    <ol>
+      <li>Что такое Cyber Kill Chain и в чём её ценность?</li>
+      <li>Чем тактика отличается от техники в ATT&amp;CK?</li>
+      <li>Что такое C2?</li>
+      <li>Чем хантинг отличается от мониторинга?</li>
+      <li>Назови один красный флаг в цепочке процессов.</li>
+    </ol>
+  </section>
+
+  <section class="lesson-section">
+    <h2>Дополнительная практика (бесплатные внешние ресурсы)</h2>
+    <ul>
+      <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener">MITRE ATT&amp;CK (официальная база)</a></li>
+      <li><a href="https://www.rangeforce.com/" target="_blank" rel="noopener">RangeForce Community Edition (бесплатно)</a></li>
+    </ul>
+  </section>
+
+  <section class="lesson-section">
     <blockquote><strong>Связь со спиралью курса.</strong> Модуль объединяет блоки 3 и 4: SIEM из недели 8 становится инструментом хантинга, расследование недели 9 — материалом для картирования.</blockquote>
   </section>
 </div>

@@ -4336,8 +4336,6 @@ async function doLoginUser() {
   document.getElementById("authModal").style.display = "none";
 
   await renderUsers();
-
-  alert("Добро пожаловать, " + profile.username);
 }
 function togglePassword(id) {
   const input = document.getElementById(id);

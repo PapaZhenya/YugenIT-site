@@ -1825,6 +1825,33 @@ async function setFirstTestOpen(isOpen) {
   updateTestAccessUi();
 }
 
+async function applyAdminCode() {
+  const codeInput = document.getElementById("adminCodeInput");
+  const code = codeInput?.value.trim();
+
+  if (!code) {
+    alert("Введите код доступа.");
+    return;
+  }
+
+  const { data, error } = await db.rpc("apply_admin_code", { p_code: code });
+
+  if (error) {
+    const message = error.message || "Database error";
+    alert(message.includes("Invalid admin code") ? "Неверный код." : `Ошибка: ${message}`);
+    return;
+  }
+
+  codeInput.value = "";
+
+  const profile = await getCurrentUserProfile();
+  await getUsers();
+  updateAdminStatus(profile?.username);
+  await renderUsers();
+
+  alert(data === "admin" ? "Права администратора выданы." : "Права администратора сняты.");
+}
+
 function updateAdminStatus(username) {
   if (!adminStatus) return;
   adminStatus.textContent = isSiteAdmin(username) ? "Admin mode" : "User mode";
@@ -4224,6 +4251,7 @@ adminPointButtons.forEach(button => {
 adminRetakeSearch?.addEventListener("input", renderAdminUserOptions);
 allowRetakeBtn?.addEventListener("click", allowUserTestRetake);
 document.getElementById("deleteTestByNameBtn")?.addEventListener("click", deleteTestByName);
+document.getElementById("applyAdminCodeBtn")?.addEventListener("click", applyAdminCode);
 
 document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("showLogin").addEventListener("click", showLoginForm);

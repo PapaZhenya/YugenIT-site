@@ -1722,6 +1722,63 @@ async function doAllowUserTestRetake() {
   alert("Test attempt has been reset for this user.");
 }
 
+async function deleteTestByName() {
+  if (isSubmittingAdminAction) return;
+
+  const profile = await getCurrentUserProfile();
+
+  if (!requireAdmin(profile, "Нет прав администратора.")) return;
+
+  isSubmittingAdminAction = true;
+  try {
+    await doDeleteTestByName();
+  } finally {
+    isSubmittingAdminAction = false;
+  }
+}
+
+async function doDeleteTestByName() {
+  const testName = document.getElementById("adminDeleteTestName")?.value.trim();
+
+  if (!testName) {
+    alert("Введите точное имя теста.");
+    return;
+  }
+
+  const confirmed = confirm(`Удалить тест "${testName}" у ВСЕХ пользователей и откатить их XP/рейтинг?\n\nДействие необратимо.`);
+
+  if (!confirmed) return;
+
+  setAdminPointsStatus("Deleting test entries...");
+
+  const { data, error } = await db.rpc("admin_delete_test_by_name", {
+    p_test_name: testName,
+    p_reason: "Admin purged stray test data"
+  });
+
+  if (error) {
+    console.error(error);
+    const message = error.message || "Database error";
+
+    if (message.includes("Admin role required")) {
+      alert("Нет прав администратора.");
+    } else {
+      alert(`Ошибка базы данных: ${message}`);
+    }
+
+    setAdminPointsStatus("Delete failed");
+    return;
+  }
+
+  const result = Array.isArray(data) ? data[0] : data;
+  await getUsers();
+  await renderUsers();
+  renderAdminUserOptions();
+  document.getElementById("adminDeleteTestName").value = "";
+  setAdminPointsStatus(`Removed "${testName}" for ${result?.affected_users || 0} user(s)`);
+  alert(`Готово. Затронуто пользователей: ${result?.affected_users || 0}.`);
+}
+
 function isFirstTestOpen() {
   return firstTestOpenCache;
 }
@@ -4166,6 +4223,7 @@ adminPointButtons.forEach(button => {
 
 adminRetakeSearch?.addEventListener("input", renderAdminUserOptions);
 allowRetakeBtn?.addEventListener("click", allowUserTestRetake);
+document.getElementById("deleteTestByNameBtn")?.addEventListener("click", deleteTestByName);
 
 document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("showLogin").addEventListener("click", showLoginForm);

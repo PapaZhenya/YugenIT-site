@@ -4167,11 +4167,28 @@ adminPointButtons.forEach(button => {
 adminRetakeSearch?.addEventListener("input", renderAdminUserOptions);
 allowRetakeBtn?.addEventListener("click", allowUserTestRetake);
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("authModal").style.display = "flex";
-
+document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("showLogin").addEventListener("click", showLoginForm);
   document.getElementById("showRegister").addEventListener("click", showRegisterForm);
+
+  const { data: { session } } = await db.auth.getSession();
+
+  if (session) {
+    const { data: profile } = await db
+      .from(PROFILES_TABLE)
+      .select("username")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (profile) {
+      localStorage.setItem("greenYCurrentUser", profile.username);
+      document.getElementById("authModal").style.display = "none";
+      await renderUsers();
+      return;
+    }
+  }
+
+  document.getElementById("authModal").style.display = "flex";
 });
 
 function showLoginForm() {
